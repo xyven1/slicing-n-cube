@@ -43,6 +43,17 @@ vertex_t transform_vertex(const symmetry_t& sym, vertex_t v, int32_t n) {
   return transformation;
 }
 
+vertex_t transform_vertex_inv(const symmetry_t& sym, vertex_t v, int32_t n) {
+  vertex_t transformation = 0;
+  for (int32_t i = 0; i < n; ++i) {
+    const uint32_t val_i = (v >> sym[i].second) & 1;
+    const uint32_t val_i_sign = val_i ^ sym[i].first;
+    const uint32_t val_i_sign_and_position = val_i_sign << i;
+    transformation |= val_i_sign_and_position;
+  }
+  return transformation;
+}
+
 complex_t transform_complex(const complex_t& complex, const symmetry_t& sym,
                             int32_t n) {
   // std::cout << "Transforming complex " << complex << " with " << sym <<
@@ -54,5 +65,22 @@ complex_t transform_complex(const complex_t& complex, const symmetry_t& sym,
     }
   }
   // std::cout << "Transformation is " << transformation << std::endl;
+  return transformation;
+}
+
+complex_t transform_complex_and_min(const complex_t& complex,
+                                    const symmetry_t& sym, int32_t n,
+                                    const complex_t& min_complex) {
+  complex_t transformation;
+  for (vertex_t v = (1u << n) - 1; v < (1u << n); --v) {
+    const vertex_t inv = transform_vertex_inv(sym, v, n);
+    transformation[v] = complex[inv];
+    if (transformation[v] && !min_complex[v]) {
+      return min_complex;
+    }
+    if (!transformation[v] && min_complex[v]) {
+      return transform_complex(complex, sym, n);
+    }
+  }
   return transformation;
 }

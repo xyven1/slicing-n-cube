@@ -9,14 +9,11 @@
 
 complex_t unique_complex(const complex_t& complex,
                          const std::vector<symmetry_t>& symmetries, int32_t n) {
-  complex_t min_transformation(complex);
+  complex_t min(complex);
   for (const symmetry_t& sym : symmetries) {
-    const complex_t transformation = transform_complex(complex, sym, n);
-    if (min_transformation > transformation) {
-      min_transformation = transformation;
-    }
+    min = transform_complex_and_min(complex, sym, n, min);
   }
-  return min_transformation;
+  return min;
 }
 
 std::vector<vertex_t> adjacent_vertices_of_complex(const complex_t& complex,

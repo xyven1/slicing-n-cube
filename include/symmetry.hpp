@@ -10,7 +10,13 @@ std::vector<symmetry_t> compute_symmetries(int32_t n);
 
 vertex_t transform_vertex(const symmetry_t& sym, vertex_t v, int32_t n);
 
+vertex_t transform_vertex_inv(const symmetry_t& sym, vertex_t v, int32_t n);
+
 complex_t transform_complex(const complex_t& complex, const symmetry_t& sym,
                             int32_t n);
+
+complex_t transform_complex_and_min(const complex_t& complex,
+                                    const symmetry_t& sym, int32_t n,
+                                    const complex_t& min_complex);
 
 #endif
