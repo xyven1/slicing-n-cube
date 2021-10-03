@@ -4,7 +4,6 @@
 
 #include "common.hpp"
 #include "complex.hpp"
-#include "prettyprint.hpp"
 
 std::string vertex_to_str(vertex_t v, int32_t n) {
   std::string str;
@@ -32,6 +31,7 @@ void evaluate_f() {
 
 int main() {
   constexpr int32_t n = 6;
+  static_assert((1 << n) == complex_t().size());
   const std::vector<complex_t> complexes = compute_cut_complexes(n);
   std::cout << complexes.size() << std::endl;
   // for (const complex_t& c : complexes) {

@@ -45,9 +45,14 @@ vertex_t transform_vertex(const symmetry_t& sym, vertex_t v, int32_t n) {
 
 complex_t transform_complex(const complex_t& complex, const symmetry_t& sym,
                             int32_t n) {
+  // std::cout << "Transforming complex " << complex << " with " << sym <<
+  // std::endl;
   complex_t transformation;
-  for (const vertex_t& v : complex) {
-    transformation.insert(transform_vertex(sym, v, n));
+  for (vertex_t v = 0; v < (1u << n); ++v) {
+    if (complex[v]) {
+      transformation[transform_vertex(sym, v, n)] = true;
+    }
   }
+  // std::cout << "Transformation is " << transformation << std::endl;
   return transformation;
 }

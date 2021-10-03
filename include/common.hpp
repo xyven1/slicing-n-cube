@@ -1,16 +1,39 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <bitset>
 #include <cstdint>
-#include <set>
+#include <iostream>
 #include <utility>
 #include <vector>
+
+#include "prettyprint.hpp"
 
 // The i-th least significant bit stores the i-th coordinate
 using vertex_t = uint32_t;
 using edge_t = std::pair<vertex_t, vertex_t>;
 using symmetry_t = std::vector<std::pair<int32_t, int32_t>>;
-using complex_t = std::set<vertex_t>;
+using complex_t = std::bitset<64>;
+
+template <std::size_t N>
+bool operator<(const std::bitset<N>& x, const std::bitset<N>& y) {
+  for (int i = N - 1; i >= 0; --i) {
+    if (x[i] != y[i]) {
+      return y[i];
+    }
+  }
+  return false;
+}
+
+template <std::size_t N>
+bool operator>(const std::bitset<N>& x, const std::bitset<N>& y) {
+  for (int i = N - 1; i >= 0; --i) {
+    if (x[i] != y[i]) {
+      return x[i];
+    }
+  }
+  return false;
+}
 
 template <typename T>
 T pow(T base, T exponent) {
