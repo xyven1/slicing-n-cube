@@ -1,8 +1,9 @@
+#include "complex.hpp"
+
 #include <cstdint>
 #include <vector>
 
 #include "common.hpp"
-#include "complex.hpp"
 #include "lp.hpp"
 #include "symmetry.hpp"
 

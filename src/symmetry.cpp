@@ -1,9 +1,10 @@
+#include "symmetry.hpp"
+
 #include <algorithm>
 #include <cstdint>
 #include <vector>
 
 #include "common.hpp"
-#include "symmetry.hpp"
 
 std::vector<symmetry_t> compute_symmetries(int32_t n) {
   const int32_t two_to_n = pow(2, n);

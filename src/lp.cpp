@@ -1,11 +1,12 @@
-#include <cstdint>
-
-#include "common.hpp"
 #include "lp.hpp"
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/QP_functions.h>
 #include <CGAL/QP_models.h>
+
+#include <cstdint>
+
+#include "common.hpp"
 
 typedef int32_t IT;
 typedef CGAL::Gmpz ET;
