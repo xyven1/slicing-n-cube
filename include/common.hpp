@@ -12,7 +12,8 @@
 // The i-th least significant bit stores the i-th coordinate
 using vertex_t = uint32_t;
 using edge_t = std::pair<vertex_t, vertex_t>;
-using symmetry_t = std::vector<std::pair<int32_t, int32_t>>;
+// The MSB stores the sign and the remaining bits represent the new position
+using symmetry_t = std::vector<uint32_t>;
 using complex_t = std::bitset<64>;
 
 template <std::size_t N>

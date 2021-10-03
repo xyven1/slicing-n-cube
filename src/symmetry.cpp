@@ -7,8 +7,7 @@
 #include "common.hpp"
 
 std::vector<symmetry_t> compute_symmetries(int32_t n) {
-  const int32_t two_to_n = pow(2, n);
-  const int32_t size = two_to_n * factorial(n);
+  const int32_t size = pow(2, n) * factorial(n);
   std::vector<symmetry_t> symmetries;
   symmetries.reserve(size);
 
@@ -22,9 +21,9 @@ std::vector<symmetry_t> compute_symmetries(int32_t n) {
       symmetry_t symmetry;
       symmetry.reserve(n);
       for (int32_t i = 0; i < n; ++i) {
-        const uint32_t mask = 1 << i;
-        const int32_t sign = (mask & signs) ? 1 : 0;
-        symmetry.emplace_back(sign, permutation[i]);
+        const uint32_t sign = (signs >> i) & 1;
+        const uint32_t sign_and_position = (sign << 31) | permutation[i];
+        symmetry.push_back(sign_and_position);
       }
       symmetries.push_back(symmetry);
     }
@@ -35,9 +34,11 @@ std::vector<symmetry_t> compute_symmetries(int32_t n) {
 vertex_t transform_vertex(const symmetry_t& sym, vertex_t v, int32_t n) {
   vertex_t transformation = 0;
   for (int32_t i = 0; i < n; ++i) {
+    const uint32_t sign = (sym[i] >> 31) & 1;
+    const uint32_t position = sym[i] & 0x7FFFFFFF;
     const uint32_t val_i = (v >> i) & 1;
-    const uint32_t val_i_sign = val_i ^ sym[i].first;
-    const uint32_t val_i_sign_and_position = val_i_sign << sym[i].second;
+    const uint32_t val_i_sign = val_i ^ sign;
+    const uint32_t val_i_sign_and_position = val_i_sign << position;
     transformation |= val_i_sign_and_position;
   }
   return transformation;
@@ -46,8 +47,10 @@ vertex_t transform_vertex(const symmetry_t& sym, vertex_t v, int32_t n) {
 vertex_t transform_vertex_inv(const symmetry_t& sym, vertex_t v, int32_t n) {
   vertex_t transformation = 0;
   for (int32_t i = 0; i < n; ++i) {
-    const uint32_t val_i = (v >> sym[i].second) & 1;
-    const uint32_t val_i_sign = val_i ^ sym[i].first;
+    const uint32_t sign = (sym[i] >> 31) & 1;
+    const uint32_t position = sym[i] & 0x7FFFFFFF;
+    const uint32_t val_i = (v >> position) & 1;
+    const uint32_t val_i_sign = val_i ^ sign;
     const uint32_t val_i_sign_and_position = val_i_sign << i;
     transformation |= val_i_sign_and_position;
   }
