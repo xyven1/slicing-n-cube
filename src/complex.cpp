@@ -8,12 +8,26 @@
 #include "symmetry.hpp"
 
 complex_t unique_complex(const complex_t& complex,
-                         const std::vector<symmetry_t>& symmetries, int32_t n) {
-  complex_t min(complex);
-  for (const symmetry_t& sym : symmetries) {
-    min = transform_complex_and_min(complex, sym, n, min);
+                         const std::vector<std::vector<vertex_t>>& inversions,
+                         int32_t n) {
+  complex_t min_complex(complex);
+  for (const std::vector<vertex_t>& inversion : inversions) {
+    complex_t transformation;
+    bool is_new_min = false;
+    for (vertex_t v = (1u << n) - 1; v < (1u << n); --v) {
+      const vertex_t inv = inversion[v];
+      transformation[v] = complex[inv];
+      if (!is_new_min && transformation[v] && !min_complex[v]) {
+        // min_complex is still smaller
+        break;
+      }
+      is_new_min |= !transformation[v] && min_complex[v];
+    }
+    if (is_new_min) {
+      min_complex = transformation;
+    }
   }
-  return min;
+  return min_complex;
 }
 
 std::vector<vertex_t> adjacent_vertices_of_complex(const complex_t& complex,
@@ -55,6 +69,8 @@ std::vector<edge_t> complex_to_edges(const complex_t& complex, int32_t n) {
 
 std::vector<complex_t> compute_cut_complexes(int32_t n) {
   const std::vector<symmetry_t> symmetries = compute_symmetries(n);
+  const std::vector<std::vector<vertex_t>> inversions =
+      compute_vertex_inversions(symmetries, n);
   const int32_t l = pow(2, n - 1);
   // There is exactly one USR of a cut complex of size l=1
   std::vector<complex_t> complexes = {{1}};
@@ -68,7 +84,7 @@ std::vector<complex_t> compute_cut_complexes(int32_t n) {
         // std::cout << "\nTrying adjacent vertex " << v << std::endl;
         complex_t maybe_complex(complexes[j]);
         maybe_complex[v] = true;
-        maybe_complex = unique_complex(maybe_complex, symmetries, n);
+        maybe_complex = unique_complex(maybe_complex, inversions, n);
         // std::cout << "Maybe new complex: " << maybe_complex << std::endl;
         if (std::find(complexes.begin() + prev_end, complexes.end(),
                       maybe_complex) == complexes.end()) {
