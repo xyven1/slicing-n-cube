@@ -1,5 +1,6 @@
 #include "complex.hpp"
 
+#include <algorithm>
 #include <cstdint>
 #include <vector>
 
@@ -11,12 +12,16 @@
 std::vector<complex_t> expand_complex(
     const std::vector<transformation_t>& transformations,
     const complex_t& complex, int32_t n) {
-  std::vector<complex_t> expansions(transformations.size());
-  for (std::size_t i = 0; i < transformations.size(); ++i) {
+  std::vector<complex_t> expansions;
+  for (const transformation_t& transformation : transformations) {
+    complex_t complex_trans;
     for (vertex_t v = 0; v < (1u << n); ++v) {
       if (complex[v]) {
-        expansions[i][transformations[i][v]] = true;
+        complex_trans[transformation[v]] = true;
       }
+    }
+    if (std::find(expansions.begin(), expansions.end(), complex_trans) == expansions.end()) {
+      expansions.push_back(complex_trans);
     }
   }
   return expansions;

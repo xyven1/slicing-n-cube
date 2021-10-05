@@ -1,9 +1,11 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <unordered_set>
 
 #include "common.hpp"
 #include "complex.hpp"
+#include "edge.hpp"
 #include "symmetry.hpp"
 
 std::string vertex_to_str(vertex_t v, int32_t n) {
@@ -37,9 +39,16 @@ int main() {
   const std::vector<symmetry_t> symmetries = compute_symmetries(n);
   const std::vector<inversion_t> inversions =
       compute_vertex_inversions(symmetries, n);
+  const std::vector<transformation_t> transformations =
+      compute_vertex_transformations(symmetries, n);
   const std::vector<complex_t> complexes = compute_cut_complexes(inversions, n);
   std::cout << complexes.size() << std::endl;
-  // for (const complex_t& c : complexes) {
-  //   std::cout << complex_to_edges(c, n) << std::endl;
-  // }
+  std::unordered_set<sliceable_set_t> mss;
+  const std::vector<edge_t> edges = compute_edges(n);
+  for (const complex_t& complex : complexes) {
+    for (const complex_t& expansion : expand_complex(transformations, complex, n)) {
+      mss.insert(complex_to_sliceable_set(expansion, edges, n));
+    }
+  }
+  std::cout << mss.size() << std::endl;
 }
