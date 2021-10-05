@@ -88,9 +88,9 @@ complex_t transform_complex_and_min(const complex_t& complex,
   return transformation;
 }
 
-std::vector<std::vector<vertex_t>> compute_vertex_transformations(
+std::vector<transformation_t> compute_vertex_transformations(
     const std::vector<symmetry_t>& symmetries, int32_t n) {
-  std::vector<std::vector<vertex_t>> transformations(symmetries.size());
+  std::vector<transformation_t> transformations(symmetries.size());
   for (std::size_t i = 0; i < symmetries.size(); ++i) {
     transformations.reserve(1u << n);
     for (vertex_t v = 0; v < (1u << n); ++v) {
@@ -100,9 +100,9 @@ std::vector<std::vector<vertex_t>> compute_vertex_transformations(
   return transformations;
 }
 
-std::vector<std::vector<vertex_t>> compute_vertex_inversions(
+std::vector<inversion_t> compute_vertex_inversions(
     const std::vector<symmetry_t>& symmetries, int32_t n) {
-  std::vector<std::vector<vertex_t>> inversions(symmetries.size());
+  std::vector<inversion_t> inversions(symmetries.size());
   for (std::size_t i = 0; i < symmetries.size(); ++i) {
     inversions.reserve(1u << n);
     for (vertex_t v = 0; v < (1u << n); ++v) {

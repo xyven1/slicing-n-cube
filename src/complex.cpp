@@ -68,10 +68,8 @@ sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
   return sliceable_set;
 }
 
-std::vector<complex_t> compute_cut_complexes(int32_t n) {
-  const std::vector<symmetry_t> symmetries = compute_symmetries(n);
-  const std::vector<std::vector<vertex_t>> inversions =
-      compute_vertex_inversions(symmetries, n);
+std::vector<complex_t> compute_cut_complexes(
+    const std::vector<inversion_t>& inversions, int32_t n) {
   const int32_t l = pow(2, n - 1);
   // There is exactly one USR of a cut complex of size l=1
   std::vector<complex_t> complexes = {{1}};

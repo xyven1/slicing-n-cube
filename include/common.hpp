@@ -14,6 +14,10 @@ using vertex_t = uint32_t;
 using edge_t = std::pair<vertex_t, vertex_t>;
 // The MSB stores the sign and the remaining bits represent the new position
 using symmetry_t = std::vector<uint32_t>;
+// inversion_t[v] stores the inversion of vertex v
+using inversion_t = std::vector<vertex_t>;
+// transformation_t[v] stores the transformation of vertex v
+using transformation_t = std::vector<vertex_t>;
 using complex_t = std::bitset<64>;
 using sliceable_set_t = std::bitset<192>;
 

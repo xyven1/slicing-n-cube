@@ -4,6 +4,7 @@
 
 #include "common.hpp"
 #include "complex.hpp"
+#include "symmetry.hpp"
 
 std::string vertex_to_str(vertex_t v, int32_t n) {
   std::string str;
@@ -33,7 +34,10 @@ int main() {
   constexpr int32_t n = 6;
   static_assert((1 << n) == complex_t().size());
   static_assert(n * (1 << (n - 1)) == sliceable_set_t().size());
-  const std::vector<complex_t> complexes = compute_cut_complexes(n);
+  const std::vector<symmetry_t> symmetries = compute_symmetries(n);
+  const std::vector<inversion_t> inversions =
+      compute_vertex_inversions(symmetries, n);
+  const std::vector<complex_t> complexes = compute_cut_complexes(inversions, n);
   std::cout << complexes.size() << std::endl;
   // for (const complex_t& c : complexes) {
   //   std::cout << complex_to_edges(c, n) << std::endl;
