@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "common.hpp"
+#include "edge.hpp"
 #include "lp.hpp"
 #include "symmetry.hpp"
 
@@ -48,23 +49,23 @@ std::vector<vertex_t> adjacent_vertices_of_complex(const complex_t& complex,
   return adjacent_vertices;
 }
 
-std::vector<edge_t> complex_to_edges(const complex_t& complex, int32_t n) {
-  std::vector<edge_t> edges;
+sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
+                                         const std::vector<edge_t>& edges,
+                                         int32_t n) {
+  sliceable_set_t sliceable_set;
   for (vertex_t v = 0; v < (1u << n); ++v) {
     if (complex[v]) {
       for (int32_t i = 0; i < n; ++i) {
         const vertex_t neighbour = v ^ (1 << i);
         if (!complex[neighbour]) {
-          if (v < neighbour) {
-            edges.emplace_back(v, neighbour);
-          } else {
-            edges.emplace_back(neighbour, v);
-          }
+          const edge_t e =
+              (v < neighbour) ? edge_t(v, neighbour) : edge_t(neighbour, v);
+          sliceable_set[edge_to_int(e, edges)] = true;
         }
       }
     }
   }
-  return edges;
+  return sliceable_set;
 }
 
 std::vector<complex_t> compute_cut_complexes(int32_t n) {

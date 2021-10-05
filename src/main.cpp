@@ -32,6 +32,7 @@ void evaluate_f() {
 int main() {
   constexpr int32_t n = 6;
   static_assert((1 << n) == complex_t().size());
+  static_assert(n * (1 << (n - 1)) == sliceable_set_t().size());
   const std::vector<complex_t> complexes = compute_cut_complexes(n);
   std::cout << complexes.size() << std::endl;
   // for (const complex_t& c : complexes) {

@@ -15,6 +15,7 @@ using edge_t = std::pair<vertex_t, vertex_t>;
 // The MSB stores the sign and the remaining bits represent the new position
 using symmetry_t = std::vector<uint32_t>;
 using complex_t = std::bitset<64>;
+using sliceable_set_t = std::bitset<192>;
 
 template <std::size_t N>
 bool operator<(const std::bitset<N>& x, const std::bitset<N>& y) {
