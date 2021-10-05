@@ -57,37 +57,6 @@ vertex_t transform_vertex_inv(const symmetry_t& sym, vertex_t v, int32_t n) {
   return transformation;
 }
 
-complex_t transform_complex(const complex_t& complex, const symmetry_t& sym,
-                            int32_t n) {
-  // std::cout << "Transforming complex " << complex << " with " << sym <<
-  // std::endl;
-  complex_t transformation;
-  for (vertex_t v = 0; v < (1u << n); ++v) {
-    if (complex[v]) {
-      transformation[transform_vertex(sym, v, n)] = true;
-    }
-  }
-  // std::cout << "Transformation is " << transformation << std::endl;
-  return transformation;
-}
-
-complex_t transform_complex_and_min(const complex_t& complex,
-                                    const symmetry_t& sym, int32_t n,
-                                    const complex_t& min_complex) {
-  complex_t transformation;
-  for (vertex_t v = (1u << n) - 1; v < (1u << n); --v) {
-    const vertex_t inv = transform_vertex_inv(sym, v, n);
-    transformation[v] = complex[inv];
-    if (transformation[v] && !min_complex[v]) {
-      return min_complex;
-    }
-    if (!transformation[v] && min_complex[v]) {
-      return transform_complex(complex, sym, n);
-    }
-  }
-  return transformation;
-}
-
 std::vector<transformation_t> compute_vertex_transformations(
     const std::vector<symmetry_t>& symmetries, int32_t n) {
   std::vector<transformation_t> transformations(symmetries.size());
