@@ -8,6 +8,20 @@
 #include "lp.hpp"
 #include "symmetry.hpp"
 
+std::vector<complex_t> expand_complex(
+    const std::vector<transformation_t>& transformations,
+    const complex_t& complex, int32_t n) {
+  std::vector<complex_t> expansions(transformations.size());
+  for (std::size_t i = 0; i < transformations.size(); ++i) {
+    for (vertex_t v = 0; v < (1u << n); ++v) {
+      if (complex[v]) {
+        expansions[i][transformations[i][v]] = true;
+      }
+    }
+  }
+  return expansions;
+}
+
 complex_t unique_complex(const complex_t& complex,
                          const std::vector<std::vector<vertex_t>>& inversions,
                          int32_t n) {
