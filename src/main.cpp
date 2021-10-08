@@ -33,9 +33,7 @@ void evaluate_f() {
 }
 
 int main() {
-  constexpr int32_t n = 6;
-  static_assert((1 << n) == complex_t().size());
-  static_assert(n * (1 << (n - 1)) == sliceable_set_t().size());
+  constexpr int32_t n = N;
   const std::vector<symmetry_t> symmetries = compute_symmetries(n);
   const std::vector<inversion_t> inversions =
       compute_vertex_inversions(symmetries, n);

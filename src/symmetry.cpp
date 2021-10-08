@@ -7,9 +7,8 @@
 #include "common.hpp"
 
 std::vector<symmetry_t> compute_symmetries(int32_t n) {
-  const int32_t size = pow(2, n) * factorial(n);
   std::vector<symmetry_t> symmetries;
-  symmetries.reserve(size);
+  symmetries.reserve(num_symmetries(n));
 
   std::vector<int32_t> permutation(n);
   for (int32_t i = 0; i < n; ++i) {
