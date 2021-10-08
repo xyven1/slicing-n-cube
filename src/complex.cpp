@@ -89,7 +89,7 @@ sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
 
 std::vector<complex_t> compute_cut_complexes(
     const std::vector<inversion_t>& inversions, int32_t n) {
-  const int32_t l = pow(2, n - 1);
+  const int32_t l = num_vertices(n) / 2;
   // There is exactly one USR of a cut complex of size l=1
   std::vector<complex_t> complexes = {{1}};
   std::size_t prev_begin = 0;

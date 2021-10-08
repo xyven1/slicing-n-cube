@@ -9,34 +9,20 @@
 
 #include "prettyprint.hpp"
 
-template <typename T>
-constexpr T pow(T base, T exponent) {
-  T power = 1;
-  for (T i = 0; i < exponent; ++i) {
-    power *= base;
-  }
-  return power;
-}
-
-template <typename T>
-constexpr T factorial(T n) {
-  T f = 1;
-  for (T i = 2; i <= n; ++i) {
-    f *= i;
-  }
-  return f;
-}
-
 constexpr int32_t num_vertices(int32_t n) {
-    return pow(2, n);
+    return 1 << n;
 }
 
-constexpr int32_t num_egdes(int32_t n) {
-    return n * pow(2, n - 1);
+constexpr int32_t num_edges(int32_t n) {
+    return n << (n - 1);
 }
 
 constexpr int32_t num_symmetries(int32_t n) {
-    return pow(2, n) * factorial(n);
+    int32_t factorial = 1;
+    for (int32_t i = 2; i <= n; ++i) {
+      factorial *= i;
+    }
+    return (1 << n) * factorial;
 }
 
 constexpr int32_t N = 6;
@@ -51,6 +37,6 @@ using inversion_t = std::vector<vertex_t>;
 // transformation_t[v] stores the transformation of vertex v
 using transformation_t = std::vector<vertex_t>;
 using complex_t = std::bitset<num_vertices(N)>;
-using sliceable_set_t = std::bitset<num_egdes(N)>;
+using sliceable_set_t = std::bitset<num_edges(N)>;
 
 #endif
