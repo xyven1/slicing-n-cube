@@ -12,7 +12,7 @@ std::string vertex_to_str(vertex_t v, int32_t n) {
   std::string str;
   str.reserve(n);
   for (int32_t i = 0; i < n; ++i) {
-    const uint32_t bit_i = (v >> i) & 1;
+    const int32_t bit_i = (v >> i) & 1;
     str += (bit_i) ? "1" : "0";
   }
   return str;
@@ -21,10 +21,10 @@ std::string vertex_to_str(vertex_t v, int32_t n) {
 void evaluate_f() {
   const std::vector<double> f = {1, 1, 1, 0.9};
   const int32_t n = static_cast<int32_t>(f.size() - 1);
-  for (vertex_t v = 0; v < (1u << n); ++v) {
+  for (vertex_t v = 0; v < num_vertices(n); ++v) {
     double x = f[n];
     for (int32_t i = 0; i < n; ++i) {
-      const uint32_t val_i = (v >> i) & 1;
+      const int32_t val_i = (v >> i) & 1;
       const double coordinate_i = (val_i) ? 1 : -1;
       x += f[i] * coordinate_i;
     }

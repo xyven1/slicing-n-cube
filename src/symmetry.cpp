@@ -60,8 +60,8 @@ std::vector<transformation_t> compute_vertex_transformations(
     const std::vector<symmetry_t>& symmetries, int32_t n) {
   std::vector<transformation_t> transformations(symmetries.size());
   for (std::size_t i = 0; i < symmetries.size(); ++i) {
-    transformations.reserve(1u << n);
-    for (vertex_t v = 0; v < (1u << n); ++v) {
+    transformations.reserve(num_vertices(n));
+    for (vertex_t v = 0; v < num_vertices(n); ++v) {
       transformations[i].push_back(transform_vertex(symmetries[i], v, n));
     }
   }
@@ -72,8 +72,8 @@ std::vector<inversion_t> compute_vertex_inversions(
     const std::vector<symmetry_t>& symmetries, int32_t n) {
   std::vector<inversion_t> inversions(symmetries.size());
   for (std::size_t i = 0; i < symmetries.size(); ++i) {
-    inversions.reserve(1u << n);
-    for (vertex_t v = 0; v < (1u << n); ++v) {
+    inversions.reserve(num_vertices(n));
+    for (vertex_t v = 0; v < num_vertices(n); ++v) {
       inversions[i].push_back(transform_vertex_inv(symmetries[i], v, n));
     }
   }

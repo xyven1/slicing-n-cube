@@ -16,11 +16,11 @@ typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 bool is_complex(const complex_t& complex, int32_t n) {
   Program lp(CGAL::SMALLER, false, 0, false, 0);
-  for (vertex_t v = 0; v < (1u << n); ++v) {
+  for (vertex_t v = 0; v < num_vertices(n); ++v) {
     // invert inequality operator for vertices not part of the complex
     const int32_t sign = (complex[v]) ? 1000 : -1000;
     for (int32_t i = 0; i < n; ++i) {
-      uint32_t val_i = (v >> i) & 1;
+      int32_t val_i = (v >> i) & 1;
       int32_t coordinate_i = (val_i) ? 1 : -1;
       lp.set_a(i, v, sign * coordinate_i);
     }

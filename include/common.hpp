@@ -42,7 +42,7 @@ constexpr int32_t num_symmetries(int32_t n) {
 constexpr int32_t N = 6;
 
 // The i-th least significant bit stores the i-th coordinate
-using vertex_t = uint32_t;
+using vertex_t = int32_t;
 using edge_t = std::pair<vertex_t, vertex_t>;
 // The MSB stores the sign and the remaining bits represent the new position
 using symmetry_t = std::vector<uint32_t>;

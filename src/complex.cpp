@@ -15,7 +15,7 @@ std::vector<complex_t> expand_complex(
   std::vector<complex_t> expansions;
   for (const transformation_t& transformation : transformations) {
     complex_t complex_trans;
-    for (vertex_t v = 0; v < (1u << n); ++v) {
+    for (vertex_t v = 0; v < num_vertices(n); ++v) {
       if (complex[v]) {
         complex_trans[transformation[v]] = true;
       }
@@ -34,7 +34,7 @@ complex_t unique_complex(const complex_t& complex,
   for (const std::vector<vertex_t>& inversion : inversions) {
     complex_t transformation;
     bool is_new_min = false;
-    for (vertex_t v = (1u << n) - 1; v < (1u << n); --v) {
+    for (vertex_t v = num_vertices(n) - 1; v >= 0; --v) {
       const vertex_t inv = inversion[v];
       transformation[v] = complex[inv];
       if (!is_new_min && transformation[v] && !min_complex[v]) {
@@ -53,7 +53,7 @@ complex_t unique_complex(const complex_t& complex,
 std::vector<vertex_t> adjacent_vertices_of_complex(const complex_t& complex,
                                                    int32_t n) {
   std::vector<vertex_t> adjacent_vertices;
-  for (vertex_t v = 0; v < (1u << n); ++v) {
+  for (vertex_t v = 0; v < num_vertices(n); ++v) {
     if (complex[v]) {
       for (int32_t i = 0; i < n; ++i) {
         vertex_t neighbour = v ^ (1 << i);
@@ -72,7 +72,7 @@ sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
                                          const std::vector<edge_t>& edges,
                                          int32_t n) {
   sliceable_set_t sliceable_set;
-  for (vertex_t v = 0; v < (1u << n); ++v) {
+  for (vertex_t v = 0; v < num_vertices(n); ++v) {
     if (complex[v]) {
       for (int32_t i = 0; i < n; ++i) {
         const vertex_t neighbour = v ^ (1 << i);
