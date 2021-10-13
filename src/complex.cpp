@@ -10,17 +10,18 @@
 #include "symmetry.hpp"
 
 std::vector<complex_t> expand_complex(
-    const std::vector<transformation_t>& transformations,
+    const std::vector<vertex_trans_t>& transformations,
     const complex_t& complex, int32_t n) {
   std::vector<complex_t> expansions;
-  for (const transformation_t& transformation : transformations) {
+  for (const vertex_trans_t& transformation : transformations) {
     complex_t complex_trans;
     for (vertex_t v = 0; v < num_vertices(n); ++v) {
       if (complex[v]) {
         complex_trans[transformation[v]] = true;
       }
     }
-    if (std::find(expansions.begin(), expansions.end(), complex_trans) == expansions.end()) {
+    if (std::find(expansions.begin(), expansions.end(), complex_trans) ==
+        expansions.end()) {
       expansions.push_back(complex_trans);
     }
   }
@@ -88,7 +89,7 @@ sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
 }
 
 std::vector<complex_t> compute_cut_complexes(
-    const std::vector<inversion_t>& inversions, int32_t n) {
+    const std::vector<vertex_inv_t>& inversions, int32_t n) {
   const int32_t l = num_vertices(n) / 2;
   // There is exactly one USR of a cut complex of size l=1
   std::vector<complex_t> complexes = {{1}};

@@ -17,10 +17,10 @@ sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
                                          int32_t n);
 
 std::vector<complex_t> compute_cut_complexes(
-    const std::vector<inversion_t>& inversions, int32_t n);
+    const std::vector<vertex_inv_t>& inversions, int32_t n);
 
 std::vector<complex_t> expand_complex(
-    const std::vector<transformation_t>& transformations,
+    const std::vector<vertex_trans_t>& transformations,
     const complex_t& complex, int32_t n);
 
 #endif
