@@ -21,6 +21,26 @@ constexpr int32_t num_symmetries(int32_t n) {
   return (1 << n) * factorial;
 }
 
+template <std::size_t N>
+bool operator<(const std::bitset<N>& x, const std::bitset<N>& y) {
+  for (std::size_t i = N - 1; i < N; --i) {
+    if (x[i] != y[i]) {
+      return y[i];
+    }
+  }
+  return false;
+}
+
+template <std::size_t N>
+bool operator>(const std::bitset<N>& x, const std::bitset<N>& y) {
+  for (std::size_t i = N - 1; i < N; --i) {
+    if (x[i] != y[i]) {
+      return x[i];
+    }
+  }
+  return false;
+}
+
 constexpr int32_t N = 5;
 
 // The i-th least significant bit stores the i-th coordinate

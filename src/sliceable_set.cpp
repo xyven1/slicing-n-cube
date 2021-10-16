@@ -16,6 +16,23 @@ bool is_subset(const sliceable_set_t& subset,
   return false;
 }
 
+sliceable_set_t unique_sliceable_set_naive(
+    const sliceable_set_t& ss, const std::vector<edge_trans_t>& transformations,
+    int32_t n) {
+  sliceable_set_t min_ss(ss);
+  for (const edge_trans_t& transformation : transformations) {
+    sliceable_set_t ss_trans;
+    for (int32_t e = 0; e < num_edges(n); ++e) {
+      const int32_t e_inv = transformation[e];
+      ss_trans[e] = ss[e_inv];
+    }
+    if (min_ss > ss_trans) {
+      min_ss = ss_trans;
+    }
+  }
+  return min_ss;
+}
+
 sliceable_set_t unique_sliceable_set(
     const sliceable_set_t& ss, const std::vector<edge_trans_t>& transformations,
     int32_t n) {

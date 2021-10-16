@@ -9,6 +9,10 @@
 bool is_subset(const sliceable_set_t& subset,
                const std::vector<sliceable_set_t>& combos);
 
+sliceable_set_t unique_sliceable_set_naive(
+    const sliceable_set_t& ss, const std::vector<edge_trans_t>& transformations,
+    int32_t n);
+
 sliceable_set_t unique_sliceable_set(
     const sliceable_set_t& ss, const std::vector<edge_trans_t>& transformations,
     int32_t n);
