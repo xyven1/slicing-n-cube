@@ -29,23 +29,23 @@ std::vector<complex_t> expand_complex(
 }
 
 complex_t unique_complex(const complex_t& complex,
-                         const std::vector<std::vector<vertex_t>>& inversions,
+                         const std::vector<vertex_trans_t>& transformations,
                          int32_t n) {
   complex_t min_complex(complex);
-  for (const std::vector<vertex_t>& inversion : inversions) {
-    complex_t transformation;
+  for (const vertex_trans_t& transformation : transformations) {
+    complex_t complex_trans;
     bool is_new_min = false;
     for (vertex_t v = num_vertices(n) - 1; v >= 0; --v) {
-      const vertex_t inv = inversion[v];
-      transformation[v] = complex[inv];
-      if (!is_new_min && transformation[v] && !min_complex[v]) {
+      const vertex_t v_inversion = transformation[v];
+      complex_trans[v] = complex[v_inversion];
+      if (!is_new_min && complex_trans[v] && !min_complex[v]) {
         // min_complex is still smaller
         break;
       }
-      is_new_min |= !transformation[v] && min_complex[v];
+      is_new_min |= !complex_trans[v] && min_complex[v];
     }
     if (is_new_min) {
-      min_complex = transformation;
+      min_complex = complex_trans;
     }
   }
   return min_complex;
@@ -89,10 +89,11 @@ sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
 }
 
 std::vector<complex_t> compute_cut_complexes(
-    const std::vector<vertex_inv_t>& inversions, int32_t n) {
+    const std::vector<vertex_trans_t>& transformations, int32_t n) {
   const int32_t l = num_vertices(n) / 2;
-  // There is exactly one USR of a cut complex of size l=1
+  // There is exactly one USR of all complexes of size 1
   std::vector<complex_t> complexes = {{1}};
+  // The range [prev_begin, prev_end) contains all complexes of size i
   std::size_t prev_begin = 0;
   std::size_t prev_end = complexes.size();
   for (int32_t i = 1; i < l; ++i) {
@@ -103,7 +104,7 @@ std::vector<complex_t> compute_cut_complexes(
         // std::cout << "\nTrying adjacent vertex " << v << std::endl;
         complex_t maybe_complex(complexes[j]);
         maybe_complex[v] = true;
-        maybe_complex = unique_complex(maybe_complex, inversions, n);
+        maybe_complex = unique_complex(maybe_complex, transformations, n);
         // std::cout << "Maybe new complex: " << maybe_complex << std::endl;
         if (std::find(complexes.begin() + prev_end, complexes.end(),
                       maybe_complex) == complexes.end()) {

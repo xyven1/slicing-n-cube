@@ -57,28 +57,16 @@ vertex_t transform_vertex_inv(const symmetry_t& sym, vertex_t v, int32_t n) {
   return transformation;
 }
 
-std::vector<vertex_trans_t> compute_vertex_transformations(
-    const std::vector<symmetry_t>& symmetries, int32_t n) {
+std::vector<vertex_trans_t> compute_vertex_transformations(int32_t n) {
+  const std::vector<symmetry_t> symmetries = compute_symmetries(n);
   std::vector<vertex_trans_t> transformations(symmetries.size());
   for (std::size_t i = 0; i < symmetries.size(); ++i) {
     transformations[i].reserve(num_vertices(n));
     for (vertex_t v = 0; v < num_vertices(n); ++v) {
-      transformations[i].push_back(transform_vertex(symmetries[i], v, n));
+      transformations[i].push_back(transform_vertex_inv(symmetries[i], v, n));
     }
   }
   return transformations;
-}
-
-std::vector<vertex_inv_t> compute_vertex_inversions(
-    const std::vector<symmetry_t>& symmetries, int32_t n) {
-  std::vector<vertex_inv_t> inversions(symmetries.size());
-  for (std::size_t i = 0; i < symmetries.size(); ++i) {
-    inversions[i].reserve(num_vertices(n));
-    for (vertex_t v = 0; v < num_vertices(n); ++v) {
-      inversions[i].push_back(transform_vertex_inv(symmetries[i], v, n));
-    }
-  }
-  return inversions;
 }
 
 std::vector<edge_trans_t> compute_edge_transformations(
@@ -88,31 +76,11 @@ std::vector<edge_trans_t> compute_edge_transformations(
   for (std::size_t i = 0; i < edge_transformations.size(); ++i) {
     edge_transformations[i].reserve(num_edges(n));
     for (int32_t e = 0; e < num_edges(n); ++e) {
-      const vertex_t u_trans = vertex_transformations[i][edges[e].first];
-      const vertex_t v_trans = vertex_transformations[i][edges[e].second];
-      const edge_t e_trans = (u_trans < v_trans) ? edge_t(u_trans, v_trans)
-                                                 : edge_t(v_trans, u_trans);
-      const int32_t e_trans_enum = edge_to_int(e_trans, edges);
-      edge_transformations[i].push_back(e_trans_enum);
+      const vertex_t u = vertex_transformations[i][edges[e].first];
+      const vertex_t v = vertex_transformations[i][edges[e].second];
+      const edge_t e_inversion = (u < v) ? edge_t(u, v) : edge_t(v, u);
+      edge_transformations[i].push_back(edge_to_int(e_inversion, edges));
     }
   }
   return edge_transformations;
-}
-
-std::vector<edge_inv_t> compute_edge_inversions(
-    const std::vector<edge_t>& edges,
-    const std::vector<vertex_inv_t>& vertex_inversions, int32_t n) {
-  std::vector<edge_inv_t> edge_inversions(vertex_inversions.size());
-  for (std::size_t i = 0; i < edge_inversions.size(); ++i) {
-    edge_inversions[i].reserve(num_edges(n));
-    for (int32_t e = 0; e < num_edges(n); ++e) {
-      const vertex_t u_inv = vertex_inversions[i][edges[e].first];
-      const vertex_t v_inv = vertex_inversions[i][edges[e].second];
-      const edge_t e_inv =
-          (u_inv < v_inv) ? edge_t(u_inv, v_inv) : edge_t(v_inv, u_inv);
-      const int32_t e_inv_enum = edge_to_int(e_inv, edges);
-      edge_inversions[i].push_back(e_inv_enum);
-    }
-  }
-  return edge_inversions;
 }

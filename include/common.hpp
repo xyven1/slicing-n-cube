@@ -25,18 +25,21 @@ constexpr int32_t N = 5;
 
 // The i-th least significant bit stores the i-th coordinate
 using vertex_t = int32_t;
+
+// The two vertices are assumed to be ordered, i.e. edge_t.first < edge_t.second
 using edge_t = std::pair<vertex_t, vertex_t>;
+
 // The MSB stores the sign and the remaining bits represent the new position
 using symmetry_t = std::vector<uint32_t>;
-// vertex_trans_t[v] stores the transformation of vertex v
+
+// vertex_trans_t[v] stores the vertex whose transformation yields v
 using vertex_trans_t = std::vector<vertex_t>;
-// vertex_inv_t[v] stores the inversion of vertex v
-using vertex_inv_t = std::vector<vertex_t>;
-// edge_trans_t[e] stores the transformation of (enumerated) edge e
+
+// edge_trans_t[e] stores the edge whose transformation yields e
 using edge_trans_t = std::vector<int32_t>;
-// edge_inv_t[e] stores the inversion of (enumerated) edge e
-using edge_inv_t = std::vector<int32_t>;
+
 using complex_t = std::bitset<num_vertices(N)>;
+
 using sliceable_set_t = std::bitset<num_edges(N)>;
 
 #endif

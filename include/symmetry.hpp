@@ -12,18 +12,10 @@ vertex_t transform_vertex(const symmetry_t& sym, vertex_t v, int32_t n);
 
 vertex_t transform_vertex_inv(const symmetry_t& sym, vertex_t v, int32_t n);
 
-std::vector<vertex_trans_t> compute_vertex_transformations(
-    const std::vector<symmetry_t>& symmetries, int32_t n);
-
-std::vector<vertex_inv_t> compute_vertex_inversions(
-    const std::vector<symmetry_t>& symmetries, int32_t n);
+std::vector<vertex_trans_t> compute_vertex_transformations(int32_t n);
 
 std::vector<edge_trans_t> compute_edge_transformations(
     const std::vector<edge_t>& edges,
     const std::vector<vertex_trans_t>& vertex_transformations, int32_t n);
-
-std::vector<edge_inv_t> compute_edge_inversions(
-    const std::vector<edge_t>& edges,
-    const std::vector<vertex_inv_t>& vertex_inversions, int32_t n);
 
 #endif

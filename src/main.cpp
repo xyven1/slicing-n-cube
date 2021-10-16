@@ -60,28 +60,23 @@ std::vector<sliceable_set_t> complex_to_usr(
 
 int main() {
   constexpr int32_t n = N;
-  const std::vector<symmetry_t> symmetries = compute_symmetries(n);
-  const std::vector<vertex_inv_t> vertex_inversions =
-      compute_vertex_inversions(symmetries, n);
   const std::vector<vertex_trans_t> vertex_transformations =
-      compute_vertex_transformations(symmetries, n);
+      compute_vertex_transformations(n);
   const std::vector<complex_t> complexes =
-      compute_cut_complexes(vertex_inversions, n);
+      compute_cut_complexes(vertex_transformations, n);
   const std::vector<edge_t> edges = compute_edges(n);
   const std::vector<sliceable_set_t> usr = complex_to_usr(complexes, edges, n);
   const std::vector<sliceable_set_t> mss =
       complex_to_mss(complexes, vertex_transformations, edges, n);
   std::cout << usr.size() << std::endl;
   std::cout << mss.size() << std::endl;
-  const std::vector<edge_trans_t> edge_transformations =
-      compute_edge_transformations(edges, vertex_transformations, n);
-  const std::vector<edge_inv_t> edge_inversions =
-      compute_edge_inversions(edges, vertex_inversions, n);
-  std::vector<sliceable_set_t> usr_2 =
-      combine_usr_mss(usr, mss, edge_inversions, n);
-  std::cout << usr_2.size() << std::endl;
-  std::cout << edges << std::endl;
-  std::cout << usr << std::endl;
-  std::cout << mss << std::endl;
-  std::cout << usr_2 << std::endl;
+  // const std::vector<edge_trans_t> edge_transformations =
+  //     compute_edge_transformations(edges, vertex_transformations, n);
+  // std::vector<sliceable_set_t> usr_2 =
+  //     combine_usr_mss(usr, mss, edge_transformations, n);
+  // std::cout << usr_2.size() << std::endl;
+  // std::cout << edges << std::endl;
+  // std::cout << usr << std::endl;
+  // std::cout << mss << std::endl;
+  // std::cout << usr_2 << std::endl;
 }
