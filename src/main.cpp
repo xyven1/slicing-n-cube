@@ -33,31 +33,6 @@ void evaluate_f() {
   }
 }
 
-std::vector<sliceable_set_t> complex_to_mss(
-    const std::vector<complex_t>& complexes,
-    const std::vector<vertex_trans_t>& vertex_transformations,
-    const std::vector<edge_t>& edges, int32_t n) {
-  std::unordered_set<sliceable_set_t> mss;
-  for (const complex_t& complex : complexes) {
-    const std::vector<complex_t> expansions =
-        expand_complex(vertex_transformations, complex, n);
-    for (const complex_t& expansion : expansions) {
-      mss.insert(complex_to_sliceable_set(expansion, edges, n));
-    }
-  }
-  return std::vector<sliceable_set_t>(mss.begin(), mss.end());
-}
-
-std::vector<sliceable_set_t> complex_to_usr(
-    const std::vector<complex_t>& complexes, const std::vector<edge_t>& edges,
-    int32_t n) {
-  std::vector<sliceable_set_t> usr;
-  for (const complex_t& complex : complexes) {
-    usr.push_back(complex_to_sliceable_set(complex, edges, n));
-  }
-  return usr;
-}
-
 int main() {
   constexpr int32_t n = N;
   const std::vector<vertex_trans_t> vertex_transformations =
@@ -65,16 +40,17 @@ int main() {
   const std::vector<complex_t> complexes =
       compute_cut_complexes(vertex_transformations, n);
   const std::vector<edge_t> edges = compute_edges(n);
-  const std::vector<sliceable_set_t> usr = complex_to_usr(complexes, edges, n);
+  const std::vector<edge_trans_t> edge_transformations =
+      compute_edge_transformations(edges, vertex_transformations, n);
+  const std::vector<sliceable_set_t> usr =
+      complexes_to_usr(complexes, edge_transformations, edges, n);
   const std::vector<sliceable_set_t> mss =
-      complex_to_mss(complexes, vertex_transformations, edges, n);
+      complexes_to_mss(complexes, vertex_transformations, edges, n);
   std::cout << usr.size() << std::endl;
   std::cout << mss.size() << std::endl;
-  // const std::vector<edge_trans_t> edge_transformations =
-  //     compute_edge_transformations(edges, vertex_transformations, n);
-  // std::vector<sliceable_set_t> usr_2 =
-  //     combine_usr_mss(usr, mss, edge_transformations, n);
-  // std::cout << usr_2.size() << std::endl;
+  std::vector<sliceable_set_t> usr_2 =
+      combine_usr_mss(usr, mss, edge_transformations, n);
+  std::cout << usr_2.size() << std::endl;
   // std::cout << edges << std::endl;
   // std::cout << usr << std::endl;
   // std::cout << mss << std::endl;

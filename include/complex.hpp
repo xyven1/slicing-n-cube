@@ -17,11 +17,17 @@ sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
                                          const std::vector<edge_t>& edges,
                                          int32_t n);
 
+std::vector<sliceable_set_t> complexes_to_usr(
+    const std::vector<complex_t>& complexes,
+    const std::vector<edge_trans_t>& edge_transformations,
+    const std::vector<edge_t>& edges, int32_t n);
+
+std::vector<sliceable_set_t> complexes_to_mss(
+    const std::vector<complex_t>& complexes,
+    const std::vector<vertex_trans_t>& vertex_transformations,
+    const std::vector<edge_t>& edges, int32_t n);
+
 std::vector<complex_t> compute_cut_complexes(
     const std::vector<vertex_trans_t>& transformations, int32_t n);
-
-std::vector<complex_t> expand_complex(
-    const std::vector<vertex_trans_t>& transformations,
-    const complex_t& complex, int32_t n);
 
 #endif

@@ -7,26 +7,8 @@
 #include "common.hpp"
 #include "edge.hpp"
 #include "lp.hpp"
+#include "sliceable_set.hpp"
 #include "symmetry.hpp"
-
-std::vector<complex_t> expand_complex(
-    const std::vector<vertex_trans_t>& transformations,
-    const complex_t& complex, int32_t n) {
-  std::vector<complex_t> expansions;
-  for (const vertex_trans_t& transformation : transformations) {
-    complex_t complex_trans;
-    for (vertex_t v = 0; v < num_vertices(n); ++v) {
-      if (complex[v]) {
-        complex_trans[transformation[v]] = true;
-      }
-    }
-    if (std::find(expansions.begin(), expansions.end(), complex_trans) ==
-        expansions.end()) {
-      expansions.push_back(complex_trans);
-    }
-  }
-  return expansions;
-}
 
 complex_t unique_complex(const complex_t& complex,
                          const std::vector<vertex_trans_t>& transformations,
@@ -76,16 +58,45 @@ sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
   for (vertex_t v = 0; v < num_vertices(n); ++v) {
     if (complex[v]) {
       for (int32_t i = 0; i < n; ++i) {
-        const vertex_t neighbour = v ^ (1 << i);
-        if (!complex[neighbour]) {
-          const edge_t e =
-              (v < neighbour) ? edge_t(v, neighbour) : edge_t(neighbour, v);
+        const vertex_t u = v ^ (1 << i);
+        if (!complex[u]) {
+          const edge_t e = (u < v) ? edge_t(u, v) : edge_t(v, u);
           sliceable_set[edge_to_int(e, edges)] = true;
         }
       }
     }
   }
   return sliceable_set;
+}
+
+std::vector<sliceable_set_t> complexes_to_usr(
+    const std::vector<complex_t>& complexes,
+    const std::vector<edge_trans_t>& edge_transformations,
+    const std::vector<edge_t>& edges, int32_t n) {
+  std::vector<sliceable_set_t> usr;
+  for (const complex_t& complex : complexes) {
+    sliceable_set_t ss = complex_to_sliceable_set(complex, edges, n);
+    ss = unique_sliceable_set(ss, edge_transformations, n);
+    usr.push_back(ss);
+  }
+  return usr;
+}
+
+std::vector<sliceable_set_t> complexes_to_mss(
+    const std::vector<complex_t>& complexes,
+    const std::vector<vertex_trans_t>& vertex_transformations,
+    const std::vector<edge_t>& edges, int32_t n) {
+  std::unordered_set<sliceable_set_t> mss;
+  for (const complex_t& complex : complexes) {
+    for (const vertex_trans_t& transformation : vertex_transformations) {
+      complex_t complex_trans;
+      for (vertex_t v = 0; v < num_vertices(n); ++v) {
+        complex_trans[v] = complex[transformation[v]];
+      }
+      mss.insert(complex_to_sliceable_set(complex_trans, edges, n));
+    }
+  }
+  return std::vector<sliceable_set_t>(mss.begin(), mss.end());
 }
 
 std::vector<complex_t> compute_cut_complexes(
