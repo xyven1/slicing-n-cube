@@ -48,9 +48,11 @@ int main() {
       complexes_to_mss(complexes, vertex_transformations, edges, n);
   std::cout << usr.size() << std::endl;
   std::cout << mss.size() << std::endl;
-  std::vector<sliceable_set_t> usr_2 =
+  const std::vector<sliceable_set_t> usr_2 =
       combine_usr_mss(usr, mss, edge_transformations, n);
   std::cout << usr_2.size() << std::endl;
+  const std::vector<sliceable_set_t> mss_2 = usr_to_mss(usr_2, edge_transformations, n);
+  std::cout << mss_2.size() << std::endl;
   // std::cout << edges << std::endl;
   // std::cout << usr << std::endl;
   // std::cout << mss << std::endl;

@@ -77,3 +77,24 @@ std::vector<sliceable_set_t> combine_usr_mss(
   }
   return combos;
 }
+
+std::vector<sliceable_set_t> usr_to_mss(
+    const std::vector<sliceable_set_t>& usr,
+    const std::vector<edge_trans_t>& transformations, int32_t n) {
+  std::vector<sliceable_set_t> mss;
+  mss.reserve(usr.size() * num_symmetries(n));
+  for (const sliceable_set_t& ss : usr) {
+    for (const edge_trans_t& transformation : transformations) {
+      sliceable_set_t ss_trans;
+      for (int32_t e = 0; e < num_edges(n); ++e) {
+        const int32_t e_inversion = transformation[e];
+        ss_trans[e] = ss[e_inversion];
+      }
+      mss.push_back(ss_trans);
+    }
+  }
+  std::sort(mss.begin(), mss.end());
+  mss.erase(std::unique(mss.begin(), mss.end()), mss.end());
+  // mss.shrink_to_fit();
+  return mss;
+}
