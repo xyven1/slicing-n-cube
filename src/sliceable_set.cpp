@@ -114,6 +114,20 @@ void sliceable_set_to_bytes(const sliceable_set_t& ss, char* bytes,
   }
 }
 
+sliceable_set_t bytes_to_sliceable_set(char* bytes, std::size_t num_bytes) {
+  sliceable_set_t ss;
+  for (std::size_t i = 0; i < num_bytes; ++i) {
+    const std::size_t rev_i = num_bytes - i - 1;
+    for (std::size_t j = 0; j < 8; ++j) {
+      const std::size_t ss_index = i * 8 + j;
+      if (ss_index < ss.size()) {
+        ss[ss_index] = bytes[rev_i] & (1 << j);
+      }
+    }
+  }
+  return ss;
+}
+
 void write_to_file(const std::vector<sliceable_set_t>& sets,
                    const std::filesystem::path& path) {
   constexpr std::size_t num_bytes =
@@ -126,7 +140,21 @@ void write_to_file(const std::vector<sliceable_set_t>& sets,
   }
 }
 
-char* read_from_file(const std::filesystem::path& path) {
+std::vector<sliceable_set_t> read_from_file(const std::filesystem::path& path) {
+  constexpr std::size_t num_bytes =
+      min_bytes_to_represent_bits(sliceable_set_t().size());
+  const std::size_t filesize = std::filesystem::file_size(path);
+  std::vector<sliceable_set_t> sets;
+  std::ifstream file(path, std::ios::binary);
+  for (std::size_t i = 0; i < filesize / num_bytes; ++i) {
+    char bytes[num_bytes];
+    file.read(bytes, num_bytes);
+    sets.push_back(bytes_to_sliceable_set(bytes, num_bytes));
+  }
+  return sets;
+}
+
+char* read_from_file_as_bytearray(const std::filesystem::path& path) {
   const std::size_t filesize = std::filesystem::file_size(path);
   char* array = new char[filesize];
   std::ifstream file(path, std::ios::binary);

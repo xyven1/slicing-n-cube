@@ -53,12 +53,39 @@ void write_two_sliceable_sets(int32_t n) {
   const std::vector<sliceable_set_t> mss_2 =
       usr_to_mss(usr_2, edge_transformations, n);
   std::cout << mss_2.size() << std::endl;
-  write_to_file(usr, std::to_string(n) + "_usr_1.bin");
-  write_to_file(mss, std::to_string(n) + "_mss_1.bin");
-  write_to_file(usr_2, std::to_string(n) + "_usr_2.bin");
-  write_to_file(mss_2, std::to_string(n) + "_mss_2.bin");
+  write_to_file(usr, NCUBE_DIR + std::to_string(n) + "_usr_1.bin");
+  write_to_file(mss, NCUBE_DIR + std::to_string(n) + "_mss_1.bin");
+  write_to_file(usr_2, NCUBE_DIR + std::to_string(n) + "_usr_2.bin");
+  write_to_file(mss_2, NCUBE_DIR + std::to_string(n) + "_mss_2.bin");
 }
 
 int main() {
-  write_two_sliceable_sets(N);
+  constexpr int32_t n = N;
+  const std::vector<vertex_trans_t> vertex_transformations =
+      compute_vertex_transformations(n);
+  const std::vector<complex_t> complexes =
+      compute_cut_complexes(vertex_transformations, n);
+  const std::vector<edge_t> edges = compute_edges(n);
+  const std::vector<edge_trans_t> edge_transformations =
+      compute_edge_transformations(edges, vertex_transformations, n);
+  const std::vector<sliceable_set_t> usr =
+      complexes_to_usr(complexes, edge_transformations, edges, n);
+  const std::vector<sliceable_set_t> mss =
+      complexes_to_mss(complexes, vertex_transformations, edges, n);
+  const std::vector<sliceable_set_t> usr_2 =
+      combine_usr_mss(usr, mss, edge_transformations, n);
+  const std::vector<sliceable_set_t> mss_2 =
+      usr_to_mss(usr_2, edge_transformations, n);
+  if (usr != read_from_file(NCUBE_DIR + std::to_string(n) + "_usr_1.bin")) {
+    throw std::runtime_error("usr");
+  }
+  if (mss != read_from_file(NCUBE_DIR + std::to_string(n) + "_mss_1.bin")) {
+    throw std::runtime_error("mss");
+  }
+  if (usr_2 != read_from_file(NCUBE_DIR + std::to_string(n) + "_usr_2.bin")) {
+    throw std::runtime_error("usr_2");
+  }
+  if (mss_2 != read_from_file(NCUBE_DIR + std::to_string(n) + "_mss_2.bin")) {
+    throw std::runtime_error("mss_2");
+  }
 }

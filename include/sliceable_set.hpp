@@ -30,6 +30,8 @@ std::vector<sliceable_set_t> usr_to_mss(
 void write_to_file(const std::vector<sliceable_set_t>& sets,
                    const std::filesystem::path& path);
 
-char* read_from_file(const std::filesystem::path& path);
+std::vector<sliceable_set_t> read_from_file(const std::filesystem::path& path);
+
+char* read_from_file_as_bytearray(const std::filesystem::path& path);
 
 #endif
