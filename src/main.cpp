@@ -33,8 +33,7 @@ void evaluate_f() {
   }
 }
 
-int main() {
-  constexpr int32_t n = N;
+void write_two_sliceable_sets(int32_t n) {
   const std::vector<vertex_trans_t> vertex_transformations =
       compute_vertex_transformations(n);
   const std::vector<complex_t> complexes =
@@ -51,10 +50,15 @@ int main() {
   const std::vector<sliceable_set_t> usr_2 =
       combine_usr_mss(usr, mss, edge_transformations, n);
   std::cout << usr_2.size() << std::endl;
-  const std::vector<sliceable_set_t> mss_2 = usr_to_mss(usr_2, edge_transformations, n);
+  const std::vector<sliceable_set_t> mss_2 =
+      usr_to_mss(usr_2, edge_transformations, n);
   std::cout << mss_2.size() << std::endl;
-  // std::cout << edges << std::endl;
-  // std::cout << usr << std::endl;
-  // std::cout << mss << std::endl;
-  // std::cout << usr_2 << std::endl;
+  write_to_file(usr, std::to_string(n) + "_usr_1.bin");
+  write_to_file(mss, std::to_string(n) + "_mss_1.bin");
+  write_to_file(usr_2, std::to_string(n) + "_usr_2.bin");
+  write_to_file(mss_2, std::to_string(n) + "_mss_2.bin");
+}
+
+int main() {
+  write_two_sliceable_sets(N);
 }

@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <filesystem>
+#include <fstream>
 #include <vector>
 
 #include "common.hpp"
@@ -97,4 +99,37 @@ std::vector<sliceable_set_t> usr_to_mss(
   mss.erase(std::unique(mss.begin(), mss.end()), mss.end());
   // mss.shrink_to_fit();
   return mss;
+}
+
+void sliceable_set_to_bytes(const sliceable_set_t& ss, char* bytes,
+                            std::size_t num_bytes) {
+  for (std::size_t i = 0; i < num_bytes; ++i) {
+    const std::size_t rev_i = num_bytes - i - 1;
+    bytes[rev_i] = 0;
+    for (std::size_t j = 0; j < 8; ++j) {
+      if (ss[i * 8 + j]) {
+        bytes[rev_i] |= static_cast<char>(1 << j);
+      }
+    }
+  }
+}
+
+void write_to_file(const std::vector<sliceable_set_t>& sets,
+                   const std::filesystem::path& path) {
+  constexpr std::size_t num_bytes =
+      min_bytes_to_represent_bits(sliceable_set_t().size());
+  std::ofstream file(path, std::ios::binary);
+  for (const sliceable_set_t& set : sets) {
+    char bytes[num_bytes];
+    sliceable_set_to_bytes(set, bytes, num_bytes);
+    file.write(bytes, num_bytes);
+  }
+}
+
+char* read_from_file(const std::filesystem::path& path) {
+  const std::size_t filesize = std::filesystem::file_size(path);
+  char* array = new char[filesize];
+  std::ifstream file(path, std::ios::binary);
+  file.read(array, filesize);
+  return array;
 }
