@@ -54,10 +54,13 @@ int combine_usr_mss(const char *usr, long num_usr, const char *mss,
                     long num_mss) {
   for (long i = 0; i < num_usr; i += 10) {
     for (long j = 0; j < num_mss; j += 10) {
-      if ((*(const uint64_t *)(usr + i) | *(const uint64_t *)(mss + j)) ==
-              0xFFFFFFFFFFFFFFFF &&
-          (*(const uint16_t *)(usr + i + 8) |
-           *(const uint16_t *)(mss + j + 8)) == 0xFFFF) {
+      const uint64_t usr_a = *(const uint64_t *)(usr + i);
+      const uint64_t mss_a = *(const uint64_t *)(mss + j);
+      const uint16_t usr_b = *(const uint16_t *)(usr + i + 8);
+      const uint16_t mss_b = *(const uint16_t *)(mss + j + 8);
+      const uint64_t a = usr_a | mss_a;
+      const uint16_t b = usr_b | mss_b;
+      if (a == 0xFFFFFFFFFFFFFFFF && b == 0xFFFF) {
         return 1;
       }
     }
