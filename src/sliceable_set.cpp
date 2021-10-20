@@ -80,6 +80,34 @@ std::vector<sliceable_set_t> combine_usr_mss(
   return combos;
 }
 
+bool combine_usr_mss_final(const std::vector<sliceable_set_t>& usr,
+                           const std::vector<sliceable_set_t>& mss) {
+  bool slices_all = false;
+  for (const sliceable_set_t& set_1 : usr) {
+    for (const sliceable_set_t& set_2 : mss) {
+      const sliceable_set_t combo = set_1 | set_2;
+      slices_all |= combo.all();
+    }
+  }
+  return slices_all;
+}
+
+bool combine_usr_mss_5(const char* usr, std::size_t num_usr, const char* mss,
+                       std::size_t num_mss) {
+  bool slices_all = false;
+  for (std::size_t i = 0; i < num_usr; i += 10) {
+    for (std::size_t j = 0; j < num_mss; j += 10) {
+      slices_all |=
+          ((*reinterpret_cast<const uint64_t*>(usr + i) |
+            *reinterpret_cast<const uint64_t*>(mss + j)) ==
+           0xFFFFFFFFFFFFFFFF) &&
+          ((*reinterpret_cast<const uint16_t*>(usr + i + 8) |
+            *reinterpret_cast<const uint16_t*>(mss + j + 8)) == 0xFFFF);
+    }
+  }
+  return slices_all;
+}
+
 std::vector<sliceable_set_t> usr_to_mss(
     const std::vector<sliceable_set_t>& usr,
     const std::vector<edge_trans_t>& transformations, int32_t n) {
@@ -145,6 +173,7 @@ std::vector<sliceable_set_t> read_from_file(const std::filesystem::path& path) {
       min_bytes_to_represent_bits(sliceable_set_t().size());
   const std::size_t filesize = std::filesystem::file_size(path);
   std::vector<sliceable_set_t> sets;
+  sets.reserve(filesize / num_bytes_sliceable_set);
   std::ifstream file(path, std::ios::binary);
   for (std::size_t i = 0; i < filesize / num_bytes_sliceable_set; ++i) {
     char bytes[num_bytes_sliceable_set];

@@ -61,31 +61,12 @@ void write_two_sliceable_sets(int32_t n) {
 
 int main() {
   constexpr int32_t n = N;
-  const std::vector<vertex_trans_t> vertex_transformations =
-      compute_vertex_transformations(n);
-  const std::vector<complex_t> complexes =
-      compute_cut_complexes(vertex_transformations, n);
-  const std::vector<edge_t> edges = compute_edges(n);
-  const std::vector<edge_trans_t> edge_transformations =
-      compute_edge_transformations(edges, vertex_transformations, n);
-  const std::vector<sliceable_set_t> usr =
-      complexes_to_usr(complexes, edge_transformations, edges, n);
-  const std::vector<sliceable_set_t> mss =
-      complexes_to_mss(complexes, vertex_transformations, edges, n);
-  const std::vector<sliceable_set_t> usr_2 =
-      combine_usr_mss(usr, mss, edge_transformations, n);
-  const std::vector<sliceable_set_t> mss_2 =
-      usr_to_mss(usr_2, edge_transformations, n);
-  if (usr != read_from_file(NCUBE_DIR + std::to_string(n) + "_usr_1.bin")) {
-    throw std::runtime_error("usr");
-  }
-  if (mss != read_from_file(NCUBE_DIR + std::to_string(n) + "_mss_1.bin")) {
-    throw std::runtime_error("mss");
-  }
-  if (usr_2 != read_from_file(NCUBE_DIR + std::to_string(n) + "_usr_2.bin")) {
-    throw std::runtime_error("usr_2");
-  }
-  if (mss_2 != read_from_file(NCUBE_DIR + std::to_string(n) + "_mss_2.bin")) {
-    throw std::runtime_error("mss_2");
-  }
+  const std::string usr_path = NCUBE_DIR + std::to_string(n) + "_usr_2.bin";
+  const std::string mss_path = NCUBE_DIR + std::to_string(n) + "_mss_2.bin";
+  const std::size_t usr_size = std::filesystem::file_size(usr_path);
+  const std::size_t mss_size = std::filesystem::file_size(mss_path);
+  const char* const usr = read_from_file_as_bytearray(usr_path);
+  const char* const mss = read_from_file_as_bytearray(mss_path);
+  const bool slices_all = combine_usr_mss_5(usr, usr_size, mss, mss_size);
+  std::cout << slices_all << std::endl;
 }
