@@ -34,7 +34,7 @@ size_t read_from_file(const char *path, char **buf_ptr) {
   return file_size;
 }
 
-void print_binary(const char *buf, size_t num_bytes) {
+void printb(const char *buf, size_t num_bytes) {
   for (size_t i = 0; i < num_bytes; ++i) {
     char str[9];
     str[0] = (buf[i] & 0x80) ? '1' : '0';
@@ -50,10 +50,10 @@ void print_binary(const char *buf, size_t num_bytes) {
   }
 }
 
-int combine_usr_mss(const char *usr, size_t num_usr, const char *mss,
-                    size_t num_mss) {
-  for (size_t i = 0; i < num_usr; i += 10) {
-    for (size_t j = 0; j < num_mss; j += 10) {
+int combine_usr_mss(const char *usr, size_t usr_len, const char *mss,
+                    size_t mss_len) {
+  for (size_t i = 0; i < usr_len; i += 10) {
+    for (size_t j = 0; j < mss_len; j += 10) {
       const uint64_t usr_a = *(const uint64_t *)(usr + i);
       const uint64_t mss_a = *(const uint64_t *)(mss + j);
       const uint16_t usr_b = *(const uint16_t *)(usr + i + 8);
@@ -72,14 +72,14 @@ int main() {
   const char usr_path[] = NCUBE_DIR "5_usr_2.bin";
   const char mss_path[] = NCUBE_DIR "5_mss_2.bin";
   char *usr, *mss;
-  const size_t num_usr = read_from_file(usr_path, &usr);
-  if (num_usr == 0) {
+  const size_t usr_len = read_from_file(usr_path, &usr);
+  if (usr_len == 0) {
     return 1;
   }
-  const size_t num_mss = read_from_file(mss_path, &mss);
-  if (num_mss == 0) {
+  const size_t mss_len = read_from_file(mss_path, &mss);
+  if (mss_len == 0) {
     return 2;
   }
-  const int slices_all = combine_usr_mss(usr, num_usr, mss, num_mss);
+  const int slices_all = combine_usr_mss(usr, usr_len, mss, mss_len);
   printf("%d\n", slices_all);
 }
