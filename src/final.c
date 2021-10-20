@@ -34,6 +34,22 @@ char *read_from_file(const char *path) {
   return buf;
 }
 
+void print_binary(const char *buf, size_t num_bytes) {
+  for (size_t i = 0; i < num_bytes; ++i) {
+    char str[9];
+    str[0] = (buf[i] & 0x80) ? '1' : '0';
+    str[1] = (buf[i] & 0x40) ? '1' : '0';
+    str[2] = (buf[i] & 0x20) ? '1' : '0';
+    str[3] = (buf[i] & 0x10) ? '1' : '0';
+    str[4] = (buf[i] & 0x08) ? '1' : '0';
+    str[5] = (buf[i] & 0x04) ? '1' : '0';
+    str[6] = (buf[i] & 0x02) ? '1' : '0';
+    str[7] = (buf[i] & 0x01) ? '1' : '0';
+    str[8] = '\0';
+    printf("%s", str);
+  }
+}
+
 int combine_usr_mss(const char *usr, long num_usr, const char *mss,
                     long num_mss) {
   for (long i = 0; i < num_usr; i += 10) {
