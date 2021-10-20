@@ -9,29 +9,29 @@ long get_file_size(const char *path) {
   return (rc == 0) ? stat_buf.st_size : -1;
 }
 
-char *read_from_file(const char *path) {
+size_t read_from_file(const char *path, char **buf_ptr) {
   const long maybe_file_size = get_file_size(path);
-  if (maybe_file_size < 0) {
-    return NULL;
+  if (maybe_file_size <= 0) {
+    return 0;
   }
-  const unsigned long file_size = (unsigned long)maybe_file_size;
-  char *const buf = (char *)malloc(file_size);
+  const size_t file_size = (unsigned long)maybe_file_size;
+  char *buf = (char *)malloc(file_size);
   if (buf == NULL) {
-    return NULL;
+    return 0;
   }
   FILE *f = fopen(path, "rb");
   if (f == NULL) {
-    return NULL;
+    free(buf);
+    return 0;
   }
   const size_t elements_read = fread(buf, sizeof(char), file_size, f);
-  if (elements_read != file_size) {
-    return NULL;
+  const int close = fclose(f);
+  if (elements_read != file_size || close != 0) {
+    free(buf);
+    return 0;
   }
-  const int ret = fclose(f);
-  if (ret != 0) {
-    return NULL;
-  }
-  return buf;
+  *buf_ptr = buf;
+  return file_size;
 }
 
 void print_binary(const char *buf, size_t num_bytes) {
@@ -50,10 +50,10 @@ void print_binary(const char *buf, size_t num_bytes) {
   }
 }
 
-int combine_usr_mss(const char *usr, long num_usr, const char *mss,
-                    long num_mss) {
-  for (long i = 0; i < num_usr; i += 10) {
-    for (long j = 0; j < num_mss; j += 10) {
+int combine_usr_mss(const char *usr, size_t num_usr, const char *mss,
+                    size_t num_mss) {
+  for (size_t i = 0; i < num_usr; i += 10) {
+    for (size_t j = 0; j < num_mss; j += 10) {
       const uint64_t usr_a = *(const uint64_t *)(usr + i);
       const uint64_t mss_a = *(const uint64_t *)(mss + j);
       const uint16_t usr_b = *(const uint16_t *)(usr + i + 8);
@@ -71,10 +71,15 @@ int combine_usr_mss(const char *usr, long num_usr, const char *mss,
 int main() {
   const char usr_path[] = NCUBE_DIR "5_usr_2.bin";
   const char mss_path[] = NCUBE_DIR "5_mss_2.bin";
-  const char *const usr = read_from_file(usr_path);
-  const char *const mss = read_from_file(mss_path);
-  const long num_usr = get_file_size(usr_path);
-  const long num_mss = get_file_size(mss_path);
+  char *usr, *mss;
+  const size_t num_usr = read_from_file(usr_path, &usr);
+  if (num_usr == 0) {
+    return 1;
+  }
+  const size_t num_mss = read_from_file(mss_path, &mss);
+  if (num_mss == 0) {
+    return 2;
+  }
   const int slices_all = combine_usr_mss(usr, num_usr, mss, num_mss);
   printf("%d\n", slices_all);
 }
