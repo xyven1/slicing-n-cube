@@ -92,22 +92,6 @@ bool combine_usr_mss_final(const std::vector<sliceable_set_t>& usr,
   return slices_all;
 }
 
-bool combine_usr_mss_5(const char* usr, std::size_t num_usr, const char* mss,
-                       std::size_t num_mss) {
-  bool slices_all = false;
-  for (std::size_t i = 0; i < num_usr; i += 10) {
-    for (std::size_t j = 0; j < num_mss; j += 10) {
-      slices_all |=
-          ((*reinterpret_cast<const uint64_t*>(usr + i) |
-            *reinterpret_cast<const uint64_t*>(mss + j)) ==
-           0xFFFFFFFFFFFFFFFF) &&
-          ((*reinterpret_cast<const uint16_t*>(usr + i + 8) |
-            *reinterpret_cast<const uint16_t*>(mss + j + 8)) == 0xFFFF);
-    }
-  }
-  return slices_all;
-}
-
 std::vector<sliceable_set_t> usr_to_mss(
     const std::vector<sliceable_set_t>& usr,
     const std::vector<edge_trans_t>& transformations, int32_t n) {
@@ -181,12 +165,4 @@ std::vector<sliceable_set_t> read_from_file(const std::filesystem::path& path) {
     sets.push_back(bytes_to_sliceable_set(bytes, num_bytes_sliceable_set));
   }
   return sets;
-}
-
-char* read_from_file_as_bytearray(const std::filesystem::path& path) {
-  const std::size_t filesize = std::filesystem::file_size(path);
-  char* array = new char[filesize];
-  std::ifstream file(path, std::ios::binary);
-  file.read(array, filesize);
-  return array;
 }

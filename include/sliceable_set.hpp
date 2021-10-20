@@ -26,9 +26,6 @@ std::vector<sliceable_set_t> combine_usr_mss(
 bool combine_usr_mss_final(const std::vector<sliceable_set_t>& usr,
                            const std::vector<sliceable_set_t>& mss);
 
-bool combine_usr_mss_5(const char* usr, std::size_t num_usr, const char* mss,
-                       std::size_t num_mss);
-
 std::vector<sliceable_set_t> usr_to_mss(
     const std::vector<sliceable_set_t>& usr,
     const std::vector<edge_trans_t>& transformations, int32_t n);
@@ -37,7 +34,5 @@ void write_to_file(const std::vector<sliceable_set_t>& sets,
                    const std::filesystem::path& path);
 
 std::vector<sliceable_set_t> read_from_file(const std::filesystem::path& path);
-
-char* read_from_file_as_bytearray(const std::filesystem::path& path);
 
 #endif

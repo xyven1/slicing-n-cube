@@ -4,4 +4,6 @@ add_executable(main main.cpp complex.cpp edge.cpp lp.cpp sliceable_set.cpp symme
 
 target_link_libraries(main CGAL::CGAL)
 
+add_executable(final final.c)
+
 include_directories(../include ../extern)

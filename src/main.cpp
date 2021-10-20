@@ -63,10 +63,8 @@ int main() {
   constexpr int32_t n = N;
   const std::string usr_path = NCUBE_DIR + std::to_string(n) + "_usr_2.bin";
   const std::string mss_path = NCUBE_DIR + std::to_string(n) + "_mss_2.bin";
-  const std::size_t usr_size = std::filesystem::file_size(usr_path);
-  const std::size_t mss_size = std::filesystem::file_size(mss_path);
-  const char* const usr = read_from_file_as_bytearray(usr_path);
-  const char* const mss = read_from_file_as_bytearray(mss_path);
-  const bool slices_all = combine_usr_mss_5(usr, usr_size, mss, mss_size);
+  const std::vector<sliceable_set_t> usr = read_from_file(usr_path);
+  const std::vector<sliceable_set_t> mss = read_from_file(mss_path);
+  const bool slices_all = combine_usr_mss_final(usr, mss);
   std::cout << slices_all << std::endl;
 }

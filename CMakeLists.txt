@@ -5,6 +5,8 @@ project(slicing_n_cube)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -march=native -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wfatal-errors")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wfatal-errors")
 
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wbad-function-cast -Wc++-compat -Wjump-misses-init -Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wstrict-prototypes -Wtraditional -Wtraditional-conversion -Wunsuffixed-float-constants")
