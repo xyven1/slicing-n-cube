@@ -30,6 +30,10 @@ std::vector<sliceable_set_t> usr_to_mss(
     const std::vector<sliceable_set_t>& usr,
     const std::vector<edge_trans_t>& transformations, int32_t n);
 
+int32_t get_leading_zeros(const sliceable_set_t& ss);
+
+int32_t get_leading_ones(const sliceable_set_t& ss);
+
 void write_to_file(const std::vector<sliceable_set_t>& sets,
                    const std::filesystem::path& path);
 

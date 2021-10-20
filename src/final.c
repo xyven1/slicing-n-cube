@@ -50,14 +50,53 @@ void printb(const char *buf, size_t num_bytes) {
   }
 }
 
+int get_leading_zeros(const char *buf, size_t num_bytes) {
+  for (size_t i = 0; i < num_bytes; ++i) {
+    for (int j = 7; j >= 0; --j) {
+      if (buf[i] & (1 << j)) {
+        return (int)(i * 8) + 7 - j;
+      }
+    }
+  }
+  return (int)(num_bytes * 8);
+}
+
+int get_leading_ones(const char *buf, size_t num_bytes) {
+  for (size_t i = 0; i < num_bytes; ++i) {
+    for (int j = 7; j >= 0; --j) {
+      if (!(buf[i] & (1 << j))) {
+        return (int)(i * 8) + 7 - j;
+      }
+    }
+  }
+  return (int)(num_bytes * 8);
+}
+
 int combine_usr_mss(const char *usr, size_t usr_len, const char *mss,
                     size_t mss_len) {
   for (size_t i = 0; i < usr_len; i += 10) {
-    for (size_t j = 0; j < mss_len; j += 10) {
+    const int leading_zeros = get_leading_zeros(usr + i, 10);
+    const uint64_t mask =
+        (leading_zeros < 64) ? 0xFFFFFFFFFFFFFFFF >> leading_zeros : 0;
+    for (size_t j = mss_len - 10; j < mss_len; j -= 10) {
       const uint64_t usr_a = *(const uint64_t *)(usr + i);
       const uint64_t mss_a = *(const uint64_t *)(mss + j);
       const uint16_t usr_b = *(const uint16_t *)(usr + i + 8);
       const uint16_t mss_b = *(const uint16_t *)(mss + j + 8);
+      #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+        if ((mss_a | __builtin_bswap64(mask)) != 0xFFFFFFFFFFFFFFFF) {
+          break;
+        }
+      #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        if ((mss_a | mask) != 0xFFFFFFFFFFFFFFFF) {
+          break;
+        }
+      #else
+        const int leading_ones = get_leading_ones(mss + j, 10);
+        if (leading_ones < leading_zeros) {
+          break;
+        }
+      #endif
       const uint64_t a = usr_a | mss_a;
       const uint16_t b = usr_b | mss_b;
       if (a == 0xFFFFFFFFFFFFFFFF && b == 0xFFFF) {

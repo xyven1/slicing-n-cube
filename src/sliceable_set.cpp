@@ -84,8 +84,13 @@ bool combine_usr_mss_final(const std::vector<sliceable_set_t>& usr,
                            const std::vector<sliceable_set_t>& mss) {
   bool slices_all = false;
   for (const sliceable_set_t& set_1 : usr) {
-    for (const sliceable_set_t& set_2 : mss) {
-      const sliceable_set_t combo = set_1 | set_2;
+    const int32_t leading_zeros = get_leading_zeros(set_1);
+    for (auto set_2_it = mss.rbegin(); set_2_it != mss.rend(); ++set_2_it) {
+      const int32_t leading_ones = get_leading_ones(*set_2_it);
+      if (leading_ones < leading_zeros) {
+        break;
+      }
+      const sliceable_set_t combo = set_1 | *set_2_it;
       slices_all |= combo.all();
     }
   }
@@ -111,6 +116,26 @@ std::vector<sliceable_set_t> usr_to_mss(
   mss.erase(std::unique(mss.begin(), mss.end()), mss.end());
   // mss.shrink_to_fit();
   return mss;
+}
+
+int32_t get_leading_zeros(const sliceable_set_t& ss) {
+  for (std::size_t i = 0; i < ss.size(); ++i) {
+    const std::size_t rev_i = ss.size() - i - 1;
+    if (ss[rev_i]) {
+      return static_cast<int32_t>(i);
+    }
+  }
+  return static_cast<int32_t>(ss.size());
+}
+
+int32_t get_leading_ones(const sliceable_set_t& ss) {
+  for (std::size_t i = 0; i < ss.size(); ++i) {
+    const std::size_t rev_i = ss.size() - i - 1;
+    if (!ss[rev_i]) {
+      return static_cast<int32_t>(i);
+    }
+  }
+  return static_cast<int32_t>(ss.size());
 }
 
 void sliceable_set_to_bytes(const sliceable_set_t& ss, char* bytes,
