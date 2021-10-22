@@ -26,6 +26,9 @@ std::vector<sliceable_set_t> combine_usr_mss(
 bool combine_usr_mss_final(const std::vector<sliceable_set_t>& usr,
                            const std::vector<sliceable_set_t>& mss);
 
+bool combine_usr_mss_final_naive(const std::vector<sliceable_set_t>& usr,
+                                 const std::vector<sliceable_set_t>& mss);
+
 std::vector<sliceable_set_t> usr_to_mss(
     const std::vector<sliceable_set_t>& usr,
     const std::vector<edge_trans_t>& transformations, int32_t n);

@@ -83,20 +83,38 @@ int combine_usr_mss(const char *usr, size_t usr_len, const char *mss,
       const uint64_t mss_a = *(const uint64_t *)(mss + j);
       const uint16_t usr_b = *(const uint16_t *)(usr + i + 8);
       const uint16_t mss_b = *(const uint16_t *)(mss + j + 8);
-      #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-        if ((mss_a | __builtin_bswap64(mask)) != 0xFFFFFFFFFFFFFFFF) {
-          break;
-        }
-      #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-        if ((mss_a | mask) != 0xFFFFFFFFFFFFFFFF) {
-          break;
-        }
-      #else
-        const int leading_ones = get_leading_ones(mss + j, 10);
-        if (leading_ones < leading_zeros) {
-          break;
-        }
-      #endif
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+      if ((mss_a | __builtin_bswap64(mask)) != 0xFFFFFFFFFFFFFFFF) {
+        break;
+      }
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+      if ((mss_a | mask) != 0xFFFFFFFFFFFFFFFF) {
+        break;
+      }
+#else
+      const int leading_ones = get_leading_ones(mss + j, 10);
+      if (leading_ones < leading_zeros) {
+        break;
+      }
+#endif
+      const uint64_t a = usr_a | mss_a;
+      const uint16_t b = usr_b | mss_b;
+      if (a == 0xFFFFFFFFFFFFFFFF && b == 0xFFFF) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+int combine_usr_mss_naive(const char *usr, size_t usr_len, const char *mss,
+                          size_t mss_len) {
+  for (size_t i = 0; i < mss_len; i += 10) {
+    for (size_t j = 0; j < usr_len; j += 10) {
+      const uint64_t mss_a = *(const uint64_t *)(mss + i);
+      const uint64_t usr_a = *(const uint64_t *)(usr + j);
+      const uint16_t mss_b = *(const uint16_t *)(mss + i + 8);
+      const uint16_t usr_b = *(const uint16_t *)(usr + j + 8);
       const uint64_t a = usr_a | mss_a;
       const uint16_t b = usr_b | mss_b;
       if (a == 0xFFFFFFFFFFFFFFFF && b == 0xFFFF) {

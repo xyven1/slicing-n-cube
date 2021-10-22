@@ -97,6 +97,18 @@ bool combine_usr_mss_final(const std::vector<sliceable_set_t>& usr,
   return slices_all;
 }
 
+bool combine_usr_mss_final_naive(const std::vector<sliceable_set_t>& usr,
+                                 const std::vector<sliceable_set_t>& mss) {
+  for (const sliceable_set_t& set_1 : mss) {
+    for (const sliceable_set_t& set_2 : usr) {
+      if ((set_1 | set_2).all()) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 std::vector<sliceable_set_t> usr_to_mss(
     const std::vector<sliceable_set_t>& usr,
     const std::vector<edge_trans_t>& transformations, int32_t n) {
