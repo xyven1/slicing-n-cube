@@ -90,6 +90,38 @@ std::vector<int64_t> compute_edge_frequencies(int32_t n) {
   return frequencies;
 }
 
+int64_t count_pairs_cardinality(const std::vector<sliceable_set_t>& usr,
+                                const std::vector<sliceable_set_t>& mss) {
+  constexpr std::size_t max_cardinality = sliceable_set_t().size();
+  std::vector<int64_t> cardinalities(max_cardinality + 1);
+  for (const sliceable_set_t& ss : mss) {
+    cardinalities[ss.count()] += 1;
+  }
+  int64_t count = 0;
+  for (const sliceable_set_t& ss : usr) {
+    for (std::size_t i = max_cardinality - ss.count(); i < cardinalities.size();
+         ++i) {
+      count += cardinalities[i];
+    }
+  }
+  return count;
+}
+
+int64_t count_pairs_leading_zeros(const std::vector<sliceable_set_t>& usr,
+                                  const std::vector<sliceable_set_t>& mss) {
+  std::vector<int64_t> leading_ones(sliceable_set_t().size() + 1);
+  for (const sliceable_set_t& ss : mss) {
+    leading_ones[get_leading_ones(ss)] += 1;
+  }
+  int64_t count = 0;
+  for (const sliceable_set_t& ss : usr) {
+    for (std::size_t i = get_leading_zeros(ss); i < leading_ones.size(); ++i) {
+      count += leading_ones[i];
+    }
+  }
+  return count;
+}
+
 int main() {
   constexpr int32_t n = N;
   const std::string usr_path = NCUBE_DIR + std::to_string(n) + "_usr_2.bin";
