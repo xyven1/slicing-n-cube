@@ -6,28 +6,31 @@
 
 #include "common.hpp"
 
-std::vector<vertex_t> adjacent_vertices_of_complex(const complex_t& complex,
-                                                   int32_t n);
+template <int32_t N>
+std::vector<vertex_t> adjacent_vertices_of_complex(const complex_t<N>& complex);
 
-complex_t unique_complex(const complex_t& complex,
-                         const std::vector<vertex_trans_t>& transformations,
-                         int32_t n);
+template <int32_t N>
+complex_t<N> unique_complex(const complex_t<N>& complex,
+                            const std::vector<vertex_trans_t>& transformations);
 
-sliceable_set_t complex_to_sliceable_set(const complex_t& complex,
-                                         const std::vector<edge_t>& edges,
-                                         int32_t n);
+template <int32_t N>
+sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
+                                            const std::vector<edge_t>& edges);
 
-std::vector<sliceable_set_t> complexes_to_usr(
-    const std::vector<complex_t>& complexes,
+template <int32_t N>
+std::vector<sliceable_set_t<N>> complexes_to_usr(
+    const std::vector<complex_t<N>>& complexes,
     const std::vector<edge_trans_t>& edge_transformations,
-    const std::vector<edge_t>& edges, int32_t n);
+    const std::vector<edge_t>& edges);
 
-std::vector<sliceable_set_t> complexes_to_mss(
-    const std::vector<complex_t>& complexes,
+template <int32_t N>
+std::vector<sliceable_set_t<N>> complexes_to_mss(
+    const std::vector<complex_t<N>>& complexes,
     const std::vector<vertex_trans_t>& vertex_transformations,
-    const std::vector<edge_t>& edges, int32_t n);
+    const std::vector<edge_t>& edges);
 
-std::vector<complex_t> compute_cut_complexes(
-    const std::vector<vertex_trans_t>& transformations, int32_t n);
+template <int32_t N>
+std::vector<complex_t<N>> compute_cut_complexes(
+    const std::vector<vertex_trans_t>& transformations);
 
 #endif

@@ -48,8 +48,6 @@ bool operator>(const std::bitset<N>& x, const std::bitset<N>& y) {
   return false;
 }
 
-constexpr int32_t N = 5;
-
 // The i-th least significant bit stores the i-th coordinate
 using vertex_t = int32_t;
 
@@ -65,8 +63,10 @@ using vertex_trans_t = std::vector<vertex_t>;
 // edge_trans_t[e] stores the edge whose transformation yields e
 using edge_trans_t = std::vector<int32_t>;
 
+template <int32_t N>
 using complex_t = std::bitset<num_vertices(N)>;
 
+template <int32_t N>
 using sliceable_set_t = std::bitset<num_edges(N)>;
 
 #endif

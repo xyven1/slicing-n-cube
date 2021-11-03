@@ -7,39 +7,51 @@
 
 #include "common.hpp"
 
-bool is_subset(const sliceable_set_t& subset,
-               const std::vector<sliceable_set_t>& combos);
+template <int32_t N>
+bool is_subset(const sliceable_set_t<N>& subset,
+               const std::vector<sliceable_set_t<N>>& combos);
 
-sliceable_set_t unique_sliceable_set_naive(
-    const sliceable_set_t& ss, const std::vector<edge_trans_t>& transformations,
-    int32_t n);
+template <int32_t N>
+sliceable_set_t<N> unique_sliceable_set_naive(
+    const sliceable_set_t<N>& ss,
+    const std::vector<edge_trans_t>& transformations);
 
-sliceable_set_t unique_sliceable_set(
-    const sliceable_set_t& ss, const std::vector<edge_trans_t>& transformations,
-    int32_t n);
+template <int32_t N>
+sliceable_set_t<N> unique_sliceable_set(
+    const sliceable_set_t<N>& ss,
+    const std::vector<edge_trans_t>& transformations);
 
-std::vector<sliceable_set_t> combine_usr_mss(
-    const std::vector<sliceable_set_t>& usr,
-    const std::vector<sliceable_set_t>& mss,
-    const std::vector<edge_trans_t>& transformations, int32_t n);
+template <int32_t N>
+std::vector<sliceable_set_t<N>> combine_usr_mss(
+    const std::vector<sliceable_set_t<N>>& usr,
+    const std::vector<sliceable_set_t<N>>& mss,
+    const std::vector<edge_trans_t>& transformations);
 
-bool combine_usr_mss_final(const std::vector<sliceable_set_t>& usr,
-                           const std::vector<sliceable_set_t>& mss);
+template <int32_t N>
+bool combine_usr_mss_final(const std::vector<sliceable_set_t<N>>& usr,
+                           const std::vector<sliceable_set_t<N>>& mss);
 
-bool combine_usr_mss_final_naive(const std::vector<sliceable_set_t>& usr,
-                                 const std::vector<sliceable_set_t>& mss);
+template <int32_t N>
+bool combine_usr_mss_final_naive(const std::vector<sliceable_set_t<N>>& usr,
+                                 const std::vector<sliceable_set_t<N>>& mss);
 
-std::vector<sliceable_set_t> usr_to_mss(
-    const std::vector<sliceable_set_t>& usr,
-    const std::vector<edge_trans_t>& transformations, int32_t n);
+template <int32_t N>
+std::vector<sliceable_set_t<N>> usr_to_mss(
+    const std::vector<sliceable_set_t<N>>& usr,
+    const std::vector<edge_trans_t>& transformations);
 
-int32_t get_leading_zeros(const sliceable_set_t& ss);
+template <int32_t N>
+int32_t get_leading_zeros(const sliceable_set_t<N>& ss);
 
-int32_t get_leading_ones(const sliceable_set_t& ss);
+template <int32_t N>
+int32_t get_leading_ones(const sliceable_set_t<N>& ss);
 
-void write_to_file(const std::vector<sliceable_set_t>& sets,
+template <int32_t N>
+void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
                    const std::filesystem::path& path);
 
-std::vector<sliceable_set_t> read_from_file(const std::filesystem::path& path);
+template <int32_t N>
+std::vector<sliceable_set_t<N>> read_from_file(
+    const std::filesystem::path& path);
 
 #endif

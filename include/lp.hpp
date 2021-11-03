@@ -5,6 +5,7 @@
 
 #include "common.hpp"
 
-bool is_complex(const complex_t& complex, int32_t n);
+template <int32_t N>
+bool is_complex(const complex_t<N>& complex);
 
 #endif
