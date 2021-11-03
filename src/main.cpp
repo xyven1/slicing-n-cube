@@ -9,30 +9,6 @@
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
 
-std::string vertex_to_str(vertex_t v, int32_t n) {
-  std::string str;
-  str.reserve(n);
-  for (int32_t i = 0; i < n; ++i) {
-    const int32_t bit_i = (v >> i) & 1;
-    str += (bit_i) ? "1" : "0";
-  }
-  return str;
-}
-
-void evaluate_f() {
-  const std::vector<double> f = {1, 1, 1, 0.9};
-  const int32_t n = static_cast<int32_t>(f.size() - 1);
-  for (vertex_t v = 0; v < num_vertices(n); ++v) {
-    double x = f[n];
-    for (int32_t i = 0; i < n; ++i) {
-      const int32_t val_i = (v >> i) & 1;
-      const double coordinate_i = (val_i) ? 1 : -1;
-      x += f[i] * coordinate_i;
-    }
-    std::cout << "vertex " << v << ": " << x << std::endl;
-  }
-}
-
 void write_two_sliceable_sets(int32_t n) {
   const std::vector<vertex_trans_t> vertex_transformations =
       compute_vertex_transformations(n);
