@@ -12,25 +12,6 @@
 #include "symmetry.hpp"
 
 template <int32_t N>
-std::vector<vertex_t> adjacent_vertices_of_complex(
-    const complex_t<N>& complex) {
-  std::vector<vertex_t> adjacent_vertices;
-  for (vertex_t v = 0; v < num_vertices(N); ++v) {
-    if (complex[v]) {
-      for (int32_t i = 0; i < N; ++i) {
-        vertex_t neighbour = v ^ (1 << i);
-        if (!complex[neighbour] &&
-            std::find(adjacent_vertices.begin(), adjacent_vertices.end(),
-                      neighbour) == adjacent_vertices.end()) {
-          adjacent_vertices.push_back(neighbour);
-        }
-      }
-    }
-  }
-  return adjacent_vertices;
-}
-
-template <int32_t N>
 complex_t<N> unique_complex(
     const complex_t<N>& complex,
     const std::vector<vertex_trans_t>& transformations) {
@@ -52,6 +33,25 @@ complex_t<N> unique_complex(
     }
   }
   return min_complex;
+}
+
+template <int32_t N>
+std::vector<vertex_t> adjacent_vertices_of_complex(
+    const complex_t<N>& complex) {
+  std::vector<vertex_t> adjacent_vertices;
+  for (vertex_t v = 0; v < num_vertices(N); ++v) {
+    if (complex[v]) {
+      for (int32_t i = 0; i < N; ++i) {
+        vertex_t neighbour = v ^ (1 << i);
+        if (!complex[neighbour] &&
+            std::find(adjacent_vertices.begin(), adjacent_vertices.end(),
+                      neighbour) == adjacent_vertices.end()) {
+          adjacent_vertices.push_back(neighbour);
+        }
+      }
+    }
+  }
+  return adjacent_vertices;
 }
 
 template <int32_t N>

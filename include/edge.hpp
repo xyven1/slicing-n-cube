@@ -12,6 +12,6 @@ inline int32_t edge_to_int(const edge_t& e, const std::vector<edge_t>& edges) {
   return static_cast<int32_t>(e_it - edges.begin());
 }
 
-std::vector<edge_t> compute_edges(int32_t);
+std::vector<edge_t> compute_edges(int32_t n);
 
 #endif
