@@ -6,6 +6,7 @@
 #include "common.hpp"
 #include "complex.hpp"
 #include "edge.hpp"
+#include "low_weight.hpp"
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
 
@@ -106,10 +107,14 @@ int64_t count_pairs_leading_zeros(const std::vector<sliceable_set_t<N>>& usr,
 
 int main() {
   constexpr int32_t N = 5;
-  const std::string usr_path = NCUBE_DIR + std::to_string(N) + "_usr_2.bin";
-  const std::string mss_path = NCUBE_DIR + std::to_string(N) + "_mss_2.bin";
-  const std::vector<sliceable_set_t<N>> usr = read_from_file<N>(usr_path);
-  const std::vector<sliceable_set_t<N>> mss = read_from_file<N>(mss_path);
-  const bool slices_all = combine_usr_mss_final<N>(usr, mss);
-  std::cout << slices_all << std::endl;
+  const auto edges = compute_edges(N);
+  const auto vertex_transformations = compute_vertex_transformations(N);
+  const auto edge_transformations =
+      compute_edge_transformations(edges, vertex_transformations, N);
+  const auto low_weight_sets =
+      compute_low_weight_sliceable_sets<N>(-1, 1, edges);
+  // expand_low_weight_sliceable_sets<N>(low_weight_sets, edge_transformations);
+  const auto k = combine_low_weight_sliceable_sets<N>(low_weight_sets,
+                                                      edge_transformations);
+  std::cout << k << std::endl;
 }
