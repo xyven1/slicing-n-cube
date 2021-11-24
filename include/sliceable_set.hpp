@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include <future>
 #include <vector>
 
 #include "common.hpp"
@@ -57,6 +58,57 @@ sliceable_set_t<N> unique_sliceable_set(
     }
     if (is_new_min) {
       min_ss = ss_trans;
+    }
+  }
+  return min_ss;
+}
+
+template <int32_t N>
+sliceable_set_t<N> unique_sliceable_set_seq(
+    const sliceable_set_t<N>& ss,
+    const std::vector<edge_trans_t>::const_iterator transformations_begin,
+    const std::vector<edge_trans_t>::const_iterator transformations_end) {
+  sliceable_set_t<N> min_ss(ss);
+  for (auto it = transformations_begin; it != transformations_end; ++it) {
+    sliceable_set_t<N> ss_trans;
+    bool is_new_min = false;
+    for (int32_t e = num_edges(N) - 1; e >= 0; --e) {
+      const int32_t e_inversion = (*it)[e];
+      ss_trans[e] = ss[e_inversion];
+      if (!is_new_min && ss_trans[e] && !min_ss[e]) {
+        // min_ss is still smaller
+        break;
+      }
+      is_new_min |= !ss_trans[e] && min_ss[e];
+    }
+    if (is_new_min) {
+      min_ss = ss_trans;
+    }
+  }
+  return min_ss;
+}
+
+template <int32_t N>
+sliceable_set_t<N> unique_sliceable_set_parallel(
+    const sliceable_set_t<N>& ss,
+    const std::vector<edge_trans_t>& transformations) {
+  const auto num_threads = std::thread::hardware_concurrency();
+  const auto work_size = transformations.size() / num_threads;
+  std::vector<std::vector<edge_trans_t>::const_iterator> separators;
+  for (unsigned int i = 0; i < num_threads; ++i) {
+    separators.push_back(transformations.begin() + i * work_size);
+  }
+  separators.push_back(transformations.end());
+  std::vector<std::future<sliceable_set_t<N>>> futures;
+  for (unsigned int i = 0; i < num_threads; ++i) {
+    futures.push_back(std::async(unique_sliceable_set_seq<N>, ss, separators[i],
+                                 separators[i + 1]));
+  }
+  sliceable_set_t<N> min_ss(ss);
+  for (auto& future : futures) {
+    const auto future_ss = future.get();
+    if (min_ss > future_ss) {
+      min_ss = future_ss;
     }
   }
   return min_ss;
