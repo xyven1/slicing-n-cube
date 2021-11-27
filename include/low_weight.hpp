@@ -12,7 +12,7 @@
 
 template <int32_t N>
 sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
-    const std::vector<int32_t>& normal, int32_t distance,
+    const std::vector<int32_t>& normal, double distance,
     const std::vector<edge_t>& edges) {
   sliceable_set_t<N> ss;
   for (const auto& e : edges) {
@@ -31,17 +31,13 @@ sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
   return ss;
 }
 
-bool next_low_weight_vector(std::vector<int32_t>& halfspace, int32_t min_weight,
-                            int32_t max_weight) {
+bool next_low_weight_vector(std::vector<int32_t>& halfspace) {
   for (auto it = halfspace.rbegin(); it != halfspace.rend(); ++it) {
-    if (*it == max_weight) {
-      *it = min_weight;
-    } else if (*it == -1) {
+    if (*it == -1) {
       *it = 1;
       return true;
     } else {
-      *it += 1;
-      return true;
+      *it = -1;
     }
   }
   return false;
@@ -49,23 +45,19 @@ bool next_low_weight_vector(std::vector<int32_t>& halfspace, int32_t min_weight,
 
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
-    int32_t min_weight, int32_t max_weight, const std::vector<edge_t>& edges) {
-  std::vector<sliceable_set_t<N>> sets;
-  std::vector<int32_t> normal(N, min_weight);
+    const std::vector<double>& distances, const std::vector<edge_t>& edges) {
+  std::unordered_set<sliceable_set_t<N>> sets;
+  std::vector<int32_t> normal(N, -1);
   do {
-    for (int i = min_weight; i <= max_weight; ++i) {
+    for (const auto& distance : distances) {
       const sliceable_set_t<N> ss =
-          low_weight_halfspace_to_sliceable_set<N>(normal, i, edges);
+          low_weight_halfspace_to_sliceable_set<N>(normal, distance, edges);
       if (ss.any()) {
-        // std::cout << normal << " " << i << " " << ss << std::endl;
-        sets.push_back(ss);
+        sets.insert(ss);
       }
     }
-  } while (next_low_weight_vector(normal, min_weight, max_weight));
-  std::sort(sets.begin(), sets.end());
-  sets.erase(std::unique(sets.begin(), sets.end()), sets.end());
-  sets.shrink_to_fit();
-  return sets;
+  } while (next_low_weight_vector(normal));
+  return std::vector<sliceable_set_t<N>>(sets.begin(), sets.end());
 }
 
 template <int32_t N>
