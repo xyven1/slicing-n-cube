@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <bitset>
+#include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <utility>
