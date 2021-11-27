@@ -16,6 +16,10 @@ add_executable(stats stats.cpp edge.cpp lp.cpp symmetry.cpp)
 
 target_link_libraries(stats CGAL::CGAL)
 
+add_executable(slice_cube slice_cube.cpp edge.cpp lp.cpp symmetry.cpp)
+
+target_link_libraries(slice_cube CGAL::CGAL)
+
 add_executable(final final.c)
 
 include_directories(../include ../extern)
