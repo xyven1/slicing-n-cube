@@ -8,7 +8,6 @@
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
 
-
 template <int32_t N>
 void write_two_sliceable_sets() {
   const std::vector<vertex_trans_t> vertex_transformations =
