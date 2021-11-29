@@ -6,18 +6,19 @@ add_library(lp lp.cpp)
 target_link_libraries(lp CGAL::CGAL)
 
 add_executable(main main.cpp)
-target_link_libraries(main lp)
+target_link_libraries(main lp Threads::Threads)
 
 add_executable(slice_cube_low_weight slice_cube_low_weight.cpp)
+target_link_libraries(slice_cube_low_weight Threads::Threads)
 
 add_executable(storage storage.cpp)
-target_link_libraries(storage lp)
+target_link_libraries(storage lp Threads::Threads)
 
 add_executable(stats stats.cpp)
-target_link_libraries(stats lp)
+target_link_libraries(stats lp Threads::Threads)
 
 add_executable(slice_cube slice_cube.cpp)
-target_link_libraries(slice_cube lp)
+target_link_libraries(slice_cube lp Threads::Threads)
 
 add_executable(final final.c)
 
