@@ -138,6 +138,70 @@ std::vector<sliceable_set_t<N>> combine_usr_mss(
 }
 
 template <int32_t N>
+void combine_usr_mss_all(
+    typename std::vector<sliceable_set_t<N>>::const_iterator usr_begin,
+    typename std::vector<sliceable_set_t<N>>::const_iterator usr_end,
+    typename std::vector<sliceable_set_t<N>>::const_iterator mss_begin,
+    typename std::vector<sliceable_set_t<N>>::const_iterator mss_end,
+    typename std::vector<sliceable_set_t<N>>::iterator combos_begin,
+    const std::vector<edge_trans_t>& transformations) {
+  auto combos_it = combos_begin;
+  for (auto usr_it = usr_begin; usr_it != usr_end; ++usr_it) {
+    for (auto mss_it = mss_begin; mss_it != mss_end; ++mss_it) {
+      const auto combo = *usr_it | *mss_it;
+      *combos_it = unique_sliceable_set<N>(combo, transformations);
+      ++combos_it;
+    }
+  }
+}
+
+template <int32_t N>
+std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
+    const std::vector<sliceable_set_t<N>>& usr,
+    const std::vector<sliceable_set_t<N>>& mss,
+    const std::vector<edge_trans_t>& transformations) {
+  // divide mss
+  const unsigned int num_threads = std::thread::hardware_concurrency();
+  const auto work_size = mss.size() / num_threads;
+  std::vector<typename std::vector<sliceable_set_t<N>>::const_iterator>
+      separators;
+  for (unsigned int i = 0; i < num_threads; ++i) {
+    separators.push_back(mss.begin() + i * work_size);
+  }
+  separators.push_back(mss.end());
+  // compute the unique symmetric representation of all pairwise unions
+  std::vector<sliceable_set_t<N>> combos(usr.size() * mss.size());
+  std::vector<std::thread> threads;
+  for (unsigned int i = 0; i < num_threads; ++i) {
+    const auto combos_sep = combos.begin() + i * usr.size() * work_size;
+    threads.push_back(std::thread(combine_usr_mss_all<N>, usr.begin(),
+                                  usr.end(), separators[i], separators[i + 1],
+                                  combos_sep, transformations));
+  }
+  for (auto& t : threads) {
+    t.join();
+  }
+  // discard duplicates
+  std::sort(combos.begin(), combos.end());
+  auto combos_end = std::unique(combos.begin(), combos.end());
+  // discard subsets
+  for (auto it = combos.begin(); it != combos_end;) {
+    const auto is_superset = [it](const sliceable_set_t<N>& ss) {
+      return (*it | ss) == ss;
+    };
+    if (std::any_of(combos.begin(), it, is_superset) ||
+        std::any_of(it + 1, combos_end, is_superset)) {
+      --combos_end;
+      *it = *combos_end;
+    } else {
+      ++it;
+    }
+  }
+  combos.erase(combos_end, combos.end());
+  return combos;
+}
+
+template <int32_t N>
 bool combine_usr_mss_final(const std::vector<sliceable_set_t<N>>& usr,
                            const std::vector<sliceable_set_t<N>>& mss) {
   bool slices_all = false;
