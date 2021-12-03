@@ -19,6 +19,15 @@ int32_t slice_cube_low_weight(const std::vector<double>& distances) {
   return k;
 }
 
+template <int32_t N>
+int32_t slice_cube_low_weight_parallel(const std::vector<double>& distances) {
+  const auto edges = compute_edges(N);
+  const auto low_weight_sets =
+      compute_low_weight_sliceable_sets<N>(distances, edges);
+  const auto k = combine_low_weight_sliceable_sets<N>(low_weight_sets, edges);
+  return k;
+}
+
 int main() {
   constexpr int32_t N = 5;
   std::vector<double> distances = {-1, 0, 1};

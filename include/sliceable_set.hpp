@@ -2,6 +2,7 @@
 #define SLICEABLE_SET_H
 
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
@@ -60,6 +61,54 @@ sliceable_set_t<N> unique_sliceable_set(
       min_ss = ss_trans;
     }
   }
+  return min_ss;
+}
+
+template <int32_t N>
+vertex_t transform_vertex_inv(vertex_t v,
+                              const std::array<int32_t, N>& positions,
+                              int32_t signs) {
+  vertex_t transformation = 0;
+  for (int32_t i = 0; i < N; ++i) {
+    const int32_t sign_i = (signs >> i) & 1;
+    const int32_t val_i = (v >> positions[i]) & 1;
+    const int32_t val_i_sign = val_i ^ sign_i;
+    const int32_t val_i_sign_and_position = val_i_sign << i;
+    transformation |= val_i_sign_and_position;
+  }
+  return transformation;
+}
+
+template <int32_t N>
+sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
+                                        const std::vector<edge_t>& edges) {
+  std::array<int32_t, N> permutation;
+  for (int32_t i = 0; i < N; ++i) {
+    permutation[i] = i;
+  }
+  sliceable_set_t<N> min_ss(ss);
+  do {
+    for (int32_t signs = 0; signs < num_vertices(N); ++signs) {
+      sliceable_set_t<N> ss_trans;
+      bool is_new_min = false;
+      for (int32_t e = num_edges(N) - 1; e >= 0; --e) {
+        const vertex_t u =
+            transform_vertex_inv<N>(edges[e].first, permutation, signs);
+        const vertex_t v =
+            transform_vertex_inv<N>(edges[e].second, permutation, signs);
+        const edge_t edge_inv = (u < v) ? edge_t(u, v) : edge_t(v, u);
+        ss_trans[e] = ss[edge_to_int(edge_inv, edges)];
+        if (!is_new_min && ss_trans[e] && !min_ss[e]) {
+          // min_ss is still smaller
+          break;
+        }
+        is_new_min |= !ss_trans[e] && min_ss[e];
+      }
+      if (is_new_min) {
+        min_ss = ss_trans;
+      }
+    }
+  } while (std::next_permutation(permutation.begin(), permutation.end()));
   return min_ss;
 }
 
@@ -138,18 +187,41 @@ std::vector<sliceable_set_t<N>> combine_usr_mss(
 }
 
 template <int32_t N>
+std::vector<sliceable_set_t<N>> combine_usr_mss(
+    const std::vector<sliceable_set_t<N>>& usr,
+    const std::vector<sliceable_set_t<N>>& mss,
+    const std::vector<edge_t>& edges) {
+  std::vector<sliceable_set_t<N>> combos;
+  for (const sliceable_set_t<N>& set_1 : usr) {
+    for (const sliceable_set_t<N>& set_2 : mss) {
+      sliceable_set_t<N> combo = set_1 | set_2;
+      combo = unique_sliceable_set<N>(combo, edges);
+      if (!is_subset<N>(combo, combos)) {
+        const auto p = [combo](const sliceable_set_t<N>& ss) {
+          return (ss | combo) == combo;
+        };
+        const auto it = remove_if(combos.begin(), combos.end(), p);
+        combos.erase(it, combos.end());
+        combos.push_back(combo);
+      }
+    }
+  }
+  return combos;
+}
+
+template <int32_t N>
 void combine_usr_mss_all(
     typename std::vector<sliceable_set_t<N>>::const_iterator usr_begin,
     typename std::vector<sliceable_set_t<N>>::const_iterator usr_end,
     typename std::vector<sliceable_set_t<N>>::const_iterator mss_begin,
     typename std::vector<sliceable_set_t<N>>::const_iterator mss_end,
     typename std::vector<sliceable_set_t<N>>::iterator combos_begin,
-    const std::vector<edge_trans_t>& transformations) {
+    const std::vector<edge_t>& edges) {
   auto combos_it = combos_begin;
   for (auto usr_it = usr_begin; usr_it != usr_end; ++usr_it) {
     for (auto mss_it = mss_begin; mss_it != mss_end; ++mss_it) {
       const auto combo = *usr_it | *mss_it;
-      *combos_it = unique_sliceable_set<N>(combo, transformations);
+      *combos_it = unique_sliceable_set<N>(combo, edges);
       ++combos_it;
     }
   }
@@ -159,7 +231,7 @@ template <int32_t N>
 std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
     const std::vector<sliceable_set_t<N>>& usr,
     const std::vector<sliceable_set_t<N>>& mss,
-    const std::vector<edge_trans_t>& transformations) {
+    const std::vector<edge_t>& edges) {
   // divide mss
   const unsigned int num_threads = std::thread::hardware_concurrency();
   const auto work_size = mss.size() / num_threads;
@@ -176,7 +248,7 @@ std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
     const auto combos_sep = combos.begin() + i * usr.size() * work_size;
     threads.push_back(std::thread(combine_usr_mss_all<N>, usr.begin(),
                                   usr.end(), separators[i], separators[i + 1],
-                                  combos_sep, transformations));
+                                  combos_sep, edges));
   }
   for (auto& t : threads) {
     t.join();
