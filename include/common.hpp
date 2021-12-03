@@ -29,6 +29,15 @@ constexpr std::size_t min_bytes_to_represent_bits(std::size_t n) {
   return n / 8 + 1;
 }
 
+std::vector<std::size_t> assign_workload(std::size_t n,
+                                         unsigned int num_threads) {
+  std::vector<std::size_t> work_loads(num_threads, n / num_threads);
+  for (std::size_t i = 0; i < n % num_threads; ++i) {
+    ++work_loads[i];
+  }
+  return work_loads;
+}
+
 namespace std {
 
 template <std::size_t N>

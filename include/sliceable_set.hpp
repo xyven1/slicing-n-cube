@@ -232,23 +232,24 @@ std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
     const std::vector<sliceable_set_t<N>>& usr,
     const std::vector<sliceable_set_t<N>>& mss,
     const std::vector<edge_t>& edges) {
+  // ensure effective parallelization
+  if (usr.size() > mss.size()) {
+    return combine_usr_mss_parallel<N>(mss, usr, edges);
+  }
   // divide mss
   const unsigned int num_threads = std::thread::hardware_concurrency();
-  const auto work_size = mss.size() / num_threads;
-  std::vector<typename std::vector<sliceable_set_t<N>>::const_iterator>
-      separators;
-  for (unsigned int i = 0; i < num_threads; ++i) {
-    separators.push_back(mss.begin() + i * work_size);
-  }
-  separators.push_back(mss.end());
+  const auto mss_workload = assign_workload(mss.size(), num_threads);
   // compute the unique symmetric representation of all pairwise unions
   std::vector<sliceable_set_t<N>> combos(usr.size() * mss.size());
   std::vector<std::thread> threads;
+  std::size_t mss_workload_prior = 0;
   for (unsigned int i = 0; i < num_threads; ++i) {
-    const auto combos_sep = combos.begin() + i * usr.size() * work_size;
-    threads.push_back(std::thread(combine_usr_mss_all<N>, usr.begin(),
-                                  usr.end(), separators[i], separators[i + 1],
-                                  combos_sep, edges));
+    const auto combos_begin = combos.begin() + mss_workload_prior * usr.size();
+    const auto mss_begin = mss.begin() + mss_workload_prior;
+    const auto mss_end = mss.begin() + mss_workload_prior + mss_workload[i];
+    threads.push_back(std::thread(combine_usr_mss_all<N>, usr.begin(), usr.end(),
+                                 mss_begin, mss_end, combos_begin, edges));
+    mss_workload_prior += mss_workload[i];
   }
   for (auto& t : threads) {
     t.join();
