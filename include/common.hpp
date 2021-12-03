@@ -29,6 +29,8 @@ constexpr std::size_t min_bytes_to_represent_bits(std::size_t n) {
   return n / 8 + 1;
 }
 
+namespace std {
+
 template <std::size_t N>
 bool operator<(const std::bitset<N>& x, const std::bitset<N>& y) {
   for (std::size_t i = N - 1; i < N; --i) {
@@ -48,6 +50,8 @@ bool operator>(const std::bitset<N>& x, const std::bitset<N>& y) {
   }
   return false;
 }
+
+}  // namespace std
 
 // The i-th least significant bit stores the i-th coordinate
 using vertex_t = int32_t;
