@@ -11,6 +11,15 @@
 
 #include "common.hpp"
 
+std::vector<std::size_t> assign_workload(std::size_t n,
+                                         unsigned int num_threads) {
+  std::vector<std::size_t> work_loads(num_threads, n / num_threads);
+  for (std::size_t i = 0; i < n % num_threads; ++i) {
+    ++work_loads[i];
+  }
+  return work_loads;
+}
+
 template <int32_t N>
 bool is_subset(const sliceable_set_t<N>& subset,
                const std::vector<sliceable_set_t<N>>& combos) {
