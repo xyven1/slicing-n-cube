@@ -31,7 +31,7 @@ sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
   return ss;
 }
 
-bool next_low_weight_vector(std::vector<int32_t>& halfspace) {
+bool next_one_weight_vector(std::vector<int32_t>& halfspace) {
   for (auto it = halfspace.rbegin(); it != halfspace.rend(); ++it) {
     if (*it == -1) {
       *it = 1;
@@ -43,8 +43,20 @@ bool next_low_weight_vector(std::vector<int32_t>& halfspace) {
   return false;
 }
 
+bool next_low_weight_vector(std::vector<int32_t>& halfspace, int32_t max) {
+  for (auto it = halfspace.rbegin(); it != halfspace.rend(); ++it) {
+    if (*it == max) {
+      *it = -max;
+    } else {
+      *it += 1;
+      return true;
+    }
+  }
+  return false;
+}
+
 template <int32_t N>
-std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
+std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
     const std::vector<double>& distances, const std::vector<edge_t>& edges) {
   std::unordered_set<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -1);
@@ -56,8 +68,32 @@ std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
         sets.insert(ss);
       }
     }
-  } while (next_low_weight_vector(normal));
+  } while (next_one_weight_vector(normal));
   return std::vector<sliceable_set_t<N>>(sets.begin(), sets.end());
+}
+
+template <int32_t N>
+std::vector<sliceable_set_t<N>> compute_low_weight_mss(
+    const std::vector<double>& distances, const std::vector<edge_t>& edges, int32_t max) {
+  std::vector<sliceable_set_t<N>> sets;
+  std::vector<int32_t> normal(N, -max);
+  do {
+    for (const auto& distance : distances) {
+      const sliceable_set_t<N> ss =
+          low_weight_halfspace_to_sliceable_set<N>(normal, distance, edges);
+      if (ss.any()) {
+        if (!is_subset<N>(ss, sets)) {
+          const auto p = [ss](const sliceable_set_t<N>& other) {
+            return (other | ss) == ss;
+          };
+          const auto it = remove_if(sets.begin(), sets.end(), p);
+          sets.erase(it, sets.end());
+          sets.push_back(ss);
+        }
+      }
+    }
+  } while (next_low_weight_vector(normal, max));
+  return sets;
 }
 
 template <int32_t N>

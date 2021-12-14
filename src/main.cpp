@@ -21,7 +21,7 @@ int main() {
     distances.push_back(i);
   }
   const auto low_weight_sets =
-      compute_low_weight_sliceable_sets<N>(distances, edges);
+      compute_one_weight_sliceable_sets<N>(distances, edges);
   const auto k = combine_low_weight_sliceable_sets<N>(low_weight_sets,
                                                       edge_transformations);
   std::cout << k << std::endl;

@@ -11,6 +11,9 @@ target_link_libraries(main lp Threads::Threads)
 add_executable(slice_cube_low_weight slice_cube_low_weight.cpp)
 target_link_libraries(slice_cube_low_weight Threads::Threads)
 
+add_executable(hyperplanes_low_weight hyperplanes_low_weight.cpp)
+target_link_libraries(hyperplanes_low_weight lp Threads::Threads)
+
 add_executable(storage storage.cpp)
 target_link_libraries(storage lp Threads::Threads)
 
