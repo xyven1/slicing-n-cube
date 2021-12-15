@@ -74,13 +74,13 @@ std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
 
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
-    const std::vector<double>& distances, const std::vector<edge_t>& edges, int32_t max) {
+    const std::vector<edge_t>& edges, int32_t max) {
   std::vector<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -max);
   do {
-    for (const auto& distance : distances) {
+    for (double d = -max * N; d < max * N; d += 0.5) {
       const sliceable_set_t<N> ss =
-          low_weight_halfspace_to_sliceable_set<N>(normal, distance, edges);
+          low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
       if (ss.any()) {
         if (!is_subset<N>(ss, sets)) {
           const auto p = [ss](const sliceable_set_t<N>& other) {

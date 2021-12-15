@@ -21,12 +21,8 @@ template <int32_t N>
 int32_t smallest_low_weight() {
   const auto mss = compute_sorted_mss<N>();
   const auto edges = compute_edges(N);
-  std::vector<double> distances;
-  for (double i = -N + 0.5; i <= N; i += 1.0) {
-    distances.push_back(i);
-  }
-  for (int k = 0; ; ++k) {
-    auto mss_low_weight = compute_low_weight_mss<N>(distances, edges, k);
+  for (int k = 0;; ++k) {
+    auto mss_low_weight = compute_low_weight_mss<N>(edges, k);
     std::sort(mss_low_weight.begin(), mss_low_weight.end());
     if (mss_low_weight == mss) {
       return k;
