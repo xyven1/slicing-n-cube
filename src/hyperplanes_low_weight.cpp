@@ -27,7 +27,8 @@ int32_t smallest_low_weight() {
     if (mss_low_weight == mss) {
       return k;
     }
-    std::cout << "k = " << k << ", |mss| = " << mss.size() << "|mss_low_weight|" << mss_low_weight.size() << std::endl;
+    std::cout << "k = " << k << ", |mss| = " << mss.size() << "|mss_low_weight|"
+              << mss_low_weight.size() << std::endl;
   }
 }
 

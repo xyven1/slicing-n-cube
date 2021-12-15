@@ -256,8 +256,9 @@ std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
     const auto combos_begin = combos.begin() + mss_workload_prior * usr.size();
     const auto mss_begin = mss.begin() + mss_workload_prior;
     const auto mss_end = mss.begin() + mss_workload_prior + mss_workload[i];
-    threads.push_back(std::thread(combine_usr_mss_all<N>, usr.begin(), usr.end(),
-                                 mss_begin, mss_end, combos_begin, edges));
+    threads.push_back(std::thread(combine_usr_mss_all<N>, usr.begin(),
+                                  usr.end(), mss_begin, mss_end, combos_begin,
+                                  edges));
     mss_workload_prior += mss_workload[i];
   }
   for (auto& t : threads) {
