@@ -3,6 +3,9 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <filesystem>
+#include <sstream>
+#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -78,7 +81,7 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
   std::vector<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -max);
   do {
-    for (double d = -max * N; d < max * N; d += 0.5) {
+    for (double d = 0.0; d < max * N; d += 0.5) {
       const sliceable_set_t<N> ss =
           low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
       if (ss.any()) {
@@ -141,6 +144,54 @@ int32_t combine_low_weight_sliceable_sets(
         return i;
       }
     }
+  }
+}
+
+template <int32_t N>
+void write_one_weight_halfspaces_to_file(const std::vector<double>& distances,
+                                         const std::vector<edge_t>& edges,
+                                         const std::filesystem::path& path) {
+  std::vector<std::string> output;
+  std::vector<int32_t> normal(N, -1);
+  do {
+    for (const auto& d : distances) {
+      const sliceable_set_t<N> ss =
+          low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
+      if (ss.any()) {
+        std::stringstream str_stream;
+        str_stream << ss << " " << normal << " " << d;
+        output.push_back(str_stream.str());
+      }
+    }
+  } while (next_one_weight_vector(normal));
+  std::sort(output.begin(), output.end());
+  std::ofstream file(path);
+  for (const auto& str : output) {
+    file << str << std::endl;
+  }
+}
+
+template <int32_t N>
+void write_low_weight_halfspaces_to_file(int32_t max,
+                                         const std::vector<edge_t>& edges,
+                                         const std::filesystem::path& path) {
+  std::vector<std::string> output;
+  std::vector<int32_t> normal(N, -max);
+  do {
+    for (double d = 0.0; d < max * N; d += 0.5) {
+      const sliceable_set_t<N> ss =
+          low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
+      if (ss.any()) {
+        std::stringstream str_stream;
+        str_stream << ss << " " << normal << " " << d;
+        output.push_back(str_stream.str());
+      }
+    }
+  } while (next_low_weight_vector(normal, max));
+  std::sort(output.begin(), output.end());
+  std::ofstream file(path);
+  for (const auto& str : output) {
+    file << str << std::endl;
   }
 }
 
