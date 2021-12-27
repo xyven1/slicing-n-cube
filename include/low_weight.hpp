@@ -76,6 +76,24 @@ std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
 }
 
 template <int32_t N>
+std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
+    int32_t max, const std::vector<double>& distances,
+    const std::vector<edge_t>& edges) {
+  std::unordered_set<sliceable_set_t<N>> sets;
+  std::vector<int32_t> normal(N, -max);
+  do {
+    for (const auto& distance : distances) {
+      const sliceable_set_t<N> ss =
+          low_weight_halfspace_to_sliceable_set<N>(normal, distance, edges);
+      if (ss.any()) {
+        sets.insert(ss);
+      }
+    }
+  } while (next_low_weight_vector(normal, max));
+  return std::vector<sliceable_set_t<N>>(sets.begin(), sets.end());
+}
+
+template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
     const std::vector<edge_t>& edges, int32_t max) {
   std::vector<sliceable_set_t<N>> sets;
