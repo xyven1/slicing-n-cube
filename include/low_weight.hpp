@@ -15,7 +15,7 @@
 
 template <int32_t N>
 sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
-    const std::vector<int32_t>& normal, double distance,
+    const std::vector<int32_t>& normal, int32_t distance,
     const std::vector<edge_t>& edges) {
   sliceable_set_t<N> ss;
   for (const auto& e : edges) {
@@ -60,7 +60,7 @@ bool next_low_weight_vector(std::vector<int32_t>& halfspace, int32_t max) {
 
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
-    const std::vector<double>& distances, const std::vector<edge_t>& edges) {
+    const std::vector<int32_t>& distances, const std::vector<edge_t>& edges) {
   std::unordered_set<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -1);
   do {
@@ -77,7 +77,7 @@ std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
 
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
-    int32_t max, const std::vector<double>& distances,
+    int32_t max, const std::vector<int32_t>& distances,
     const std::vector<edge_t>& edges) {
   std::unordered_set<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -max);
@@ -99,7 +99,7 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
   std::vector<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -max);
   do {
-    for (double d = 0.0; d < max * N; d += 0.5) {
+    for (int32_t d = 0; d < max * N; ++d) {
       const sliceable_set_t<N> ss =
           low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
       if (ss.any()) {
@@ -166,18 +166,18 @@ int32_t combine_low_weight_sliceable_sets(
 }
 
 template <int32_t N>
-void write_one_weight_halfspaces_to_file(const std::vector<double>& distances,
+void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& distances,
                                          const std::vector<edge_t>& edges,
                                          const std::filesystem::path& path) {
   std::vector<std::string> output;
   std::vector<int32_t> normal(N, -1);
   do {
-    for (const auto& d : distances) {
+    for (const auto& distance : distances) {
       const sliceable_set_t<N> ss =
-          low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
+          low_weight_halfspace_to_sliceable_set<N>(normal, distance, edges);
       if (ss.any()) {
         std::stringstream str_stream;
-        str_stream << ss << " " << normal << " " << d;
+        str_stream << ss << " " << normal << " " << distance;
         output.push_back(str_stream.str());
       }
     }
@@ -196,12 +196,12 @@ void write_low_weight_halfspaces_to_file(int32_t max,
   std::vector<std::string> output;
   std::vector<int32_t> normal(N, -max);
   do {
-    for (double d = 0.0; d < max * N; d += 0.5) {
+    for (int32_t distance = 0; distance < max * N; ++distance) {
       const sliceable_set_t<N> ss =
-          low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
+          low_weight_halfspace_to_sliceable_set<N>(normal, distance, edges);
       if (ss.any()) {
         std::stringstream str_stream;
-        str_stream << ss << " " << normal << " " << d;
+        str_stream << ss << " " << normal << " " << distance;
         output.push_back(str_stream.str());
       }
     }

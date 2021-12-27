@@ -9,9 +9,9 @@
 template <int32_t N>
 void write_one_weight_halfspaces() {
   const auto edges = compute_edges(N);
-  std::vector<double> distances;
-  for (double d = 0.0; d < N; d += 0.5) {
-    distances.push_back(d);
+  std::vector<int32_t> distances;
+  for (int32_t i = 0; i < N; ++i) {
+    distances.push_back(i);
   }
   const auto file_name_any = "any_threshold_" + std::to_string(N) + ".txt";
   const auto file_name_one = "one_threshold_" + std::to_string(N) + ".txt";

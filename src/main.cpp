@@ -16,8 +16,8 @@ int main() {
   const auto vertex_transformations = compute_vertex_transformations(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
-  std::vector<double> distances;
-  for (double i = -N; i <= N; i += 0.5) {
+  std::vector<int32_t> distances;
+  for (int32_t i = 0; i < N; ++i) {
     distances.push_back(i);
   }
   const auto low_weight_sets =
