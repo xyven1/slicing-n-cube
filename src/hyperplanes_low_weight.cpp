@@ -33,8 +33,8 @@ int32_t smallest_low_weight() {
 }
 
 int main() {
-  std::cout << smallest_low_weight<3>() << std::endl;
-  std::cout << smallest_low_weight<4>() << std::endl;
-  std::cout << smallest_low_weight<5>() << std::endl;
-  std::cout << smallest_low_weight<6>() << std::endl;
+  std::cout << "n = 3\n" << smallest_low_weight<3>() << std::endl;
+  std::cout << "n = 4\n" << smallest_low_weight<4>() << std::endl;
+  std::cout << "n = 5\n" << smallest_low_weight<5>() << std::endl;
+  std::cout << "n = 6\n" << smallest_low_weight<6>() << std::endl;
 }
