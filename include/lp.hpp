@@ -8,4 +8,7 @@
 template <int32_t N>
 bool is_complex(const complex_t<N>& complex);
 
+template <int32_t N>
+bool is_complex_degree_two(const complex_t<N>& complex);
+
 #endif

@@ -140,4 +140,40 @@ std::vector<complex_t<N>> compute_cut_complexes(
   return complexes;
 }
 
+template <int32_t N>
+std::vector<complex_t<N>> compute_cut_complexes_degree_two(
+    const std::vector<vertex_trans_t>& transformations) {
+  const int32_t l = num_vertices(N) / 2;
+  // There is exactly one USR of all complexes of size 1
+  std::vector<complex_t<N>> complexes = {{1}};
+  // The range [prev_begin, prev_end) contains all complexes of size i
+  std::size_t prev_begin = 0;
+  std::size_t prev_end = complexes.size();
+  for (int32_t i = 1; i < l; ++i) {
+    // std::cout << "Expanding complexes of size " << i << std::endl;
+    for (std::size_t j = prev_begin; j < prev_end; ++j) {
+      // std::cout << "Expanding complex " << complexes[j] << std::endl;
+      for (const vertex_t& v : adjacent_vertices_of_complex<N>(complexes[j])) {
+        // std::cout << "\nTrying adjacent vertex " << v << std::endl;
+        complex_t<N> maybe_complex(complexes[j]);
+        maybe_complex[v] = true;
+        maybe_complex = unique_complex<N>(maybe_complex, transformations);
+        // std::cout << "Maybe new complex: " << maybe_complex << std::endl;
+        if (std::find(complexes.begin() + prev_end, complexes.end(),
+                      maybe_complex) == complexes.end()) {
+          if (is_complex_degree_two<N>(maybe_complex)) {
+            complexes.push_back(maybe_complex);
+            // std::cout << "New complex: " << maybe_complex << std::endl;
+          }
+        } else {
+          // std::cout << "Already known complex" << std::endl;
+        }
+      }
+    }
+    prev_begin = prev_end;
+    prev_end = complexes.size();
+  }
+  return complexes;
+}
+
 #endif
