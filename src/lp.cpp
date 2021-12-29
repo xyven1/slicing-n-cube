@@ -15,7 +15,7 @@ typedef CGAL::Quadratic_program<IT> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 template <int32_t N>
-bool is_complex(const complex_t<N>& complex) {
+bool is_complex_degree_one(const complex_t<N>& complex) {
   Program lp(CGAL::SMALLER, false, 0, false, 0);
   for (vertex_t v = 0; v < num_vertices(N); ++v) {
     // invert inequality operator for vertices not part of the complex
@@ -56,12 +56,12 @@ bool is_complex_degree_two(const complex_t<N>& complex) {
   return !s.is_infeasible();
 }
 
-template bool is_complex<2>(const complex_t<2>& complex);
-template bool is_complex<3>(const complex_t<3>& complex);
-template bool is_complex<4>(const complex_t<4>& complex);
-template bool is_complex<5>(const complex_t<5>& complex);
-template bool is_complex<6>(const complex_t<6>& complex);
-template bool is_complex<7>(const complex_t<7>& complex);
+template bool is_complex_degree_one<2>(const complex_t<2>& complex);
+template bool is_complex_degree_one<3>(const complex_t<3>& complex);
+template bool is_complex_degree_one<4>(const complex_t<4>& complex);
+template bool is_complex_degree_one<5>(const complex_t<5>& complex);
+template bool is_complex_degree_one<6>(const complex_t<6>& complex);
+template bool is_complex_degree_one<7>(const complex_t<7>& complex);
 
 template bool is_complex_degree_two<2>(const complex_t<2>& complex);
 template bool is_complex_degree_two<3>(const complex_t<3>& complex);

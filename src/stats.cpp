@@ -12,7 +12,7 @@ std::vector<int64_t> compute_edge_frequencies() {
   const std::vector<vertex_trans_t> vertex_transformations =
       compute_vertex_transformations(N);
   const std::vector<complex_t<N>> complexes =
-      compute_cut_complexes<N>(vertex_transformations);
+      compute_cut_complexes_degree_one<N>(vertex_transformations);
   const std::vector<edge_t> edges = compute_edges(N);
   const std::vector<sliceable_set_t<N>> mss =
       complexes_to_mss<N>(complexes, vertex_transformations, edges);
