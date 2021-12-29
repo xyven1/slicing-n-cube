@@ -28,22 +28,8 @@ bool is_complex(const complex_t<N>& complex) {
     lp.set_a(N, v, sign);
     lp.set_b(v, -1);
   }
-  lp.set_l(N, true, 0);
-  for (int32_t i = 0; i < N; ++i) {
-    lp.set_l(i, true, 1);
-    Solution s = CGAL::solve_linear_program(lp, ET());
-    if (!s.is_infeasible()) {
-      return true;
-    }
-    lp.set_l(i, false);
-    lp.set_u(i, true, -1);
-    s = CGAL::solve_linear_program(lp, ET());
-    if (!s.is_infeasible()) {
-      return true;
-    }
-    lp.set_u(i, false);
-  }
-  return false;
+  Solution s = CGAL::solve_linear_program(lp, ET());
+  return !s.is_infeasible();
 }
 
 template bool is_complex<2>(const complex_t<2>& complex);
