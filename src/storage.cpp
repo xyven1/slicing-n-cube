@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cstdint>
-#include <iostream>
 #include <string>
 
 #include "common.hpp"
@@ -19,8 +18,6 @@ void write_degree_two_sliceable_sets() {
       compute_edge_transformations(edges, vertex_transformations, N);
   auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
   auto mss = complexes_to_mss<N>(complexes, vertex_transformations, edges);
-  std::cout << usr.size() << std::endl;
-  std::cout << mss.size() << std::endl;
   std::sort(usr.begin(), usr.end());
   std::sort(mss.begin(), mss.end());
   write_to_file<N>(usr,
@@ -39,12 +36,8 @@ void write_two_sliceable_sets() {
       compute_edge_transformations(edges, vertex_transformations, N);
   auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
   auto mss = complexes_to_mss<N>(complexes, vertex_transformations, edges);
-  std::cout << usr.size() << std::endl;
-  std::cout << mss.size() << std::endl;
   auto usr_2 = combine_usr_mss<N>(usr, mss, edge_transformations);
-  std::cout << usr_2.size() << std::endl;
   auto mss_2 = usr_to_mss<N>(usr_2, edge_transformations);
-  std::cout << mss_2.size() << std::endl;
   std::sort(usr.begin(), usr.end());
   std::sort(mss.begin(), mss.end());
   std::sort(usr_2.begin(), usr_2.end());
