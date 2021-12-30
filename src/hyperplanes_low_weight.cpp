@@ -13,15 +13,18 @@ auto compute_sorted_mss() {
   const auto complexes =
       compute_cut_complexes_degree_one<N>(vertex_transformations);
   const auto edges = compute_edges(N);
-  auto mss = complexes_to_mss<N>(complexes, vertex_transformations, edges);
+  const auto edge_transformations =
+      compute_edge_transformations(edges, vertex_transformations, N);
+  const auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
+  auto mss = usr_to_mss<N>(usr, edge_transformations);
   std::sort(mss.begin(), mss.end());
   return mss;
 }
 
 template <int32_t N>
 int32_t smallest_low_weight() {
-  const auto mss = compute_sorted_mss<N>();
   const auto edges = compute_edges(N);
+  const auto mss = compute_sorted_mss<N>();
   for (int k = 0;; ++k) {
     auto mss_low_weight = compute_low_weight_mss<N>(edges, k);
     std::sort(mss_low_weight.begin(), mss_low_weight.end());

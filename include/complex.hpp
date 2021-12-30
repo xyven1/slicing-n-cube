@@ -88,24 +88,6 @@ std::vector<sliceable_set_t<N>> complexes_to_usr(
 }
 
 template <int32_t N>
-std::vector<sliceable_set_t<N>> complexes_to_mss(
-    const std::vector<complex_t<N>>& complexes,
-    const std::vector<vertex_trans_t>& vertex_transformations,
-    const std::vector<edge_t>& edges) {
-  std::unordered_set<sliceable_set_t<N>> mss;
-  for (const complex_t<N>& complex : complexes) {
-    for (const vertex_trans_t& transformation : vertex_transformations) {
-      complex_t<N> complex_trans;
-      for (vertex_t v = 0; v < num_vertices(N); ++v) {
-        complex_trans[v] = complex[transformation[v]];
-      }
-      mss.insert(complex_to_sliceable_set<N>(complex_trans, edges));
-    }
-  }
-  return std::vector<sliceable_set_t<N>>(mss.begin(), mss.end());
-}
-
-template <int32_t N>
 std::vector<complex_t<N>> compute_cut_complexes(
     const std::vector<vertex_trans_t>& transformations,
     std::function<bool(const complex_t<N>&)> is_complex) {

@@ -17,7 +17,7 @@ void write_degree_two_sliceable_sets() {
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
   auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
-  auto mss = complexes_to_mss<N>(complexes, vertex_transformations, edges);
+  auto mss = usr_to_mss<N>(usr, edge_transformations);
   std::sort(usr.begin(), usr.end());
   std::sort(mss.begin(), mss.end());
   write_to_file<N>(usr,
@@ -35,7 +35,7 @@ void write_two_sliceable_sets() {
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
   auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
-  auto mss = complexes_to_mss<N>(complexes, vertex_transformations, edges);
+  auto mss = usr_to_mss<N>(usr, edge_transformations);
   auto usr_2 = combine_usr_mss<N>(usr, mss, edge_transformations);
   auto mss_2 = usr_to_mss<N>(usr_2, edge_transformations);
   std::sort(usr.begin(), usr.end());
