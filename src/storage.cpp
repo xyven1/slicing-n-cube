@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -16,11 +17,12 @@ void write_degree_two_sliceable_sets() {
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
-  const auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
-  const auto mss =
-      complexes_to_mss<N>(complexes, vertex_transformations, edges);
+  auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
+  auto mss = complexes_to_mss<N>(complexes, vertex_transformations, edges);
   std::cout << usr.size() << std::endl;
   std::cout << mss.size() << std::endl;
+  std::sort(usr.begin(), usr.end());
+  std::sort(mss.begin(), mss.end());
   write_to_file<N>(usr,
                    NCUBE_DIR "degree_two/" + std::to_string(N) + "_usr_1.bin");
   write_to_file<N>(mss,
@@ -35,15 +37,18 @@ void write_two_sliceable_sets() {
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
-  const auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
-  const auto mss =
-      complexes_to_mss<N>(complexes, vertex_transformations, edges);
+  auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
+  auto mss = complexes_to_mss<N>(complexes, vertex_transformations, edges);
   std::cout << usr.size() << std::endl;
   std::cout << mss.size() << std::endl;
-  const auto usr_2 = combine_usr_mss<N>(usr, mss, edge_transformations);
+  auto usr_2 = combine_usr_mss<N>(usr, mss, edge_transformations);
   std::cout << usr_2.size() << std::endl;
-  const auto mss_2 = usr_to_mss<N>(usr_2, edge_transformations);
+  auto mss_2 = usr_to_mss<N>(usr_2, edge_transformations);
   std::cout << mss_2.size() << std::endl;
+  std::sort(usr.begin(), usr.end());
+  std::sort(mss.begin(), mss.end());
+  std::sort(usr_2.begin(), usr_2.end());
+  std::sort(mss_2.begin(), mss_2.end());
   write_to_file<N>(usr, NCUBE_DIR + std::to_string(N) + "_usr_1.bin");
   write_to_file<N>(mss, NCUBE_DIR + std::to_string(N) + "_mss_1.bin");
   write_to_file<N>(usr_2, NCUBE_DIR + std::to_string(N) + "_usr_2.bin");
