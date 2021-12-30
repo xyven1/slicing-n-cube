@@ -285,6 +285,28 @@ std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
 }
 
 template <int32_t N>
+int32_t get_leading_zeros(const sliceable_set_t<N>& ss) {
+  for (std::size_t i = 0; i < ss.size(); ++i) {
+    const std::size_t rev_i = ss.size() - i - 1;
+    if (ss[rev_i]) {
+      return static_cast<int32_t>(i);
+    }
+  }
+  return static_cast<int32_t>(ss.size());
+}
+
+template <int32_t N>
+int32_t get_leading_ones(const sliceable_set_t<N>& ss) {
+  for (std::size_t i = 0; i < ss.size(); ++i) {
+    const std::size_t rev_i = ss.size() - i - 1;
+    if (!ss[rev_i]) {
+      return static_cast<int32_t>(i);
+    }
+  }
+  return static_cast<int32_t>(ss.size());
+}
+
+template <int32_t N>
 bool combine_usr_mss_final(const std::vector<sliceable_set_t<N>>& usr,
                            const std::vector<sliceable_set_t<N>>& mss) {
   bool slices_all = false;
@@ -335,28 +357,6 @@ std::vector<sliceable_set_t<N>> usr_to_mss(
   mss.erase(std::unique(mss.begin(), mss.end()), mss.end());
   // mss.shrink_to_fit();
   return mss;
-}
-
-template <int32_t N>
-int32_t get_leading_zeros(const sliceable_set_t<N>& ss) {
-  for (std::size_t i = 0; i < ss.size(); ++i) {
-    const std::size_t rev_i = ss.size() - i - 1;
-    if (ss[rev_i]) {
-      return static_cast<int32_t>(i);
-    }
-  }
-  return static_cast<int32_t>(ss.size());
-}
-
-template <int32_t N>
-int32_t get_leading_ones(const sliceable_set_t<N>& ss) {
-  for (std::size_t i = 0; i < ss.size(); ++i) {
-    const std::size_t rev_i = ss.size() - i - 1;
-    if (!ss[rev_i]) {
-      return static_cast<int32_t>(i);
-    }
-  }
-  return static_cast<int32_t>(ss.size());
 }
 
 template <int32_t N>
