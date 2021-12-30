@@ -15,10 +15,13 @@ add_executable(hyperplanes_low_weight hyperplanes_low_weight.cpp)
 target_link_libraries(hyperplanes_low_weight lp Threads::Threads)
 
 add_executable(write_hyperplanes write_hyperplanes.cpp)
-target_link_libraries(write_hyperplanes)
+# Required for GCC 8
+target_link_libraries(write_hyperplanes stdc++fs)
 
 add_executable(storage storage.cpp)
 target_link_libraries(storage lp Threads::Threads)
+# Required for GCC 8
+target_link_libraries(storage stdc++fs)
 
 add_executable(stats stats.cpp)
 target_link_libraries(stats lp Threads::Threads)
