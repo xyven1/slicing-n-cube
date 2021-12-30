@@ -5,9 +5,6 @@ find_package(Threads REQUIRED)
 add_library(lp lp.cpp)
 target_link_libraries(lp CGAL::CGAL)
 
-add_executable(main main.cpp)
-target_link_libraries(main lp Threads::Threads)
-
 add_executable(slice_cube_low_weight slice_cube_low_weight.cpp)
 target_link_libraries(slice_cube_low_weight Threads::Threads)
 
