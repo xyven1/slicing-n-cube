@@ -388,6 +388,13 @@ sliceable_set_t<N> bytes_to_sliceable_set(char* bytes, std::size_t num_bytes) {
   return ss;
 }
 
+constexpr std::size_t min_bytes_to_represent_bits(std::size_t n) {
+  if (n % 8 == 0) {
+    return n / 8;
+  }
+  return n / 8 + 1;
+}
+
 template <int32_t N>
 void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
                    const std::filesystem::path& path) {

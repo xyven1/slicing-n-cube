@@ -22,13 +22,6 @@ constexpr int32_t num_symmetries(int32_t n) {
   return (1 << n) * factorial;
 }
 
-constexpr std::size_t min_bytes_to_represent_bits(std::size_t n) {
-  if (n % 8 == 0) {
-    return n / 8;
-  }
-  return n / 8 + 1;
-}
-
 namespace std {
 
 template <std::size_t N>
