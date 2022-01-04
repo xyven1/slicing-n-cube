@@ -15,8 +15,8 @@ void write_one_weight_halfspaces() {
   }
   const auto file_name_any = "any_threshold_" + std::to_string(N) + ".txt";
   const auto file_name_one = "one_threshold_" + std::to_string(N) + ".txt";
-  const auto file_path_any = NCUBE_DIR "one_weight/" + file_name_any;
-  const auto file_path_one = NCUBE_DIR "one_weight/" + file_name_one;
+  const auto file_path_any = N_CUBE_OUT_DIR "/one_weight/" + file_name_any;
+  const auto file_path_one = N_CUBE_OUT_DIR "/one_weight/" + file_name_one;
   write_one_weight_halfspaces_to_file<N>(distances, edges, file_path_any);
   write_one_weight_halfspaces_to_file<N>({0, 1}, edges, file_path_one);
 }
@@ -26,7 +26,7 @@ void write_low_weight_halfspaces(int32_t max) {
   const auto edges = compute_edges(N);
   const auto file_name =
       "max_" + std::to_string(max) + "_" + std::to_string(N) + ".txt";
-  const auto file_path = NCUBE_DIR "low_weight/" + file_name;
+  const auto file_path = N_CUBE_OUT_DIR "/low_weight/" + file_name;
   write_low_weight_halfspaces_to_file<N>(max, edges, file_path);
 }
 

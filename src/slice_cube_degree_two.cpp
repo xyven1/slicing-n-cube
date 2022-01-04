@@ -13,9 +13,9 @@ int main() {
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
-  const auto usr_1 = read_from_file<N>(NCUBE_DIR "degree_two/" +
+  const auto usr_1 = read_from_file<N>(N_CUBE_OUT_DIR "/degree_two/" +
                                        std::to_string(N) + "_usr_1.bin");
-  const auto mss_1 = read_from_file<N>(NCUBE_DIR "degree_two/" +
+  const auto mss_1 = read_from_file<N>(N_CUBE_OUT_DIR "/degree_two/" +
                                        std::to_string(N) + "_mss_1.bin");
   const auto usr_2 = combine_usr_mss<N>(usr_1, mss_1, edge_transformations);
   std::cout << "|usr_2| = " << usr_2.size() << std::endl;

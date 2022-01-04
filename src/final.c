@@ -126,8 +126,8 @@ int combine_usr_mss_naive(const char *usr, size_t usr_len, const char *mss,
 }
 
 int main() {
-  const char usr_path[] = NCUBE_DIR "degree_one/5_usr_2.bin";
-  const char mss_path[] = NCUBE_DIR "degree_one/5_mss_2.bin";
+  const char usr_path[] = N_CUBE_OUT_DIR "/degree_one/5_usr_2.bin";
+  const char mss_path[] = N_CUBE_OUT_DIR "/degree_one/5_mss_2.bin";
   char *usr, *mss;
   const size_t usr_len = read_from_file(usr_path, &usr);
   if (usr_len == 0) {
