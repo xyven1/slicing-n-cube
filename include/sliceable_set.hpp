@@ -99,21 +99,6 @@ sliceable_set_t<N> unique_sliceable_set(
   return min_ss;
 }
 
-template <int32_t N>
-vertex_t transform_vertex_inv(vertex_t v,
-                              const std::array<int32_t, N>& positions,
-                              int32_t signs) {
-  vertex_t transformation = 0;
-  for (int32_t i = 0; i < N; ++i) {
-    const int32_t sign_i = (signs >> i) & 1;
-    const int32_t val_i = (v >> positions[i]) & 1;
-    const int32_t val_i_sign = val_i ^ sign_i;
-    const int32_t val_i_sign_and_position = val_i_sign << i;
-    transformation |= val_i_sign_and_position;
-  }
-  return transformation;
-}
-
 /**
  *  Returns the unique symmetric representation of a sliceable set.
  **/
