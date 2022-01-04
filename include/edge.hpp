@@ -31,9 +31,9 @@ std::vector<edge_t> compute_edges(int32_t n) {
   edges.reserve(num_edges(n));
   for (vertex_t v = 0; v < num_vertices(n); ++v) {
     for (int32_t i = 0; i < n; ++i) {
-      const vertex_t neighbour = v ^ (1 << i);
-      if (v < neighbour) {
-        edges.emplace_back(v, neighbour);
+      const vertex_t u = get_neighbour(v, i);
+      if (u < v) {
+        edges.emplace_back(u, v);
       }
     }
   }

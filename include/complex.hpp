@@ -38,8 +38,7 @@ bool is_complex_degree_one(const complex_t<N>& complex) {
     // invert inequality operator for vertices not part of the complex
     const int32_t sign = (complex[v]) ? 1000 : -1000;
     for (int32_t i = 0; i < N; ++i) {
-      int32_t val_i = (v >> i) & 1;
-      int32_t coordinate_i = (val_i) ? 1 : -1;
+      const auto coordinate_i = get_coordinate(v, i);
       lp.set_a(i, v, sign * coordinate_i);
     }
     lp.set_a(N, v, sign);
@@ -60,13 +59,13 @@ bool is_complex_degree_two(const complex_t<N>& complex) {
     // invert inequality operator for vertices not part of the complex
     const int32_t sign = (complex[v]) ? 1000 : -1000;
     for (int32_t i = 0; i < N; ++i) {
-      const int32_t coordinate_i = ((v >> i) & 1) ? 1 : -1;
+      const auto coordinate_i = get_coordinate(v, i);
       lp.set_a(i, v, sign * coordinate_i);
     }
     for (int32_t i = 0; i < N; ++i) {
-      const int32_t coordinate_i = ((v >> i) & 1) ? 1 : -1;
+      const auto coordinate_i = get_coordinate(v, i);
       for (int32_t j = 0; j < N; ++j) {
-        const int32_t coordinate_j = ((v >> j) & 1) ? 1 : -1;
+        const auto coordinate_j = get_coordinate(v, j);
         lp.set_a(N + i * N + j, v, sign * coordinate_i * coordinate_j);
       }
     }
@@ -120,7 +119,7 @@ std::vector<vertex_t> adjacent_vertices_of_complex(
   for (vertex_t v = 0; v < num_vertices(N); ++v) {
     if (complex[v]) {
       for (int32_t i = 0; i < N; ++i) {
-        vertex_t neighbour = v ^ (1 << i);
+        const vertex_t neighbour = get_neighbour(v, i);
         if (!complex[neighbour] &&
             std::find(adjacent_vertices.begin(), adjacent_vertices.end(),
                       neighbour) == adjacent_vertices.end()) {
@@ -142,7 +141,7 @@ sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
   for (vertex_t v = 0; v < num_vertices(N); ++v) {
     if (complex[v]) {
       for (int32_t i = 0; i < N; ++i) {
-        const vertex_t u = v ^ (1 << i);
+        const vertex_t u = get_neighbour(v, i);
         if (!complex[u]) {
           const edge_t e = (u < v) ? edge_t(u, v) : edge_t(v, u);
           sliceable_set[edge_to_int(e, edges)] = true;

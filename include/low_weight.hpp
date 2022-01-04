@@ -28,8 +28,8 @@ sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
   for (const auto& e : edges) {
     int32_t u_scalar = 0, v_scalar = 0;
     for (int32_t i = 0; i < N; ++i) {
-      const int32_t u_i = (e.first & (1 << i)) ? 1 : -1;
-      const int32_t v_i = (e.second & (1 << i)) ? 1 : -1;
+      const auto u_i = get_coordinate(e.first, i);
+      const auto v_i = get_coordinate(e.second, i);
       u_scalar += u_i * normal[i];
       v_scalar += v_i * normal[i];
     }
