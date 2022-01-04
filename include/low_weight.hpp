@@ -142,11 +142,14 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
       const sliceable_set_t<N> ss =
           low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
       if (ss.any()) {
-        if (!is_subset<N>(ss, sets)) {
-          const auto p = [ss](const sliceable_set_t<N>& other) {
+        const auto is_superset = [ss](const sliceable_set_t<N>& other) {
+          return (other | ss) == other;
+        };
+        if (std::none_of(sets.begin(), sets.end(), is_superset)) {
+          const auto is_subset = [ss](const sliceable_set_t<N>& other) {
             return (other | ss) == ss;
           };
-          const auto it = remove_if(sets.begin(), sets.end(), p);
+          const auto it = remove_if(sets.begin(), sets.end(), is_subset);
           sets.erase(it, sets.end());
           sets.push_back(ss);
         }

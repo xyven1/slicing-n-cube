@@ -35,21 +35,6 @@ std::vector<std::size_t> assign_workload(std::size_t n,
 }
 
 /**
- *  Returns whether the sliceable set `subset` is a subset of any sliceable set
- *  in `combos`.
- **/
-template <int32_t N>
-bool is_subset(const sliceable_set_t<N>& subset,
-               const std::vector<sliceable_set_t<N>>& combos) {
-  for (const sliceable_set_t<N>& combo : combos) {
-    if ((subset | combo) == combo) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
  *  Returns the unique symmetric representation of a sliceable set.
  *
  *  This is an inefficient implementation that exist only for reference.
@@ -210,11 +195,14 @@ std::vector<sliceable_set_t<N>> combine_usr_mss(
     for (const sliceable_set_t<N>& set_2 : mss) {
       sliceable_set_t<N> combo = set_1 | set_2;
       combo = unique_sliceable_set<N>(combo, transformations);
-      if (!is_subset<N>(combo, combos)) {
-        const auto p = [combo](const sliceable_set_t<N>& ss) {
-          return (ss | combo) == combo;
+      const auto is_superset = [combo](const sliceable_set_t<N>& other) {
+        return (other | combo) == other;
+      };
+      if (std::none_of(combos.begin(), combos.end(), is_superset)) {
+        const auto is_subset = [combo](const sliceable_set_t<N>& other) {
+          return (other | combo) == combo;
         };
-        const auto it = remove_if(combos.begin(), combos.end(), p);
+        const auto it = remove_if(combos.begin(), combos.end(), is_subset);
         combos.erase(it, combos.end());
         combos.push_back(combo);
       }
@@ -237,11 +225,14 @@ std::vector<sliceable_set_t<N>> combine_usr_mss(
     for (const sliceable_set_t<N>& set_2 : mss) {
       sliceable_set_t<N> combo = set_1 | set_2;
       combo = unique_sliceable_set<N>(combo, edges);
-      if (!is_subset<N>(combo, combos)) {
-        const auto p = [combo](const sliceable_set_t<N>& ss) {
-          return (ss | combo) == combo;
+      const auto is_superset = [combo](const sliceable_set_t<N>& other) {
+        return (other | combo) == other;
+      };
+      if (std::none_of(combos.begin(), combos.end(), is_superset)) {
+        const auto is_subset = [combo](const sliceable_set_t<N>& other) {
+          return (other | combo) == combo;
         };
-        const auto it = remove_if(combos.begin(), combos.end(), p);
+        const auto it = remove_if(combos.begin(), combos.end(), is_subset);
         combos.erase(it, combos.end());
         combos.push_back(combo);
       }
