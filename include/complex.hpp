@@ -21,18 +21,16 @@
 template <int32_t N>
 using complex_t = std::bitset<num_vertices(N)>;
 
-typedef int32_t IT;
-typedef CGAL::Gmpz ET;
-
-typedef CGAL::Quadratic_program<IT> Program;
-typedef CGAL::Quadratic_program_solution<ET> Solution;
-
 /**
  *  Returns true if a degree one polynomial of N variables separates the given
  *  set of vertices from its complement and returns false otherwise.
  **/
 template <int32_t N>
 bool is_complex_degree_one(const complex_t<N>& complex) {
+  using IT = int32_t;
+  using ET = CGAL::Gmpz;
+  using Program = CGAL::Quadratic_program<IT>;
+  using Solution = CGAL::Quadratic_program_solution<ET>;
   Program lp(CGAL::SMALLER, false, 0, false, 0);
   for (vertex_t v = 0; v < num_vertices(N); ++v) {
     // invert inequality operator for vertices not part of the complex
@@ -54,6 +52,10 @@ bool is_complex_degree_one(const complex_t<N>& complex) {
  **/
 template <int32_t N>
 bool is_complex_degree_two(const complex_t<N>& complex) {
+  using IT = int32_t;
+  using ET = CGAL::Gmpz;
+  using Program = CGAL::Quadratic_program<IT>;
+  using Solution = CGAL::Quadratic_program_solution<ET>;
   Program lp(CGAL::SMALLER, false, 0, false, 0);
   for (vertex_t v = 0; v < num_vertices(N); ++v) {
     // invert inequality operator for vertices not part of the complex
