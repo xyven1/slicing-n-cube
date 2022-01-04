@@ -13,6 +13,12 @@
 #include "edge.hpp"
 #include "sliceable_set.hpp"
 
+/**
+ *  Returns the slicing by a low weight halfspace.
+ *
+ *  The low weight halfspace is given by its normal vector and threshold
+ *  (distance to the origin).
+ **/
 template <int32_t N>
 sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
     const std::vector<int32_t>& normal, int32_t distance,
@@ -34,6 +40,14 @@ sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
   return ss;
 }
 
+/**
+ *  Changes a normal vector containing only values in {-1, 1} into the next
+ *  normal vector containing only values in {-1, 1}.
+ *
+ *  Returns true if and only if the resulting normal vector is all -1.
+ *
+ *  Naturally, the first call should be on a normal vector that is all -1.
+ **/
 bool next_one_weight_vector(std::vector<int32_t>& halfspace) {
   for (auto it = halfspace.rbegin(); it != halfspace.rend(); ++it) {
     if (*it == -1) {
@@ -46,6 +60,14 @@ bool next_one_weight_vector(std::vector<int32_t>& halfspace) {
   return false;
 }
 
+/**
+ *  Changes a normal vector containing only values in {-max, ..., max} into the
+ *  next normal vector containing only values in {-max, ..., max}.
+ *
+ *  Returns true if and only if the resulting normal vector is all -max.
+ *
+ *  Naturally, the first call should be on a normal vector that is all -max.
+ **/
 bool next_low_weight_vector(std::vector<int32_t>& halfspace, int32_t max) {
   for (auto it = halfspace.rbegin(); it != halfspace.rend(); ++it) {
     if (*it == max) {
@@ -58,6 +80,11 @@ bool next_low_weight_vector(std::vector<int32_t>& halfspace, int32_t max) {
   return false;
 }
 
+/**
+ *  Returns all slicings by low weight halfspaces satisfying the following:
+ *    - The normal vector contains only values in {-1, 1}.
+ *    - The threshold (distance to the origin) is one of the given thresholds.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
     const std::vector<int32_t>& distances, const std::vector<edge_t>& edges) {
@@ -75,6 +102,11 @@ std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
   return std::vector<sliceable_set_t<N>>(sets.begin(), sets.end());
 }
 
+/**
+ *  Returns all slicings by low weight halfspaces satisfying the following:
+ *    - The normal vector contains only values in {-max, ..., max}.
+ *    - The threshold (distance to the origin) is one of the given thresholds.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
     int32_t max, const std::vector<int32_t>& distances,
@@ -93,6 +125,12 @@ std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
   return std::vector<sliceable_set_t<N>>(sets.begin(), sets.end());
 }
 
+/**
+ *  Returns all maximal slicings by low weight halfspaces satisfying the
+ *  following:
+ *    - The normal vector contains only values in {-max, ..., max}.
+ *    - The threshold (distance to the origin) is any integer value.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
     const std::vector<edge_t>& edges, int32_t max) {
@@ -117,6 +155,13 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
   return sets;
 }
 
+/**
+ *  Returns the smallest k so that the given sliceable sets contain a
+ *  k-sliceable set.
+ *
+ *  This function uses significantly more memory than the below function which
+ *  prevents efficient parallelization.
+ **/
 template <int32_t N>
 int32_t combine_low_weight_sliceable_sets(
     const std::vector<sliceable_set_t<N>>& sets,
@@ -141,6 +186,10 @@ int32_t combine_low_weight_sliceable_sets(
   }
 }
 
+/**
+ *  Returns the smallest k so that the given sliceable sets contain a
+ *  k-sliceable set.
+ **/
 template <int32_t N>
 int32_t combine_low_weight_sliceable_sets(
     const std::vector<sliceable_set_t<N>>& sets,
@@ -165,6 +214,17 @@ int32_t combine_low_weight_sliceable_sets(
   }
 }
 
+/**
+ *  Writes in lexicographic order all slicings by low weight halfspaces
+ *  satisfying the following to a file at the given path:
+ *    - The normal vector contains only values in {-1, 1}.
+ *    - The threshold (distance to the origin) is one of the given thresholds.
+ *
+ *  For each slicing the following is written in text:
+ *    - The bitstring encoding of the slicing.
+ *    - The normal vector.
+ *    - The threshold.
+ **/
 template <int32_t N>
 void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& distances,
                                          const std::vector<edge_t>& edges,
@@ -189,6 +249,17 @@ void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& distances,
   }
 }
 
+/**
+ *  Writes in lexicographic order all slicings by low weight halfspaces
+ *  satisfying the following to a file at the given path:
+ *    - The normal vector contains only values in {-max, ..., max}.
+ *    - The threshold (distance to the origin) is any integer value.
+ *
+ *  For each slicing the following is written in text:
+ *    - The bitstring encoding of the slicing.
+ *    - The normal vector.
+ *    - The threshold.
+ **/
 template <int32_t N>
 void write_low_weight_halfspaces_to_file(int32_t max,
                                          const std::vector<edge_t>& edges,

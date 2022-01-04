@@ -12,6 +12,9 @@
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
 
+/**
+ *  Returns the unique symmetric representation of a cut complex.
+ **/
 template <int32_t N>
 complex_t<N> unique_complex(
     const complex_t<N>& complex,
@@ -36,6 +39,10 @@ complex_t<N> unique_complex(
   return min_complex;
 }
 
+/**
+ *  Returns all vertices that are adjacent to a vertex in the cut complex but
+ *  are not part of the complex already.
+ **/
 template <int32_t N>
 std::vector<vertex_t> adjacent_vertices_of_complex(
     const complex_t<N>& complex) {
@@ -55,6 +62,9 @@ std::vector<vertex_t> adjacent_vertices_of_complex(
   return adjacent_vertices;
 }
 
+/**
+ *  Returns the slicing corresponding to the exterior edges of a cut complex.
+ **/
 template <int32_t N>
 sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
                                             const std::vector<edge_t>& edges) {
@@ -73,6 +83,10 @@ sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
   return sliceable_set;
 }
 
+/**
+ *  Returns the unique symmetric representation of all slicings induced by the
+ *  cut complexes.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> complexes_to_usr(
     const std::vector<complex_t<N>>& complexes,
@@ -87,11 +101,15 @@ std::vector<sliceable_set_t<N>> complexes_to_usr(
   return usr;
 }
 
+/**
+ *  Returns the unique symmetric representation of all cut complexes subject
+ *  to a given function that decides if a set of vertices is a cut complex.
+ **/
 template <int32_t N>
 std::vector<complex_t<N>> compute_cut_complexes(
     const std::vector<vertex_trans_t>& transformations,
     std::function<bool(const complex_t<N>&)> is_complex) {
-  const int32_t l = num_vertices(N) / 2;
+  constexpr int32_t l = num_vertices(N) / 2;
   // There is exactly one USR of all complexes of size 1
   std::vector<complex_t<N>> complexes = {{1}};
   // The range [prev_begin, prev_end) contains all complexes of size i
@@ -124,12 +142,20 @@ std::vector<complex_t<N>> compute_cut_complexes(
   return complexes;
 }
 
+/**
+ *  Returns the unique symmetric representation of all cut complexes subject
+ *  to a degree one polynomial (i.e. a normal hyperplane).
+ **/
 template <int32_t N>
 std::vector<complex_t<N>> compute_cut_complexes_degree_one(
     const std::vector<vertex_trans_t>& transformations) {
   return compute_cut_complexes<N>(transformations, is_complex_degree_one<N>);
 }
 
+/**
+ *  Returns the unique symmetric representation of all cut complexes subject
+ *  to a degree two polynomial.
+ **/
 template <int32_t N>
 std::vector<complex_t<N>> compute_cut_complexes_degree_two(
     const std::vector<vertex_trans_t>& transformations) {

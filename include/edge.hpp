@@ -7,11 +7,18 @@
 
 #include "common.hpp"
 
+/**
+ *  Returns the enumeration of an edge over the lexicographic order of all
+ *  edges.
+ **/
 inline int32_t edge_to_int(const edge_t& e, const std::vector<edge_t>& edges) {
   const auto e_it = std::lower_bound(edges.begin(), edges.end(), e);
   return static_cast<int32_t>(e_it - edges.begin());
 }
 
+/**
+ *  Returns all edges of the n-cube in lexicographic order.
+ **/
 std::vector<edge_t> compute_edges(int32_t n) {
   std::vector<edge_t> edges;
   edges.reserve(num_edges(n));

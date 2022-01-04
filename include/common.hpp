@@ -10,10 +10,13 @@
 
 #include "prettyprint.hpp"
 
+// 2^n
 constexpr int32_t num_vertices(int32_t n) { return 1 << n; }
 
+// n * 2^n
 constexpr int32_t num_edges(int32_t n) { return n << (n - 1); }
 
+// n! * 2^n
 constexpr int32_t num_symmetries(int32_t n) {
   int32_t factorial = 1;
   for (int32_t i = 2; i <= n; ++i) {
@@ -61,9 +64,11 @@ using vertex_trans_t = std::vector<vertex_t>;
 // edge_trans_t[e] stores the edge whose transformation yields e
 using edge_trans_t = std::vector<int32_t>;
 
+// complex[v] is true iff vertex v is in the complex
 template <int32_t N>
 using complex_t = std::bitset<num_vertices(N)>;
 
+// edges[e] is true iff edge e is in the sliceable set
 template <int32_t N>
 using sliceable_set_t = std::bitset<num_edges(N)>;
 

@@ -11,6 +11,12 @@
 
 #include "common.hpp"
 
+/**
+ *  Returns a balanced distribution of n units of work across num_threads
+ *  workers.
+ *
+ *  For example, assign_workload(15, 4) returns {4, 4, 4, 3}.
+ **/
 std::vector<std::size_t> assign_workload(std::size_t n,
                                          unsigned int num_threads) {
   std::vector<std::size_t> work_loads(num_threads, n / num_threads);
@@ -20,6 +26,10 @@ std::vector<std::size_t> assign_workload(std::size_t n,
   return work_loads;
 }
 
+/**
+ *  Returns whether the sliceable set `subset` is a subset of any sliceable set
+ *  in `combos`.
+ **/
 template <int32_t N>
 bool is_subset(const sliceable_set_t<N>& subset,
                const std::vector<sliceable_set_t<N>>& combos) {
@@ -31,6 +41,11 @@ bool is_subset(const sliceable_set_t<N>& subset,
   return false;
 }
 
+/**
+ *  Returns the unique symmetric representation of a sliceable set.
+ *
+ *  This is an inefficient implementation that exist only for reference.
+ **/
 template <int32_t N>
 sliceable_set_t<N> unique_sliceable_set_naive(
     const sliceable_set_t<N>& ss,
@@ -49,6 +64,9 @@ sliceable_set_t<N> unique_sliceable_set_naive(
   return min_ss;
 }
 
+/**
+ *  Returns the unique symmetric representation of a sliceable set.
+ **/
 template <int32_t N>
 sliceable_set_t<N> unique_sliceable_set(
     const sliceable_set_t<N>& ss,
@@ -88,6 +106,9 @@ vertex_t transform_vertex_inv(vertex_t v,
   return transformation;
 }
 
+/**
+ *  Returns the unique symmetric representation of a sliceable set.
+ **/
 template <int32_t N>
 sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
                                         const std::vector<edge_t>& edges) {
@@ -121,6 +142,13 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
   return min_ss;
 }
 
+/**
+ *  Returns the unique symmetric representation of a sliceable set.
+ *
+ *  This function takes the edge transformations as a range which enables the
+ *  caller to parallelize the computation of the unique symmetric
+ *  representation.
+ **/
 template <int32_t N>
 sliceable_set_t<N> unique_sliceable_set_seq(
     const sliceable_set_t<N>& ss,
@@ -146,6 +174,9 @@ sliceable_set_t<N> unique_sliceable_set_seq(
   return min_ss;
 }
 
+/**
+ *  Returns the unique symmetric representation of a sliceable set.
+ **/
 template <int32_t N>
 sliceable_set_t<N> unique_sliceable_set_parallel(
     const sliceable_set_t<N>& ss,
@@ -172,6 +203,10 @@ sliceable_set_t<N> unique_sliceable_set_parallel(
   return min_ss;
 }
 
+/**
+ *  Returns the unique symmetric representation of the pairwise unions of
+ *  maximal sliceable sets and their unique symmetric representation.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> combine_usr_mss(
     const std::vector<sliceable_set_t<N>>& usr,
@@ -195,6 +230,10 @@ std::vector<sliceable_set_t<N>> combine_usr_mss(
   return combos;
 }
 
+/**
+ *  Returns the unique symmetric representation of the pairwise unions of
+ *  maximal sliceable sets and their unique symmetric representation.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> combine_usr_mss(
     const std::vector<sliceable_set_t<N>>& usr,
@@ -218,6 +257,10 @@ std::vector<sliceable_set_t<N>> combine_usr_mss(
   return combos;
 }
 
+/**
+ *  Stores the unique symmetric representation of the pairwise unions of
+ *  maximal sliceable sets and their unique symmetric representation in a range.
+ **/
 template <int32_t N>
 void combine_usr_mss_all(
     typename std::vector<sliceable_set_t<N>>::const_iterator usr_begin,
@@ -236,6 +279,10 @@ void combine_usr_mss_all(
   }
 }
 
+/**
+ *  Returns the unique symmetric representation of the pairwise unions of
+ *  maximal sliceable sets and their unique symmetric representation.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
     const std::vector<sliceable_set_t<N>>& usr,
@@ -284,6 +331,9 @@ std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
   return combos;
 }
 
+/**
+ *  Returns the number of leading zeros in a sliceable set.
+ **/
 template <int32_t N>
 int32_t get_leading_zeros(const sliceable_set_t<N>& ss) {
   for (std::size_t i = 0; i < ss.size(); ++i) {
@@ -295,6 +345,9 @@ int32_t get_leading_zeros(const sliceable_set_t<N>& ss) {
   return static_cast<int32_t>(ss.size());
 }
 
+/**
+ *  Returns the number of leading ones in a sliceable set.
+ **/
 template <int32_t N>
 int32_t get_leading_ones(const sliceable_set_t<N>& ss) {
   for (std::size_t i = 0; i < ss.size(); ++i) {
@@ -306,6 +359,12 @@ int32_t get_leading_ones(const sliceable_set_t<N>& ss) {
   return static_cast<int32_t>(ss.size());
 }
 
+/**
+ *  Returns whether any pairwise union of maximal sliceable sets and their
+ *  unique symmetric representation slices all edges.
+ *
+ *  The maximal sliceable sets are required to be sorted.
+ **/
 template <int32_t N>
 bool combine_usr_mss_final(const std::vector<sliceable_set_t<N>>& usr,
                            const std::vector<sliceable_set_t<N>>& mss) {
@@ -324,6 +383,12 @@ bool combine_usr_mss_final(const std::vector<sliceable_set_t<N>>& usr,
   return slices_all;
 }
 
+/**
+ *  Returns whether any pairwise union of maximal sliceable sets and their
+ *  unique symmetric representation slices all edges.
+ *
+ *  This is an inefficient implementation that exist only for reference.
+ **/
 template <int32_t N>
 bool combine_usr_mss_final_naive(const std::vector<sliceable_set_t<N>>& usr,
                                  const std::vector<sliceable_set_t<N>>& mss) {
@@ -337,6 +402,10 @@ bool combine_usr_mss_final_naive(const std::vector<sliceable_set_t<N>>& usr,
   return false;
 }
 
+/**
+ *  Returns the symmetry expansions of the unique symmetric representation of
+ *  sliceable sets.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> usr_to_mss(
     const std::vector<sliceable_set_t<N>>& usr,
@@ -359,6 +428,9 @@ std::vector<sliceable_set_t<N>> usr_to_mss(
   return mss;
 }
 
+/**
+ *  Stores the bitstring encoding of a sliceable set in a byte array.
+ **/
 template <int32_t N>
 void sliceable_set_to_bytes(const sliceable_set_t<N>& ss, char* bytes,
                             std::size_t num_bytes) {
@@ -373,6 +445,9 @@ void sliceable_set_to_bytes(const sliceable_set_t<N>& ss, char* bytes,
   }
 }
 
+/**
+ *  Returns a sliceable set from to its bitstring encoding in a byte array.
+ **/
 template <int32_t N>
 sliceable_set_t<N> bytes_to_sliceable_set(char* bytes, std::size_t num_bytes) {
   sliceable_set_t<N> ss;
@@ -388,6 +463,9 @@ sliceable_set_t<N> bytes_to_sliceable_set(char* bytes, std::size_t num_bytes) {
   return ss;
 }
 
+/**
+ *  Returns the minimum number of bytes needed to represent n bits.
+ **/
 constexpr std::size_t min_bytes_to_represent_bits(std::size_t n) {
   if (n % 8 == 0) {
     return n / 8;
@@ -395,6 +473,9 @@ constexpr std::size_t min_bytes_to_represent_bits(std::size_t n) {
   return n / 8 + 1;
 }
 
+/**
+ *  Writes sliceable sets to a file at the given path.
+ **/
 template <int32_t N>
 void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
                    const std::filesystem::path& path) {
@@ -408,6 +489,12 @@ void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
   }
 }
 
+/**
+ *  Returns the sliceable sets stored in a file at the given path.
+ *
+ *  Naturally, this function should be called on a file created by
+ *  `write_to_file`.
+ **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> read_from_file(
     const std::filesystem::path& path) {

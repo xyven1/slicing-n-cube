@@ -8,6 +8,9 @@
 #include "common.hpp"
 #include "edge.hpp"
 
+/**
+ *  Returns all symmetries inherent to the n-cube.
+ **/
 std::vector<symmetry_t> compute_symmetries(int32_t n) {
   std::vector<symmetry_t> symmetries;
   symmetries.reserve(num_symmetries(n));
@@ -32,6 +35,9 @@ std::vector<symmetry_t> compute_symmetries(int32_t n) {
   return symmetries;
 }
 
+/**
+ *  Returns the transformation of a vertex.
+ **/
 vertex_t transform_vertex(const symmetry_t& sym, vertex_t v, int32_t n) {
   vertex_t transformation = 0;
   for (int32_t i = 0; i < n; ++i) {
@@ -45,6 +51,9 @@ vertex_t transform_vertex(const symmetry_t& sym, vertex_t v, int32_t n) {
   return transformation;
 }
 
+/**
+ *  Returns the inverse transformation of a vertex.
+ **/
 vertex_t transform_vertex_inv(const symmetry_t& sym, vertex_t v, int32_t n) {
   vertex_t transformation = 0;
   for (int32_t i = 0; i < n; ++i) {
@@ -58,6 +67,12 @@ vertex_t transform_vertex_inv(const symmetry_t& sym, vertex_t v, int32_t n) {
   return transformation;
 }
 
+/**
+ *  Returns all inverse vertex transformations.
+ *
+ *  The element vertex_transformations[i][v] in the returned vector contains the
+ *  inverse transformation of vertex v according to the i-th symmetry.
+ **/
 std::vector<vertex_trans_t> compute_vertex_transformations(int32_t n) {
   const std::vector<symmetry_t> symmetries = compute_symmetries(n);
   std::vector<vertex_trans_t> transformations(symmetries.size());
@@ -70,6 +85,12 @@ std::vector<vertex_trans_t> compute_vertex_transformations(int32_t n) {
   return transformations;
 }
 
+/**
+ *  Returns all inverse edge transformations.
+ *
+ *  The element edge_transformations[i][e] in the returned vector contains the
+ *  inverse transformation of edge e according to the i-th symmetry.
+ **/
 std::vector<edge_trans_t> compute_edge_transformations(
     const std::vector<edge_t>& edges,
     const std::vector<vertex_trans_t>& vertex_transformations, int32_t n) {
