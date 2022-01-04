@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(slicing_n_cube)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wfatal-errors")
