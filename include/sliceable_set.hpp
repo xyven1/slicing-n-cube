@@ -3,13 +3,21 @@
 
 #include <algorithm>
 #include <array>
+#include <bitset>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <future>
 #include <vector>
 
-#include "common.hpp"
+#include "bitset_comparator.hpp"
+#include "edge.hpp"
+#include "symmetry.hpp"
+#include "vertex.hpp"
+
+// edges[e] is true iff edge e is in the sliceable set
+template <int32_t N>
+using sliceable_set_t = std::bitset<num_edges(N)>;
 
 /**
  *  Returns a balanced distribution of n units of work across num_threads

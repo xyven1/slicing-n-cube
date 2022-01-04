@@ -5,8 +5,26 @@
 #include <cstdint>
 #include <vector>
 
-#include "common.hpp"
 #include "edge.hpp"
+#include "vertex.hpp"
+
+// The MSB stores the sign and the remaining bits represent the new position
+using symmetry_t = std::vector<uint32_t>;
+
+// vertex_trans_t[v] stores the vertex whose transformation yields v
+using vertex_trans_t = std::vector<vertex_t>;
+
+// edge_trans_t[e] stores the edge whose transformation yields e
+using edge_trans_t = std::vector<int32_t>;
+
+// n! * 2^n
+constexpr int32_t num_symmetries(int32_t n) {
+  int32_t factorial = 1;
+  for (int32_t i = 2; i <= n; ++i) {
+    factorial *= i;
+  }
+  return (1 << n) * factorial;
+}
 
 /**
  *  Returns all symmetries inherent to the n-cube.

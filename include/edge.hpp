@@ -3,9 +3,16 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <utility>
 #include <vector>
 
-#include "common.hpp"
+#include "vertex.hpp"
+
+// The two vertices are assumed to be ordered, i.e. e.first < e.second
+using edge_t = std::pair<vertex_t, vertex_t>;
+
+// n * 2^n
+constexpr int32_t num_edges(int32_t n) { return n << (n - 1); }
 
 /**
  *  Returns the enumeration of an edge over the lexicographic order of all

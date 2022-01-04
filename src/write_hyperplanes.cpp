@@ -2,9 +2,9 @@
 #include <iostream>
 #include <vector>
 
-#include "common.hpp"
 #include "edge.hpp"
 #include "low_weight.hpp"
+#include "vertex.hpp"
 
 template <int32_t N>
 void write_one_weight_halfspaces() {

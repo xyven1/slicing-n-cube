@@ -2,10 +2,10 @@
 #include <iostream>
 #include <string>
 
-#include "common.hpp"
 #include "edge.hpp"
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
+#include "vertex.hpp"
 
 int main() {
   constexpr int32_t N = 5;

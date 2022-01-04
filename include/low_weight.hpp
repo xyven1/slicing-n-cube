@@ -9,9 +9,10 @@
 #include <unordered_set>
 #include <vector>
 
-#include "common.hpp"
 #include "edge.hpp"
+#include "prettyprint.hpp"
 #include "sliceable_set.hpp"
+#include "vertex.hpp"
 
 /**
  *  Returns the slicing by a low weight halfspace.

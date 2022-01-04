@@ -1,10 +1,10 @@
 #include <cstdint>
 #include <iostream>
 
-#include "common.hpp"
 #include "edge.hpp"
 #include "low_weight.hpp"
 #include "symmetry.hpp"
+#include "vertex.hpp"
 
 template <int32_t N>
 int32_t slice_cube_one_weight(const std::vector<int32_t>& distances) {

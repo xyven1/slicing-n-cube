@@ -1,11 +1,11 @@
 #include <cstdint>
 #include <iostream>
 
-#include "common.hpp"
 #include "complex.hpp"
 #include "edge.hpp"
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
+#include "vertex.hpp"
 
 bool slice_cube_5() {
   constexpr int32_t N = 5;

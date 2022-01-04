@@ -6,14 +6,19 @@
 #include <CGAL/QP_models.h>
 
 #include <algorithm>
+#include <bitset>
 #include <cstdint>
 #include <functional>
 #include <vector>
 
-#include "common.hpp"
 #include "edge.hpp"
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
+#include "vertex.hpp"
+
+// complex[v] is true iff vertex v is in the complex
+template <int32_t N>
+using complex_t = std::bitset<num_vertices(N)>;
 
 typedef int32_t IT;
 typedef CGAL::Gmpz ET;

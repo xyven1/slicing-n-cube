@@ -2,11 +2,11 @@
 #include <cstdint>
 #include <string>
 
-#include "common.hpp"
 #include "complex.hpp"
 #include "edge.hpp"
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
+#include "vertex.hpp"
 
 template <int32_t N>
 void write_degree_two_sliceable_sets() {
