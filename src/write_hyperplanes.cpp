@@ -15,10 +15,10 @@ void write_one_weight_halfspaces() {
   for (int32_t i = 0; i < N; ++i) {
     distances.push_back(i);
   }
-  constexpr auto dir = N_CUBE_OUT_DIR "/one_weight/";
+  constexpr auto dir = N_CUBE_OUT_DIR "/one_weight";
   std::filesystem::create_directories(dir);
-  const auto path_any = dir + ("any_threshold_" + std::to_string(N) + ".txt");
-  const auto path_one = dir + ("one_threshold_" + std::to_string(N) + ".txt");
+  const auto path_any = dir + ("/any_threshold_" + std::to_string(N) + ".txt");
+  const auto path_one = dir + ("/one_threshold_" + std::to_string(N) + ".txt");
   write_one_weight_halfspaces_to_file<N>(distances, edges, path_any);
   write_one_weight_halfspaces_to_file<N>({0, 1}, edges, path_one);
 }
@@ -26,10 +26,10 @@ void write_one_weight_halfspaces() {
 template <int32_t N>
 void write_low_weight_halfspaces(int32_t max) {
   const auto edges = compute_edges(N);
-  constexpr auto dir = N_CUBE_OUT_DIR "/one_weight/";
+  constexpr auto dir = N_CUBE_OUT_DIR "/one_weight";
   std::filesystem::create_directories(dir);
   const auto path =
-      dir + ("max_" + std::to_string(max) + "_" + std::to_string(N) + ".txt");
+      dir + ("/max_" + std::to_string(max) + "_" + std::to_string(N) + ".txt");
   write_low_weight_halfspaces_to_file<N>(max, edges, path);
 }
 
