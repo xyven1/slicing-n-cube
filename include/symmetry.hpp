@@ -1,5 +1,5 @@
-#ifndef SYMMETRY_H
-#define SYMMETRY_H
+#ifndef N_CUBE_SYMMETRY_H_
+#define N_CUBE_SYMMETRY_H_
 
 #include <algorithm>
 #include <cstdint>
@@ -107,4 +107,4 @@ std::vector<edge_trans_t> compute_edge_transformations(
   return edge_transformations;
 }
 
-#endif
+#endif  // N_CUBE_SYMMETRY_H_

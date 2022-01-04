@@ -1,5 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef N_CUBE_COMMON_H_
+#define N_CUBE_COMMON_H_
 
 #include <bitset>
 #include <chrono>
@@ -72,4 +72,4 @@ using complex_t = std::bitset<num_vertices(N)>;
 template <int32_t N>
 using sliceable_set_t = std::bitset<num_edges(N)>;
 
-#endif
+#endif  // N_CUBE_COMMON_H_

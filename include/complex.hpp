@@ -1,5 +1,5 @@
-#ifndef COMPLEX_H
-#define COMPLEX_H
+#ifndef N_CUBE_COMPLEX_H_
+#define N_CUBE_COMPLEX_H_
 
 #include <algorithm>
 #include <cstdint>
@@ -162,4 +162,4 @@ std::vector<complex_t<N>> compute_cut_complexes_degree_two(
   return compute_cut_complexes<N>(transformations, is_complex_degree_two<N>);
 }
 
-#endif
+#endif  // N_CUBE_COMPLEX_H_

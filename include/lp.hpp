@@ -1,5 +1,5 @@
-#ifndef LP_H
-#define LP_H
+#ifndef N_CUBE_LP_H_
+#define N_CUBE_LP_H_
 
 #include <cstdint>
 
@@ -19,4 +19,4 @@ bool is_complex_degree_one(const complex_t<N>& complex);
 template <int32_t N>
 bool is_complex_degree_two(const complex_t<N>& complex);
 
-#endif
+#endif  // N_CUBE_LP_H_

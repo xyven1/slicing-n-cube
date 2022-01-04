@@ -1,5 +1,5 @@
-#ifndef EDGE_H
-#define EDGE_H
+#ifndef N_CUBE_EDGE_H_
+#define N_CUBE_EDGE_H_
 
 #include <algorithm>
 #include <cstdint>
@@ -34,4 +34,4 @@ std::vector<edge_t> compute_edges(int32_t n) {
   return edges;
 }
 
-#endif
+#endif  // N_CUBE_EDGE_H_

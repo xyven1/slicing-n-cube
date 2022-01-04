@@ -1,5 +1,5 @@
-#ifndef LOW_WEIGHT_H
-#define LOW_WEIGHT_H
+#ifndef N_CUBE_LOW_WEIGHT_H_
+#define N_CUBE_LOW_WEIGHT_H_
 
 #include <algorithm>
 #include <cstdint>
@@ -284,4 +284,4 @@ void write_low_weight_halfspaces_to_file(int32_t max,
   }
 }
 
-#endif
+#endif  // N_CUBE_LOW_WEIGHT_H_

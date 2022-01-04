@@ -1,5 +1,5 @@
-#ifndef SLICEABLE_SET_H
-#define SLICEABLE_SET_H
+#ifndef N_CUBE_SLICEABLE_SET_H_
+#define N_CUBE_SLICEABLE_SET_H_
 
 #include <algorithm>
 #include <array>
@@ -512,4 +512,4 @@ std::vector<sliceable_set_t<N>> read_from_file(
   return sets;
 }
 
-#endif
+#endif  // N_CUBE_SLICEABLE_SET_H_
