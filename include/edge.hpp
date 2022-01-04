@@ -8,10 +8,10 @@
 
 #include "vertex.hpp"
 
-// The two vertices are assumed to be ordered, i.e. e.first < e.second
+/* The two vertices are assumed to be ordered, i.e. e.first < e.second. */
 using edge_t = std::pair<vertex_t, vertex_t>;
 
-// n * 2^n
+/* The number of edges is n * 2^(n - 1). */
 constexpr int32_t num_edges(int32_t n) { return n << (n - 1); }
 
 /**
@@ -24,7 +24,7 @@ inline int32_t edge_to_int(const edge_t& e, const std::vector<edge_t>& edges) {
 }
 
 /**
- *  Returns all edges of the n-cube in lexicographic order.
+ *  Returns all edges in lexicographic order.
  **/
 std::vector<edge_t> compute_edges(int32_t n) {
   std::vector<edge_t> edges;
