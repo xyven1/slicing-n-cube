@@ -6,6 +6,7 @@
 #include <CGAL/QP_models.h>
 
 #include <algorithm>
+#include <array>
 #include <bitset>
 #include <cstdint>
 #include <functional>
@@ -80,26 +81,31 @@ bool is_complex_degree_two(const complex_t<N>& complex) {
  *  Returns the unique symmetric representation of a cut complex.
  **/
 template <int32_t N>
-complex_t<N> unique_complex(
-    const complex_t<N>& complex,
-    const std::vector<vertex_trans_t>& transformations) {
-  complex_t<N> min_complex(complex);
-  for (const vertex_trans_t& transformation : transformations) {
-    complex_t<N> complex_trans;
-    bool is_new_min = false;
-    for (vertex_t v = num_vertices(N) - 1; v >= 0; --v) {
-      const vertex_t v_inversion = transformation[v];
-      complex_trans[v] = complex[v_inversion];
-      if (!is_new_min && complex_trans[v] && !min_complex[v]) {
-        // min_complex is still smaller
-        break;
-      }
-      is_new_min |= !complex_trans[v] && min_complex[v];
-    }
-    if (is_new_min) {
-      min_complex = complex_trans;
-    }
+complex_t<N> unique_complex(const complex_t<N>& complex) {
+  std::array<int32_t, N> permutation;
+  for (int32_t i = 0; i < N; ++i) {
+    permutation[i] = i;
   }
+  complex_t<N> min_complex(complex);
+  do {
+    for (int32_t signs = 0; signs < num_vertices(N); ++signs) {
+      complex_t<N> complex_trans;
+      bool is_new_min = false;
+      for (vertex_t v = num_vertices(N) - 1; v >= 0; --v) {
+        const vertex_t v_inversion =
+            transform_vertex_inv<N>(v, permutation, signs);
+        complex_trans[v] = complex[v_inversion];
+        if (!is_new_min && complex_trans[v] && !min_complex[v]) {
+          // min_complex is still smaller
+          break;
+        }
+        is_new_min |= !complex_trans[v] && min_complex[v];
+      }
+      if (is_new_min) {
+        min_complex = complex_trans;
+      }
+    }
+  } while (std::next_permutation(permutation.begin(), permutation.end()));
   return min_complex;
 }
 
@@ -171,7 +177,6 @@ std::vector<sliceable_set_t<N>> complexes_to_usr(
  **/
 template <int32_t N>
 std::vector<complex_t<N>> compute_cut_complexes(
-    const std::vector<vertex_trans_t>& transformations,
     std::function<bool(const complex_t<N>&)> is_complex) {
   constexpr int32_t l = num_vertices(N) / 2;
   // There is exactly one USR of all complexes of size 1
@@ -187,7 +192,7 @@ std::vector<complex_t<N>> compute_cut_complexes(
         // std::cout << "\nTrying adjacent vertex " << v << std::endl;
         complex_t<N> maybe_complex(complexes[j]);
         maybe_complex[v] = true;
-        maybe_complex = unique_complex<N>(maybe_complex, transformations);
+        maybe_complex = unique_complex<N>(maybe_complex);
         // std::cout << "Maybe new complex: " << maybe_complex << std::endl;
         if (std::find(complexes.begin() + prev_end, complexes.end(),
                       maybe_complex) == complexes.end()) {
@@ -211,9 +216,8 @@ std::vector<complex_t<N>> compute_cut_complexes(
  *  to a degree one polynomial (i.e. a normal hyperplane).
  **/
 template <int32_t N>
-std::vector<complex_t<N>> compute_cut_complexes_degree_one(
-    const std::vector<vertex_trans_t>& transformations) {
-  return compute_cut_complexes<N>(transformations, is_complex_degree_one<N>);
+std::vector<complex_t<N>> compute_cut_complexes_degree_one() {
+  return compute_cut_complexes<N>(is_complex_degree_one<N>);
 }
 
 /**
@@ -221,9 +225,8 @@ std::vector<complex_t<N>> compute_cut_complexes_degree_one(
  *  to a degree two polynomial.
  **/
 template <int32_t N>
-std::vector<complex_t<N>> compute_cut_complexes_degree_two(
-    const std::vector<vertex_trans_t>& transformations) {
-  return compute_cut_complexes<N>(transformations, is_complex_degree_two<N>);
+std::vector<complex_t<N>> compute_cut_complexes_degree_two() {
+  return compute_cut_complexes<N>(is_complex_degree_two<N>);
 }
 
 #endif  // N_CUBE_COMPLEX_H_

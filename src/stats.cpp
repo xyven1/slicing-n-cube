@@ -10,8 +10,7 @@
 template <int32_t N>
 std::vector<int64_t> compute_edge_frequencies() {
   const auto vertex_transformations = compute_vertex_transformations(N);
-  const auto complexes =
-      compute_cut_complexes_degree_one<N>(vertex_transformations);
+  const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);

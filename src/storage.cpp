@@ -12,8 +12,7 @@
 template <int32_t N>
 void write_degree_two_sliceable_sets() {
   const auto vertex_transformations = compute_vertex_transformations(N);
-  const auto complexes =
-      compute_cut_complexes_degree_two<N>(vertex_transformations);
+  const auto complexes = compute_cut_complexes_degree_two<N>();
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
@@ -32,8 +31,7 @@ void write_degree_two_sliceable_sets() {
 template <int32_t N>
 void write_degree_one_sliceable_sets() {
   const auto vertex_transformations = compute_vertex_transformations(N);
-  const auto complexes =
-      compute_cut_complexes_degree_one<N>(vertex_transformations);
+  const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);

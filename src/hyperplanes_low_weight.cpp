@@ -11,8 +11,7 @@
 template <int32_t N>
 auto compute_sorted_mss() {
   const auto vertex_transformations = compute_vertex_transformations(N);
-  const auto complexes =
-      compute_cut_complexes_degree_one<N>(vertex_transformations);
+  const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
