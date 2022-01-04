@@ -17,7 +17,7 @@
 #include "symmetry.hpp"
 #include "vertex.hpp"
 
-// complex[v] is true iff vertex v is in the complex
+/* complex[v] is true if vertex v is in the complex and false otherwise. */
 template <int32_t N>
 using complex_t = std::bitset<num_vertices(N)>;
 
@@ -33,7 +33,11 @@ bool is_complex_degree_one(const complex_t<N>& complex) {
   using Solution = CGAL::Quadratic_program_solution<ET>;
   Program lp(CGAL::SMALLER, false, 0, false, 0);
   for (vertex_t v = 0; v < num_vertices(N); ++v) {
-    // invert inequality operator for vertices not part of the complex
+    // The variable sign serves two purposes:
+    // 1. Invert the inequality operator for vertices not part of the complex by
+    //    multiplying the inequality with -1.
+    // 2. Express the strict inequality `a * x < 0` as `a * x <= -eps`.
+    //    To retain integer inputs the inequality is then rescaled by eps^-1.
     const int32_t sign = (complex[v]) ? 1000 : -1000;
     for (int32_t i = 0; i < N; ++i) {
       const auto coordinate_i = get_coordinate(v, i);
@@ -58,7 +62,11 @@ bool is_complex_degree_two(const complex_t<N>& complex) {
   using Solution = CGAL::Quadratic_program_solution<ET>;
   Program lp(CGAL::SMALLER, false, 0, false, 0);
   for (vertex_t v = 0; v < num_vertices(N); ++v) {
-    // invert inequality operator for vertices not part of the complex
+    // The variable sign serves two purposes:
+    // 1. Invert the inequality operator for vertices not part of the complex by
+    //    multiplying the inequality with -1.
+    // 2. Express the strict inequality `a * x < 0` as `a * x <= -eps`.
+    //    To retain integer inputs the inequality is then rescaled by eps^-1.
     const int32_t sign = (complex[v]) ? 1000 : -1000;
     for (int32_t i = 0; i < N; ++i) {
       const auto coordinate_i = get_coordinate(v, i);
@@ -87,6 +95,10 @@ complex_t<N> unique_complex(const complex_t<N>& complex) {
   for (int32_t i = 0; i < N; ++i) {
     permutation[i] = i;
   }
+  // Since the unique symmetric representation of a cut complex is defined as
+  // the lexicographically smallest transformation, a transformation may be
+  // aborted as soon as any resulting bit (starting from the leftmost bit) is 1
+  // and the corresponding bit of the current minimum is 0.
   complex_t<N> min_complex(complex);
   do {
     for (int32_t signs = 0; signs < num_vertices(N); ++signs) {
@@ -97,7 +109,6 @@ complex_t<N> unique_complex(const complex_t<N>& complex) {
             transform_vertex_inv<N>(v, permutation, signs);
         complex_trans[v] = complex[v_inversion];
         if (!is_new_min && complex_trans[v] && !min_complex[v]) {
-          // min_complex is still smaller
           break;
         }
         is_new_min |= !complex_trans[v] && min_complex[v];
@@ -179,30 +190,22 @@ std::vector<sliceable_set_t<N>> complexes_to_usr(
 template <int32_t N>
 std::vector<complex_t<N>> compute_cut_complexes(
     std::function<bool(const complex_t<N>&)> is_complex) {
-  constexpr int32_t l = num_vertices(N) / 2;
-  // There is exactly one USR of all complexes of size 1
+  // There is exactly one USR of all complexes of size 1.
   std::vector<complex_t<N>> complexes = {{1}};
-  // The range [prev_begin, prev_end) contains all complexes of size i
+  // The range [prev_begin, prev_end) contains all complexes of size i.
   std::size_t prev_begin = 0;
   std::size_t prev_end = complexes.size();
-  for (int32_t i = 1; i < l; ++i) {
-    // std::cout << "Expanding complexes of size " << i << std::endl;
+  for (int32_t i = 1; i < num_vertices(N) / 2; ++i) {
     for (std::size_t j = prev_begin; j < prev_end; ++j) {
-      // std::cout << "Expanding complex " << complexes[j] << std::endl;
-      for (const vertex_t& v : adjacent_vertices_of_complex<N>(complexes[j])) {
-        // std::cout << "\nTrying adjacent vertex " << v << std::endl;
-        complex_t<N> maybe_complex(complexes[j]);
-        maybe_complex[v] = true;
-        maybe_complex = unique_complex<N>(maybe_complex);
-        // std::cout << "Maybe new complex: " << maybe_complex << std::endl;
+      for (const auto& v : adjacent_vertices_of_complex<N>(complexes[j])) {
+        complex_t<N> new_complex = complexes[j];
+        new_complex[v] = true;
+        new_complex = unique_complex<N>(new_complex);
         if (std::find(complexes.begin() + prev_end, complexes.end(),
-                      maybe_complex) == complexes.end()) {
-          if (is_complex(maybe_complex)) {
-            complexes.push_back(maybe_complex);
-            // std::cout << "New complex: " << maybe_complex << std::endl;
+                      new_complex) == complexes.end()) {
+          if (is_complex(new_complex)) {
+            complexes.push_back(new_complex);
           }
-        } else {
-          // std::cout << "Already known complex" << std::endl;
         }
       }
     }
