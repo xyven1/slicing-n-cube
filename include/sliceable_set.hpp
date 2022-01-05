@@ -252,22 +252,31 @@ bool combine_usr_mss_final_naive(const std::vector<sliceable_set_t<N>>& usr,
 template <int32_t N>
 std::vector<sliceable_set_t<N>> usr_to_mss(
     const std::vector<sliceable_set_t<N>>& usr,
-    const std::vector<edge_trans_t>& transformations) {
+    const std::vector<edge_t>& edges) {
   std::vector<sliceable_set_t<N>> mss;
   mss.reserve(usr.size() * num_symmetries(N));
-  for (const sliceable_set_t<N>& ss : usr) {
-    for (const edge_trans_t& transformation : transformations) {
-      sliceable_set_t<N> ss_trans;
-      for (int32_t e = 0; e < num_edges(N); ++e) {
-        const int32_t e_inversion = transformation[e];
-        ss_trans[e] = ss[e_inversion];
-      }
-      mss.push_back(ss_trans);
+  for (const auto& ss : usr) {
+    std::array<int32_t, N> permutation;
+    for (int32_t i = 0; i < N; ++i) {
+      permutation[i] = i;
     }
+    do {
+      for (int32_t signs = 0; signs < num_vertices(N); ++signs) {
+        sliceable_set_t<N> ss_trans;
+        for (int32_t e = 0; e < num_edges(N); ++e) {
+          const vertex_t u =
+              transform_vertex_inv<N>(edges[e].first, permutation, signs);
+          const vertex_t v =
+              transform_vertex_inv<N>(edges[e].second, permutation, signs);
+          const edge_t edge_inv = (u < v) ? edge_t(u, v) : edge_t(v, u);
+          ss_trans[e] = ss[edge_to_int(edge_inv, edges)];
+        }
+        mss.push_back(ss_trans);
+      }
+    } while (std::next_permutation(permutation.begin(), permutation.end()));
   }
   std::sort(mss.begin(), mss.end());
   mss.erase(std::unique(mss.begin(), mss.end()), mss.end());
-  // mss.shrink_to_fit();
   return mss;
 }
 
