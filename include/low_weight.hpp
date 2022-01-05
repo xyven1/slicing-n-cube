@@ -177,7 +177,7 @@ int32_t combine_low_weight_sliceable_sets(
   std::cout << "expanded size = " << sets.size() << std::endl;
   std::cout << "k = " << 1 << " size = " << sets_k.size() << std::endl;
   for (int i = 2;; ++i) {
-    sets_k = combine_usr_mss_parallel<N>(sets_k, sets, edges);
+    sets_k = pairwise_unions_parallel<N>(sets_k, sets, edges);
     std::cout << "k = " << i << " size = " << sets_k.size() << std::endl;
     for (const auto& ss : sets_k) {
       if (ss.all()) {

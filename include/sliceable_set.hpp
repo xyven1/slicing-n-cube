@@ -78,7 +78,7 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
  *  lists of sliceable sets.
  **/
 template <int32_t N>
-std::vector<sliceable_set_t<N>> combine_usr_mss(
+std::vector<sliceable_set_t<N>> pairwise_unions(
     const std::vector<sliceable_set_t<N>>& sets_1,
     const std::vector<sliceable_set_t<N>>& sets_2,
     const std::vector<edge_t>& edges) {
@@ -108,7 +108,7 @@ std::vector<sliceable_set_t<N>> combine_usr_mss(
  *  lists of sliceable sets in a range. Does NOT discard duplicates.
  **/
 template <int32_t N>
-void combine_usr_mss_all(
+void pairwise_unions_all(
     typename std::vector<sliceable_set_t<N>>::const_iterator sets_1_begin,
     typename std::vector<sliceable_set_t<N>>::const_iterator sets_1_end,
     typename std::vector<sliceable_set_t<N>>::const_iterator sets_2_begin,
@@ -131,13 +131,13 @@ void combine_usr_mss_all(
  *  This function is parallelized but requires a significant amount of memory.
  **/
 template <int32_t N>
-std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
+std::vector<sliceable_set_t<N>> pairwise_unions_parallel(
     const std::vector<sliceable_set_t<N>>& sets_1,
     const std::vector<sliceable_set_t<N>>& sets_2,
     const std::vector<edge_t>& edges) {
   // ensure effective parallelization
   if (sets_1.size() > sets_2.size()) {
-    return combine_usr_mss_parallel<N>(sets_2, sets_1, edges);
+    return pairwise_unions_parallel<N>(sets_2, sets_1, edges);
   }
   // divide mss
   const unsigned int num_threads = std::thread::hardware_concurrency();
@@ -150,7 +150,7 @@ std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
     const auto unions_begin = unions.begin() + prev_workload * sets_1.size();
     const auto set_1_begin = sets_2.begin() + prev_workload;
     const auto sets_1_end = sets_2.begin() + prev_workload + set_1_workload[i];
-    threads.push_back(std::thread(combine_usr_mss_all<N>, sets_1.begin(),
+    threads.push_back(std::thread(pairwise_unions_all<N>, sets_1.begin(),
                                   sets_1.end(), set_1_begin, sets_1_end,
                                   unions_begin, edges));
     prev_workload += set_1_workload[i];
@@ -213,8 +213,8 @@ int32_t get_leading_ones(const sliceable_set_t<N>& ss) {
  *  The second list is required to be sorted.
  **/
 template <int32_t N>
-bool combine_usr_mss_final(const std::vector<sliceable_set_t<N>>& usr,
-                           const std::vector<sliceable_set_t<N>>& mss) {
+bool pairwise_unions_slice_cube(const std::vector<sliceable_set_t<N>>& usr,
+                                const std::vector<sliceable_set_t<N>>& mss) {
   bool slices_all = false;
   for (const sliceable_set_t<N>& set_1 : usr) {
     const int32_t leading_zeros = get_leading_zeros<N>(set_1);
@@ -223,8 +223,8 @@ bool combine_usr_mss_final(const std::vector<sliceable_set_t<N>>& usr,
       if (leading_ones < leading_zeros) {
         break;
       }
-      const sliceable_set_t<N> combo = set_1 | *set_2_it;
-      slices_all |= combo.all();
+      const auto set_union = set_1 | *set_2_it;
+      slices_all |= set_union.all();
     }
   }
   return slices_all;

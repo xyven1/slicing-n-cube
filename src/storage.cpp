@@ -29,7 +29,7 @@ void write_degree_one_sliceable_sets() {
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = usr_to_mss<N>(usr, edges);
-  const auto usr_2 = combine_usr_mss<N>(usr, mss, edges);
+  const auto usr_2 = pairwise_unions<N>(usr, mss, edges);
   const auto mss_2 = usr_to_mss<N>(usr_2, edges);
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_one";
   std::filesystem::create_directories(dir);
