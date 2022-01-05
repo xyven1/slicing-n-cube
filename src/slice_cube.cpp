@@ -9,11 +9,8 @@
 
 template <int32_t N>
 bool slice_cube() {
-  const auto vertex_transformations = compute_vertex_transformations(N);
-  const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto edges = compute_edges(N);
-  const auto edge_transformations =
-      compute_edge_transformations(edges, vertex_transformations, N);
+  const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = usr_to_mss<N>(usr, edges);
   const auto usr_2 = combine_usr_mss<N>(usr, mss, edges);

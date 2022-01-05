@@ -9,11 +9,8 @@
 
 template <int32_t N>
 std::vector<int64_t> compute_edge_frequencies() {
-  const auto vertex_transformations = compute_vertex_transformations(N);
-  const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto edges = compute_edges(N);
-  const auto edge_transformations =
-      compute_edge_transformations(edges, vertex_transformations, N);
+  const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = usr_to_mss<N>(usr, edges);
   std::vector<int64_t> frequencies(num_edges(N) + 1);
