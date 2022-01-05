@@ -172,7 +172,7 @@ sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
  *  Returns the unique symmetric representation of all slicings induced by the
  *  cut complexes.
  *
- *  The returned slicings are sorted in lexigraphic order.
+ *  The returned slicings are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> complexes_to_usr(
