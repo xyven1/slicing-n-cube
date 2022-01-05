@@ -15,7 +15,7 @@ auto compute_sorted_mss() {
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
-  const auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
+  const auto usr = complexes_to_usr<N>(complexes, edges);
   auto mss = usr_to_mss<N>(usr, edge_transformations);
   std::sort(mss.begin(), mss.end());
   return mss;

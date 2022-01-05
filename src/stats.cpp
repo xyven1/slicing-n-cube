@@ -14,7 +14,7 @@ std::vector<int64_t> compute_edge_frequencies() {
   const auto edges = compute_edges(N);
   const auto edge_transformations =
       compute_edge_transformations(edges, vertex_transformations, N);
-  const auto usr = complexes_to_usr<N>(complexes, edge_transformations, edges);
+  const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = usr_to_mss<N>(usr, edge_transformations);
   std::vector<int64_t> frequencies(num_edges(N) + 1);
   for (const auto& ss : mss) {

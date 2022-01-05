@@ -12,6 +12,7 @@
 #include <functional>
 #include <vector>
 
+#include "bitset_comparator.hpp"
 #include "edge.hpp"
 #include "sliceable_set.hpp"
 #include "symmetry.hpp"
@@ -168,18 +169,21 @@ sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
 /**
  *  Returns the unique symmetric representation of all slicings induced by the
  *  cut complexes.
+ *
+ *  The returned slicings are sorted in lexigraphic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> complexes_to_usr(
     const std::vector<complex_t<N>>& complexes,
-    const std::vector<edge_trans_t>& edge_transformations,
     const std::vector<edge_t>& edges) {
   std::vector<sliceable_set_t<N>> usr;
-  for (const complex_t<N>& complex : complexes) {
-    sliceable_set_t<N> ss = complex_to_sliceable_set<N>(complex, edges);
-    ss = unique_sliceable_set<N>(ss, edge_transformations);
+  for (const auto& complex : complexes) {
+    auto ss = complex_to_sliceable_set<N>(complex, edges);
+    ss = unique_sliceable_set<N>(ss, edges);
     usr.push_back(ss);
   }
+  std::sort(usr.begin(), usr.end());
+  usr.erase(std::unique(usr.begin(), usr.end()), usr.end());
   return usr;
 }
 
