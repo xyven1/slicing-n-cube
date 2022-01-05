@@ -16,7 +16,7 @@ bool slice_cube() {
       compute_edge_transformations(edges, vertex_transformations, N);
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = usr_to_mss<N>(usr, edge_transformations);
-  const auto usr_2 = combine_usr_mss<N>(usr, mss, edge_transformations);
+  const auto usr_2 = combine_usr_mss<N>(usr, mss, edges);
   const auto mss_2 = usr_to_mss<N>(usr_2, edge_transformations);
   return combine_usr_mss_final<N>(usr, mss);
 }

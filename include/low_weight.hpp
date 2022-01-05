@@ -162,37 +162,6 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
 /**
  *  Returns the smallest k so that the given sliceable sets contain a
  *  k-sliceable set.
- *
- *  This function uses significantly more memory than the below function which
- *  prevents efficient parallelization.
- **/
-template <int32_t N>
-int32_t combine_low_weight_sliceable_sets(
-    const std::vector<sliceable_set_t<N>>& sets,
-    const std::vector<edge_trans_t>& transformations) {
-  std::vector<sliceable_set_t<N>> sets_k;
-  for (const auto& ss : sets) {
-    const auto usr = unique_sliceable_set<N>(ss, transformations);
-    if (std::find(sets_k.begin(), sets_k.end(), usr) == sets_k.end()) {
-      sets_k.push_back(usr);
-    }
-  }
-  std::cout << "expanded size = " << sets.size() << std::endl;
-  std::cout << "k = " << 1 << " size = " << sets_k.size() << std::endl;
-  for (int i = 2;; ++i) {
-    sets_k = combine_usr_mss<N>(sets_k, sets, transformations);
-    std::cout << "k = " << i << " size = " << sets_k.size() << std::endl;
-    for (const auto& ss : sets_k) {
-      if (ss.all()) {
-        return i;
-      }
-    }
-  }
-}
-
-/**
- *  Returns the smallest k so that the given sliceable sets contain a
- *  k-sliceable set.
  **/
 template <int32_t N>
 int32_t combine_low_weight_sliceable_sets(

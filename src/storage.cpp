@@ -37,7 +37,7 @@ void write_degree_one_sliceable_sets() {
       compute_edge_transformations(edges, vertex_transformations, N);
   auto usr = complexes_to_usr<N>(complexes, edges);
   auto mss = usr_to_mss<N>(usr, edge_transformations);
-  auto usr_2 = combine_usr_mss<N>(usr, mss, edge_transformations);
+  auto usr_2 = combine_usr_mss<N>(usr, mss, edges);
   auto mss_2 = usr_to_mss<N>(usr_2, edge_transformations);
   std::sort(usr.begin(), usr.end());
   std::sort(mss.begin(), mss.end());
