@@ -106,9 +106,11 @@ complex_t<N> unique_complex(const complex_t<N>& complex) {
       complex_t<N> complex_trans;
       bool is_new_min = false;
       for (vertex_t v = num_vertices(N) - 1; v >= 0; --v) {
-        const vertex_t v_inversion =
-            transform_vertex_inv<N>(v, permutation, signs);
-        complex_trans[v] = complex[v_inversion];
+        const vertex_t v_trans = transform_vertex<N>(v, permutation, signs);
+        // This actually computes the inverse transformation, but because the
+        // algorithm goes through all transformations it ultimately ends up
+        // being the same.
+        complex_trans[v] = complex[v_trans];
         if (!is_new_min && complex_trans[v] && !min_complex[v]) {
           break;
         }

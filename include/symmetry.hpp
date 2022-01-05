@@ -17,18 +17,16 @@ constexpr int32_t num_symmetries(int32_t n) {
 }
 
 template <int32_t N>
-vertex_t transform_vertex_inv(vertex_t v,
-                              const std::array<int32_t, N>& positions,
-                              int32_t signs) {
-  vertex_t transformation = 0;
+vertex_t transform_vertex(vertex_t v, const std::array<int32_t, N>& positions,
+                          int32_t signs) {
+  vertex_t v_trans = 0;
   for (int32_t i = 0; i < N; ++i) {
-    const int32_t sign_i = (signs >> i) & 1;
-    const int32_t val_i = (v >> positions[i]) & 1;
-    const int32_t val_i_sign = val_i ^ sign_i;
-    const int32_t val_i_sign_and_position = val_i_sign << i;
-    transformation |= val_i_sign_and_position;
+    const int32_t change_sign = (signs >> i) & 1;
+    const int32_t coordinate_bit = (v >> i) & 1;
+    const int32_t new_coordinate_bit = coordinate_bit ^ change_sign;
+    v_trans |= new_coordinate_bit << positions[i];
   }
-  return transformation;
+  return v_trans;
 }
 
 #endif  // N_CUBE_SYMMETRY_H_
