@@ -18,8 +18,6 @@ void write_degree_two_sliceable_sets() {
       compute_edge_transformations(edges, vertex_transformations, N);
   auto usr = complexes_to_usr<N>(complexes, edges);
   auto mss = usr_to_mss<N>(usr, edges);
-  std::sort(usr.begin(), usr.end());
-  std::sort(mss.begin(), mss.end());
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_two";
   std::filesystem::create_directories(dir);
   const auto path_usr_1 = dir + ("/" + std::to_string(N) + "_usr_1.bin");
@@ -39,10 +37,6 @@ void write_degree_one_sliceable_sets() {
   auto mss = usr_to_mss<N>(usr, edges);
   auto usr_2 = combine_usr_mss<N>(usr, mss, edges);
   auto mss_2 = usr_to_mss<N>(usr_2, edges);
-  std::sort(usr.begin(), usr.end());
-  std::sort(mss.begin(), mss.end());
-  std::sort(usr_2.begin(), usr_2.end());
-  std::sort(mss_2.begin(), mss_2.end());
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_one";
   std::filesystem::create_directories(dir);
   const auto path_usr_1 = dir + ("/" + std::to_string(N) + "_usr_1.bin");

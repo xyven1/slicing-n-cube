@@ -9,22 +9,11 @@
 #include "vertex.hpp"
 
 template <int32_t N>
-auto compute_sorted_mss() {
-  const auto vertex_transformations = compute_vertex_transformations(N);
+int32_t smallest_low_weight() {
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto edges = compute_edges(N);
-  const auto edge_transformations =
-      compute_edge_transformations(edges, vertex_transformations, N);
   const auto usr = complexes_to_usr<N>(complexes, edges);
-  auto mss = usr_to_mss<N>(usr, edges);
-  std::sort(mss.begin(), mss.end());
-  return mss;
-}
-
-template <int32_t N>
-int32_t smallest_low_weight() {
-  const auto edges = compute_edges(N);
-  const auto mss = compute_sorted_mss<N>();
+  const auto mss = usr_to_mss<N>(usr, edges);
   for (int k = 0;; ++k) {
     auto mss_low_weight = compute_low_weight_mss<N>(edges, k);
     std::sort(mss_low_weight.begin(), mss_low_weight.end());
