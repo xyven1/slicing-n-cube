@@ -7,8 +7,8 @@
 #include "symmetry.hpp"
 #include "vertex.hpp"
 
-bool slice_cube_5() {
-  constexpr int32_t N = 5;
+template <int32_t N>
+bool slice_cube() {
   const auto vertex_transformations = compute_vertex_transformations(N);
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto edges = compute_edges(N);
@@ -21,4 +21,4 @@ bool slice_cube_5() {
   return combine_usr_mss_final<N>(usr, mss);
 }
 
-int main() { std::cout << slice_cube_5() << std::endl; }
+int main() { std::cout << slice_cube<5>() << std::endl; }
