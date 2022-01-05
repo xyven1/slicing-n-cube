@@ -50,15 +50,12 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
       sliceable_set_t<N> ss_trans;
       bool is_new_min = false;
       for (int32_t e = num_edges(N) - 1; e >= 0; --e) {
-        const vertex_t u =
-            transform_vertex<N>(edges[e].first, permutation, signs);
-        const vertex_t v =
-            transform_vertex<N>(edges[e].second, permutation, signs);
-        const edge_t edge_trans = (u < v) ? edge_t(u, v) : edge_t(v, u);
+        const auto edge_trans = transform_edge<N>(edges[e], permutation, signs);
+        const auto e_trans = edge_to_int(edge_trans, edges);
         // This actually computes the inverse transformation, but because the
         // algorithm goes through all transformations it ultimately ends up
         // being the same.
-        ss_trans[e] = ss[edge_to_int(edge_trans, edges)];
+        ss_trans[e] = ss[e_trans];
         if (!is_new_min && ss_trans[e] && !min_ss[e]) {
           // min_ss is still smaller
           break;
@@ -267,12 +264,10 @@ std::vector<sliceable_set_t<N>> usr_to_mss(
       for (int32_t signs = 0; signs < num_vertices(N); ++signs) {
         sliceable_set_t<N> ss_trans;
         for (int32_t e = 0; e < num_edges(N); ++e) {
-          const vertex_t u =
-              transform_vertex<N>(edges[e].first, permutation, signs);
-          const vertex_t v =
-              transform_vertex<N>(edges[e].second, permutation, signs);
-          const edge_t edge_trans = (u < v) ? edge_t(u, v) : edge_t(v, u);
-          ss_trans[edge_to_int(edge_trans, edges)] = ss[e];
+          const auto edge_trans =
+              transform_edge<N>(edges[e], permutation, signs);
+          const auto e_trans = edge_to_int(edge_trans, edges);
+          ss_trans[e_trans] = ss[e];
         }
         mss.push_back(ss_trans);
       }

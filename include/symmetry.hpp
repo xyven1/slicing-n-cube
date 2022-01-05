@@ -29,4 +29,12 @@ vertex_t transform_vertex(vertex_t v, const std::array<int32_t, N>& positions,
   return v_trans;
 }
 
+template <int32_t N>
+edge_t transform_edge(edge_t e, const std::array<int32_t, N>& positions,
+                      int32_t signs) {
+  const vertex_t u = transform_vertex<N>(e.first, positions, signs);
+  const vertex_t v = transform_vertex<N>(e.second, positions, signs);
+  return (u < v) ? edge_t(u, v) : edge_t(v, u);
+}
+
 #endif  // N_CUBE_SYMMETRY_H_
