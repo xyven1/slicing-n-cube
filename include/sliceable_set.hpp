@@ -79,30 +79,28 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> combine_usr_mss(
-    const std::vector<sliceable_set_t<N>>& usr,
-    const std::vector<sliceable_set_t<N>>& mss,
+    const std::vector<sliceable_set_t<N>>& sets_1,
+    const std::vector<sliceable_set_t<N>>& sets_2,
     const std::vector<edge_t>& edges) {
-  std::vector<sliceable_set_t<N>> combos;
-  for (const sliceable_set_t<N>& set_1 : usr) {
-    for (const sliceable_set_t<N>& set_2 : mss) {
-      sliceable_set_t<N> combo = set_1 | set_2;
-      combo = unique_sliceable_set<N>(combo, edges);
-      // Returns whether the other sliceable set is a superset of the combo.
-      const auto is_superset = [combo](const sliceable_set_t<N>& other) {
-        return (combo | other) == other;
+  std::vector<sliceable_set_t<N>> unions;
+  for (const auto& set_1 : sets_1) {
+    for (const auto& set_2 : sets_2) {
+      const auto usr = unique_sliceable_set<N>(set_1 | set_2, edges);
+      const auto is_superset_of_usr = [usr](const sliceable_set_t<N>& ss) {
+        return (usr | ss) == ss;
       };
-      if (std::none_of(combos.begin(), combos.end(), is_superset)) {
-        // Returns whether the other sliceable set is a subset of the combo.
-        const auto is_subset = [combo](const sliceable_set_t<N>& other) {
-          return (combo | other) == combo;
+      if (std::none_of(unions.begin(), unions.end(), is_superset_of_usr)) {
+        const auto is_subset_of_usr = [usr](const sliceable_set_t<N>& ss) {
+          return (usr | ss) == usr;
         };
-        const auto it = remove_if(combos.begin(), combos.end(), is_subset);
-        combos.erase(it, combos.end());
-        combos.push_back(combo);
+        const auto it =
+            remove_if(unions.begin(), unions.end(), is_subset_of_usr);
+        unions.erase(it, unions.end());
+        unions.push_back(usr);
       }
     }
   }
-  return combos;
+  return unions;
 }
 
 /**
@@ -111,18 +109,17 @@ std::vector<sliceable_set_t<N>> combine_usr_mss(
  **/
 template <int32_t N>
 void combine_usr_mss_all(
-    typename std::vector<sliceable_set_t<N>>::const_iterator usr_begin,
-    typename std::vector<sliceable_set_t<N>>::const_iterator usr_end,
-    typename std::vector<sliceable_set_t<N>>::const_iterator mss_begin,
-    typename std::vector<sliceable_set_t<N>>::const_iterator mss_end,
-    typename std::vector<sliceable_set_t<N>>::iterator combos_begin,
+    typename std::vector<sliceable_set_t<N>>::const_iterator sets_1_begin,
+    typename std::vector<sliceable_set_t<N>>::const_iterator sets_1_end,
+    typename std::vector<sliceable_set_t<N>>::const_iterator sets_2_begin,
+    typename std::vector<sliceable_set_t<N>>::const_iterator sets_2_end,
+    typename std::vector<sliceable_set_t<N>>::iterator unions_begin,
     const std::vector<edge_t>& edges) {
-  auto combos_it = combos_begin;
-  for (auto usr_it = usr_begin; usr_it != usr_end; ++usr_it) {
-    for (auto mss_it = mss_begin; mss_it != mss_end; ++mss_it) {
-      const auto combo = *usr_it | *mss_it;
-      *combos_it = unique_sliceable_set<N>(combo, edges);
-      ++combos_it;
+  auto unions_it = unions_begin;
+  for (auto set_1 = sets_1_begin; set_1 != sets_1_end; ++set_1) {
+    for (auto set_2 = sets_2_begin; set_2 != sets_2_end; ++set_2) {
+      *unions_it = unique_sliceable_set<N>(*set_1 | *set_2, edges);
+      ++unions_it;
     }
   }
 }
@@ -135,51 +132,50 @@ void combine_usr_mss_all(
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> combine_usr_mss_parallel(
-    const std::vector<sliceable_set_t<N>>& usr,
-    const std::vector<sliceable_set_t<N>>& mss,
+    const std::vector<sliceable_set_t<N>>& sets_1,
+    const std::vector<sliceable_set_t<N>>& sets_2,
     const std::vector<edge_t>& edges) {
   // ensure effective parallelization
-  if (usr.size() > mss.size()) {
-    return combine_usr_mss_parallel<N>(mss, usr, edges);
+  if (sets_1.size() > sets_2.size()) {
+    return combine_usr_mss_parallel<N>(sets_2, sets_1, edges);
   }
   // divide mss
   const unsigned int num_threads = std::thread::hardware_concurrency();
-  const auto mss_workload = assign_workload(mss.size(), num_threads);
+  const auto set_1_workload = assign_workload(sets_2.size(), num_threads);
   // compute the unique symmetric representation of all pairwise unions
-  std::vector<sliceable_set_t<N>> combos(usr.size() * mss.size());
+  std::vector<sliceable_set_t<N>> unions(sets_1.size() * sets_2.size());
   std::vector<std::thread> threads;
-  std::size_t mss_workload_prior = 0;
+  std::size_t prev_workload = 0;
   for (unsigned int i = 0; i < num_threads; ++i) {
-    const auto combos_begin = combos.begin() + mss_workload_prior * usr.size();
-    const auto mss_begin = mss.begin() + mss_workload_prior;
-    const auto mss_end = mss.begin() + mss_workload_prior + mss_workload[i];
-    threads.push_back(std::thread(combine_usr_mss_all<N>, usr.begin(),
-                                  usr.end(), mss_begin, mss_end, combos_begin,
-                                  edges));
-    mss_workload_prior += mss_workload[i];
+    const auto unions_begin = unions.begin() + prev_workload * sets_1.size();
+    const auto set_1_begin = sets_2.begin() + prev_workload;
+    const auto sets_1_end = sets_2.begin() + prev_workload + set_1_workload[i];
+    threads.push_back(std::thread(combine_usr_mss_all<N>, sets_1.begin(),
+                                  sets_1.end(), set_1_begin, sets_1_end,
+                                  unions_begin, edges));
+    prev_workload += set_1_workload[i];
   }
   for (auto& t : threads) {
     t.join();
   }
   // discard duplicates
-  std::sort(combos.begin(), combos.end());
-  auto combos_end = std::unique(combos.begin(), combos.end());
+  std::sort(unions.begin(), unions.end());
+  auto unions_end = std::unique(unions.begin(), unions.end());
   // discard subsets
-  for (auto it = combos.begin(); it != combos_end;) {
-    // Returns whether the other sliceable set is a superset of the combo.
-    const auto is_superset = [it](const sliceable_set_t<N>& other) {
-      return (*it | other) == other;
+  for (auto it = unions.begin(); it != unions_end;) {
+    const auto is_superset_of_it = [it](const sliceable_set_t<N>& ss) {
+      return (*it | ss) == ss;
     };
-    if (std::any_of(combos.begin(), it, is_superset) ||
-        std::any_of(it + 1, combos_end, is_superset)) {
-      --combos_end;
-      *it = *combos_end;
+    if (std::any_of(unions.begin(), it, is_superset_of_it) ||
+        std::any_of(it + 1, unions_end, is_superset_of_it)) {
+      --unions_end;
+      *it = *unions_end;
     } else {
       ++it;
     }
   }
-  combos.erase(combos_end, combos.end());
-  return combos;
+  unions.erase(unions_end, unions.end());
+  return unions;
 }
 
 /**
