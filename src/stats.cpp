@@ -31,8 +31,7 @@ int64_t count_pairs_cardinality(const std::vector<sliceable_set_t<N>>& usr,
   }
   int64_t count = 0;
   for (const auto& ss : usr) {
-    for (std::size_t i = max_cardinality - ss.count(); i < cardinalities.size();
-         ++i) {
+    for (auto i = max_cardinality - ss.count(); i < cardinalities.size(); ++i) {
       count += cardinalities[i];
     }
   }
@@ -48,8 +47,7 @@ int64_t count_pairs_leading_zeros(const std::vector<sliceable_set_t<N>>& usr,
   }
   int64_t count = 0;
   for (const auto& ss : usr) {
-    for (std::size_t i = get_leading_zeros<N>(ss); i < leading_ones.size();
-         ++i) {
+    for (auto i = get_leading_zeros<N>(ss); i < leading_ones.size(); ++i) {
       count += leading_ones[i];
     }
   }
