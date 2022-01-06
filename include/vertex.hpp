@@ -43,9 +43,10 @@ vertex_t transform_vertex(vertex_t v, const std::array<int32_t, N>& permutation,
                           int32_t signs) {
   vertex_t v_trans = 0;
   for (int32_t i = 0; i < N; ++i) {
-    const int32_t change_sign = (signs >> i) & 1;
-    const int32_t coordinate_bit = (v >> i) & 1;
-    const int32_t new_coordinate_bit = coordinate_bit ^ change_sign;
+    const bool change_sign = (signs >> i) & 1;
+    const bool coordinate_bit = (v >> i) & 1;
+    // != flips the coordinate_bit if and only if change_sign is true
+    const bool new_coordinate_bit = coordinate_bit != change_sign;
     v_trans |= new_coordinate_bit << permutation[i];
   }
   return v_trans;
