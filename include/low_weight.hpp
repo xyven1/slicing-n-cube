@@ -137,6 +137,8 @@ std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
  *  following:
  *    - The normal vector contains only values in {-max, ..., max}.
  *    - The threshold (distance to the origin) is any integer value.
+ *
+ *  The returned slicings are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
@@ -146,23 +148,24 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
   normal.fill(-max);
   do {
     for (int32_t d = 0; d < max * N; ++d) {
-      const auto ss =
+      const auto mss =
           low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
-      if (ss.any()) {
-        const auto is_superset = [ss](const sliceable_set_t<N>& other) {
-          return (other | ss) == other;
+      if (mss.any()) {
+        const auto is_superset_of_mss = [mss](const sliceable_set_t<N>& ss) {
+          return (ss | mss) == ss;
         };
-        if (std::none_of(sets.begin(), sets.end(), is_superset)) {
-          const auto is_subset = [ss](const sliceable_set_t<N>& other) {
-            return (other | ss) == ss;
+        if (std::none_of(sets.begin(), sets.end(), is_superset_of_mss)) {
+          const auto is_subset_of_mss = [mss](const sliceable_set_t<N>& ss) {
+            return (ss | mss) == mss;
           };
-          const auto it = remove_if(sets.begin(), sets.end(), is_subset);
+          const auto it = remove_if(sets.begin(), sets.end(), is_subset_of_mss);
           sets.erase(it, sets.end());
-          sets.push_back(ss);
+          sets.push_back(mss);
         }
       }
     }
   } while (next_low_weight_vector<N>(normal, max));
+  std::sort(sets.begin(), sets.end());
   return sets;
 }
 
