@@ -1,22 +1,44 @@
 #include <cstdint>
 #include <iostream>
-#include <string>
 
+#include "complex.hpp"
 #include "edge.hpp"
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
 
 using namespace ncube;
 
-int main() {
+bool slice_5_cube_with_2_hyperplanes() {
   constexpr int32_t N = 5;
   const auto edges = compute_edges<N>();
-  const auto usr_1 = read_from_file<N>(N_CUBE_OUT_DIR "/degree_two/" +
-                                       std::to_string(N) + "_usr_1.bin");
-  const auto mss_1 = read_from_file<N>(N_CUBE_OUT_DIR "/degree_two/" +
-                                       std::to_string(N) + "_mss_1.bin");
-  const auto usr_2 = pairwise_unions<N>(usr_1, mss_1, edges);
-  std::cout << "|usr_2| = " << usr_2.size() << std::endl;
-  const auto mss_2 = expand_usr<N>(usr_2, edges);
-  std::cout << "|mss_2| = " << mss_2.size() << std::endl;
+  const auto complexes = compute_complexes<N>(is_complex_degree_two<N>);
+  const auto usr = complexes_to_usr<N>(complexes, edges);
+  const auto mss = expand_usr<N>(usr, edges);
+  const auto slices_cube = pairwise_unions_slice_cube<N>(usr, mss);
+  return slices_cube;
+}
+
+bool slice_5_cube_with_3_hyperplanes() {
+  constexpr int32_t N = 5;
+  const auto edges = compute_edges<N>();
+  const auto complexes = compute_complexes<N>(is_complex_degree_two<N>);
+  const auto usr = complexes_to_usr<N>(complexes, edges);
+  const auto mss = expand_usr<N>(usr, edges);
+  for (auto it_1 = mss.rbegin(); it_1 != mss.rend(); ++it_1) {
+    for (auto it_2 = mss.rbegin(); it_2 != mss.rend(); ++it_2) {
+      for (auto it_3 = usr.rbegin(); it_3 != usr.rend(); ++it_3) {
+        if ((*it_1 | *it_2 | *it_3).all()) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+int main() {
+  std::cout << "Can two degree two polynomials slice the 5-cube: "
+            << slice_5_cube_with_2_hyperplanes() << std::endl;
+  std::cout << "Can three degree two polynomials slice the 5-cube: "
+            << slice_5_cube_with_3_hyperplanes() << std::endl;
 }
