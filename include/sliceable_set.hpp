@@ -196,7 +196,8 @@ std::vector<sliceable_set_t<N>> pairwise_unions_parallel(
 }
 
 /**
- *  Returns the number of leading (leftmost) zeros in a sliceable set.
+ *  Returns the number of leading (leftmost) zeros in the bitstring encoding of
+ *  a sliceable set.
  **/
 template <int32_t N>
 int32_t get_leading_zeros(const sliceable_set_t<N>& ss) {
@@ -210,7 +211,8 @@ int32_t get_leading_zeros(const sliceable_set_t<N>& ss) {
 }
 
 /**
- *  Returns the number of leading (leftmost) ones in a sliceable set.
+ *  Returns the number of leading (leftmost) ones in the bitstring encoding of a
+ *  sliceable set.
  **/
 template <int32_t N>
 int32_t get_leading_ones(const sliceable_set_t<N>& ss) {
@@ -227,20 +229,20 @@ int32_t get_leading_ones(const sliceable_set_t<N>& ss) {
  *  Returns true if any pairwise union of two lists of sliceable sets slices all
  *  edges and false otherwise.
  *
- *  The second list is required to be sorted.
+ *  The second list is required to be sorted in lexicographic order.
  **/
 template <int32_t N>
-bool pairwise_unions_slice_cube(const std::vector<sliceable_set_t<N>>& usr,
-                                const std::vector<sliceable_set_t<N>>& mss) {
+bool pairwise_unions_slice_cube(const std::vector<sliceable_set_t<N>>& sets_1,
+                                const std::vector<sliceable_set_t<N>>& sets_2) {
   bool slices_all = false;
-  for (const sliceable_set_t<N>& set_1 : usr) {
+  for (const auto& set_1 : sets_1) {
     const int32_t leading_zeros = get_leading_zeros<N>(set_1);
-    for (auto set_2_it = mss.rbegin(); set_2_it != mss.rend(); ++set_2_it) {
-      const int32_t leading_ones = get_leading_ones<N>(*set_2_it);
+    for (auto set_2 = sets_2.rbegin(); set_2 != sets_2.rend(); ++set_2) {
+      const int32_t leading_ones = get_leading_ones<N>(*set_2);
       if (leading_ones < leading_zeros) {
         break;
       }
-      const auto set_union = set_1 | *set_2_it;
+      const auto set_union = set_1 | *set_2;
       slices_all |= set_union.all();
     }
   }
@@ -315,7 +317,7 @@ sliceable_set_t<N> bytes_to_sliceable_set(
 }
 
 /**
- *  Writes sliceable sets to a file at the given path.
+ *  Writes sliceable sets in binary to a file at the given path.
  **/
 template <int32_t N>
 void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
@@ -328,10 +330,10 @@ void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
 }
 
 /**
- *  Returns the sliceable sets stored in a file at the given path.
+ *  Returns the sliceable sets stored in binary in a file at the given path.
  *
- *  Naturally, this function should be called on a file created by
- *  `write_to_file`.
+ *  Naturally, this function should be called on a file created by the function
+ *  write_to_file.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> read_from_file(
