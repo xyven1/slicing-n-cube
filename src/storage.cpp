@@ -15,7 +15,7 @@ void write_degree_two_1_sliceable_sets() {
   const auto edges = compute_edges<N>();
   const auto complexes = compute_cut_complexes_degree_two<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
-  const auto mss = usr_to_mss<N>(usr, edges);
+  const auto mss = expand_usr<N>(usr, edges);
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_two";
   std::filesystem::create_directories(dir);
   const auto path_usr = dir + ("/" + std::to_string(N) + "_usr_1.bin");
@@ -29,7 +29,7 @@ void write_degree_one_1_sliceable_sets() {
   const auto edges = compute_edges<N>();
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
-  const auto mss = usr_to_mss<N>(usr, edges);
+  const auto mss = expand_usr<N>(usr, edges);
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_one";
   std::filesystem::create_directories(dir);
   const auto path_usr = dir + ("/" + std::to_string(N) + "_usr_1.bin");
@@ -54,9 +54,9 @@ void write_degree_one_2_sliceable_sets() {
   const auto edges = compute_edges<N>();
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
-  const auto mss = usr_to_mss<N>(usr, edges);
+  const auto mss = expand_usr<N>(usr, edges);
   const auto usr_2 = pairwise_unions<N>(usr, mss, edges);
-  const auto mss_2 = usr_to_mss<N>(usr_2, edges);
+  const auto mss_2 = expand_usr<N>(usr_2, edges);
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_one";
   std::filesystem::create_directories(dir);
   const auto path_usr_1 = dir + ("/" + std::to_string(N) + "_usr_1.bin");

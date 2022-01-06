@@ -17,6 +17,6 @@ int main() {
                                        std::to_string(N) + "_mss_1.bin");
   const auto usr_2 = pairwise_unions<N>(usr_1, mss_1, edges);
   std::cout << "|usr_2| = " << usr_2.size() << std::endl;
-  const auto mss_2 = usr_to_mss<N>(usr_2, edges);
+  const auto mss_2 = expand_usr<N>(usr_2, edges);
   std::cout << "|mss_2| = " << mss_2.size() << std::endl;
 }

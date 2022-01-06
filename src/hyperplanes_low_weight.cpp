@@ -14,7 +14,7 @@ int32_t smallest_low_weight() {
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto edges = compute_edges<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
-  const auto mss = usr_to_mss<N>(usr, edges);
+  const auto mss = expand_usr<N>(usr, edges);
   for (int k = 0;; ++k) {
     auto mss_low_weight = compute_low_weight_mss<N>(edges, k);
     std::sort(mss_low_weight.begin(), mss_low_weight.end());

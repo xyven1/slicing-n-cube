@@ -256,10 +256,10 @@ bool pairwise_unions_slice_cube(const std::vector<sliceable_set_t<N>>& sets_1,
  *  The returned sliceable sets are sorted in lexicographic order.
  **/
 template <int32_t N>
-std::vector<sliceable_set_t<N>> usr_to_mss(
+std::vector<sliceable_set_t<N>> expand_usr(
     const std::vector<sliceable_set_t<N>>& usr,
     const edge_lexicon_t<N>& edges) {
-  std::vector<sliceable_set_t<N>> mss;
+  std::vector<sliceable_set_t<N>> expansions;
   for (const auto& ss : usr) {
     std::array<int32_t, N> permutation;
     for (int32_t i = 0; i < N; ++i) {
@@ -274,13 +274,14 @@ std::vector<sliceable_set_t<N>> usr_to_mss(
           const auto e_trans = edge_to_int<N>(edge_trans, edges);
           ss_trans[e_trans] = ss[e];
         }
-        mss.push_back(ss_trans);
+        expansions.push_back(ss_trans);
       }
     } while (std::next_permutation(permutation.begin(), permutation.end()));
   }
-  std::sort(mss.begin(), mss.end());
-  mss.erase(std::unique(mss.begin(), mss.end()), mss.end());
-  return mss;
+  std::sort(expansions.begin(), expansions.end());
+  expansions.erase(std::unique(expansions.begin(), expansions.end()),
+                   expansions.end());
+  return expansions;
 }
 
 /**

@@ -13,7 +13,7 @@ std::vector<int64_t> compute_edge_frequencies() {
   const auto edges = compute_edges<N>();
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
-  const auto mss = usr_to_mss<N>(usr, edges);
+  const auto mss = expand_usr<N>(usr, edges);
   std::vector<int64_t> frequencies(num_edges(N) + 1);
   for (const auto& ss : mss) {
     frequencies[ss.count()] += 1;
