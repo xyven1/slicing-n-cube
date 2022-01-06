@@ -13,7 +13,7 @@ using namespace ncube;
 template <int32_t N>
 void write_degree_two_1_sliceable_sets() {
   const auto edges = compute_edges<N>();
-  const auto complexes = compute_cut_complexes_degree_two<N>();
+  const auto complexes = compute_complexes<N>(is_complex_degree_two<N>);
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = expand_usr<N>(usr, edges);
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_two";
@@ -27,7 +27,7 @@ void write_degree_two_1_sliceable_sets() {
 template <int32_t N>
 void write_degree_one_1_sliceable_sets() {
   const auto edges = compute_edges<N>();
-  const auto complexes = compute_cut_complexes_degree_one<N>();
+  const auto complexes = compute_complexes<N>(is_complex_degree_one<N>);
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = expand_usr<N>(usr, edges);
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_one";
@@ -41,7 +41,7 @@ void write_degree_one_1_sliceable_sets() {
 template <int32_t N>
 void write_degree_one_1_sliceable_sets_only_usr() {
   const auto edges = compute_edges<N>();
-  const auto complexes = compute_cut_complexes_degree_one<N>();
+  const auto complexes = compute_complexes<N>(is_complex_degree_one<N>);
   const auto usr = complexes_to_usr<N>(complexes, edges);
   constexpr auto dir = N_CUBE_OUT_DIR "/degree_one";
   std::filesystem::create_directories(dir);
@@ -52,7 +52,7 @@ void write_degree_one_1_sliceable_sets_only_usr() {
 template <int32_t N>
 void write_degree_one_2_sliceable_sets() {
   const auto edges = compute_edges<N>();
-  const auto complexes = compute_cut_complexes_degree_one<N>();
+  const auto complexes = compute_complexes<N>(is_complex_degree_one<N>);
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = expand_usr<N>(usr, edges);
   const auto usr_2 = pairwise_unions<N>(usr, mss, edges);

@@ -11,7 +11,7 @@ using namespace ncube;
 
 template <int32_t N>
 int32_t smallest_low_weight() {
-  const auto complexes = compute_cut_complexes_degree_one<N>();
+  const auto complexes = compute_complexes<N>(is_complex_degree_one<N>);
   const auto edges = compute_edges<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = expand_usr<N>(usr, edges);
