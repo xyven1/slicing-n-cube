@@ -10,7 +10,7 @@ using namespace ncube;
 
 template <int32_t N>
 std::vector<int64_t> compute_edge_frequencies() {
-  const auto edges = compute_edges(N);
+  const auto edges = compute_edges<N>();
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = usr_to_mss<N>(usr, edges);

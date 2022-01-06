@@ -10,7 +10,7 @@ using namespace ncube;
 
 void slice_cube_5() {
   constexpr int32_t N = 5;
-  const auto edges = compute_edges(N);
+  const auto edges = compute_edges<N>();
   const auto complexes = compute_cut_complexes_degree_one<N>();
   const auto usr_1 = complexes_to_usr<N>(complexes, edges);
   std::cout << usr_1.size() << std::endl;

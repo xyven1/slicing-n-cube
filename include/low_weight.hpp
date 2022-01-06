@@ -25,7 +25,7 @@ namespace ncube {
 template <int32_t N>
 sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
     const std::vector<int32_t>& normal, int32_t threshold,
-    const std::vector<edge_t>& edges) {
+    const edge_lexicon_t<N>& edges) {
   sliceable_set_t<N> ss;
   for (const auto& e : edges) {
     int32_t u_scalar = 0, v_scalar = 0;
@@ -37,7 +37,7 @@ sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
     }
     if ((u_scalar < threshold && v_scalar > threshold) ||
         (u_scalar > threshold && v_scalar < threshold)) {
-      ss[edge_to_int(e, edges)] = true;
+      ss[edge_to_int<N>(e, edges)] = true;
     }
   }
   return ss;
@@ -90,7 +90,7 @@ bool next_low_weight_vector(std::vector<int32_t>& halfspace, int32_t max) {
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
-    const std::vector<int32_t>& thresholds, const std::vector<edge_t>& edges) {
+    const std::vector<int32_t>& thresholds, const edge_lexicon_t<N>& edges) {
   std::unordered_set<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -1);
   do {
@@ -113,7 +113,7 @@ std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
     int32_t max, const std::vector<int32_t>& thresholds,
-    const std::vector<edge_t>& edges) {
+    const edge_lexicon_t<N>& edges) {
   std::unordered_set<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -max);
   do {
@@ -136,7 +136,7 @@ std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
-    const std::vector<edge_t>& edges, int32_t max) {
+    const edge_lexicon_t<N>& edges, int32_t max) {
   std::vector<sliceable_set_t<N>> sets;
   std::vector<int32_t> normal(N, -max);
   do {
@@ -168,7 +168,7 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
 template <int32_t N>
 int32_t combine_low_weight_sliceable_sets(
     const std::vector<sliceable_set_t<N>>& sets,
-    const std::vector<edge_t>& edges) {
+    const edge_lexicon_t<N>& edges) {
   std::vector<sliceable_set_t<N>> sets_k;
   for (const auto& ss : sets) {
     const auto usr = unique_sliceable_set<N>(ss, edges);
@@ -202,7 +202,7 @@ int32_t combine_low_weight_sliceable_sets(
  **/
 template <int32_t N>
 void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& thresholds,
-                                         const std::vector<edge_t>& edges,
+                                         const edge_lexicon_t<N>& edges,
                                          const std::filesystem::path& path) {
   std::vector<std::string> output;
   std::vector<int32_t> normal(N, -1);
@@ -237,7 +237,7 @@ void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& thresholds,
  **/
 template <int32_t N>
 void write_low_weight_halfspaces_to_file(int32_t max,
-                                         const std::vector<edge_t>& edges,
+                                         const edge_lexicon_t<N>& edges,
                                          const std::filesystem::path& path) {
   std::vector<std::string> output;
   std::vector<int32_t> normal(N, -max);

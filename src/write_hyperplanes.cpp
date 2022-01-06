@@ -12,7 +12,7 @@ using namespace ncube;
 
 template <int32_t N>
 void write_one_weight_halfspaces() {
-  const auto edges = compute_edges(N);
+  const auto edges = compute_edges<N>();
   std::vector<int32_t> distances;
   for (int32_t i = 0; i < N; ++i) {
     distances.push_back(i);
@@ -27,7 +27,7 @@ void write_one_weight_halfspaces() {
 
 template <int32_t N>
 void write_low_weight_halfspaces(int32_t max) {
-  const auto edges = compute_edges(N);
+  const auto edges = compute_edges<N>();
   constexpr auto dir = N_CUBE_OUT_DIR "/one_weight";
   std::filesystem::create_directories(dir);
   const auto path =

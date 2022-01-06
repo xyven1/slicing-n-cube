@@ -56,7 +56,7 @@ std::vector<std::size_t> assign_workload(std::size_t m,
  **/
 template <int32_t N>
 sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
-                                        const std::vector<edge_t>& edges) {
+                                        const edge_lexicon_t<N>& edges) {
   std::array<int32_t, N> permutation;
   for (int32_t i = 0; i < N; ++i) {
     permutation[i] = i;
@@ -72,7 +72,7 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
       bool is_new_min = false;
       for (int32_t e = num_edges(N) - 1; e >= 0; --e) {
         const auto edge_trans = transform_edge<N>(edges[e], permutation, signs);
-        const auto e_trans = edge_to_int(edge_trans, edges);
+        const auto e_trans = edge_to_int<N>(edge_trans, edges);
         // This actually computes the inverse transformation, but because the
         // algorithm goes through all transformations it ultimately ends up
         // being the same.
@@ -98,7 +98,7 @@ template <int32_t N>
 std::vector<sliceable_set_t<N>> pairwise_unions(
     const std::vector<sliceable_set_t<N>>& sets_1,
     const std::vector<sliceable_set_t<N>>& sets_2,
-    const std::vector<edge_t>& edges) {
+    const edge_lexicon_t<N>& edges) {
   std::vector<sliceable_set_t<N>> unions;
   for (const auto& set_1 : sets_1) {
     for (const auto& set_2 : sets_2) {
@@ -131,7 +131,7 @@ void pairwise_unions_all(
     typename std::vector<sliceable_set_t<N>>::const_iterator sets_2_begin,
     typename std::vector<sliceable_set_t<N>>::const_iterator sets_2_end,
     typename std::vector<sliceable_set_t<N>>::iterator unions_begin,
-    const std::vector<edge_t>& edges) {
+    const edge_lexicon_t<N>& edges) {
   auto unions_it = unions_begin;
   for (auto set_1 = sets_1_begin; set_1 != sets_1_end; ++set_1) {
     for (auto set_2 = sets_2_begin; set_2 != sets_2_end; ++set_2) {
@@ -151,7 +151,7 @@ template <int32_t N>
 std::vector<sliceable_set_t<N>> pairwise_unions_parallel(
     const std::vector<sliceable_set_t<N>>& sets_1,
     const std::vector<sliceable_set_t<N>>& sets_2,
-    const std::vector<edge_t>& edges) {
+    const edge_lexicon_t<N>& edges) {
   // ensure effective parallelization
   if (sets_1.size() > sets_2.size()) {
     return pairwise_unions_parallel<N>(sets_2, sets_1, edges);
@@ -256,7 +256,7 @@ bool pairwise_unions_slice_cube(const std::vector<sliceable_set_t<N>>& usr,
 template <int32_t N>
 std::vector<sliceable_set_t<N>> usr_to_mss(
     const std::vector<sliceable_set_t<N>>& usr,
-    const std::vector<edge_t>& edges) {
+    const edge_lexicon_t<N>& edges) {
   std::vector<sliceable_set_t<N>> mss;
   for (const auto& ss : usr) {
     std::array<int32_t, N> permutation;
@@ -269,7 +269,7 @@ std::vector<sliceable_set_t<N>> usr_to_mss(
         for (int32_t e = 0; e < num_edges(N); ++e) {
           const auto edge_trans =
               transform_edge<N>(edges[e], permutation, signs);
-          const auto e_trans = edge_to_int(edge_trans, edges);
+          const auto e_trans = edge_to_int<N>(edge_trans, edges);
           ss_trans[e_trans] = ss[e];
         }
         mss.push_back(ss_trans);

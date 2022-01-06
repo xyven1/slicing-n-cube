@@ -5,7 +5,6 @@
 #include <array>
 #include <cstdint>
 #include <utility>
-#include <vector>
 
 #include "vertex.hpp"
 
@@ -16,6 +15,10 @@ using edge_t = std::pair<vertex_t, vertex_t>;
 
 /* The number of edges is n * 2^(n - 1). */
 constexpr int32_t num_edges(int32_t n) { return n << (n - 1); }
+
+/* All edges sorted in lexigraphic order to enable efficient enumeration. */
+template <int32_t N>
+using edge_lexicon_t = std::array<edge_t, num_edges(N)>;
 
 /**
  *  Returns a symmetric transformation of an edge.
@@ -35,7 +38,8 @@ edge_t transform_edge(edge_t e, const std::array<int32_t, N>& permutation,
  *  Returns the enumeration of an edge over the lexicographic order of all
  *  edges.
  **/
-inline int32_t edge_to_int(const edge_t& e, const std::vector<edge_t>& edges) {
+template <int32_t N>
+int32_t edge_to_int(const edge_t& e, const edge_lexicon_t<N>& edges) {
   const auto e_it = std::lower_bound(edges.begin(), edges.end(), e);
   return static_cast<int32_t>(e_it - edges.begin());
 }
@@ -43,14 +47,15 @@ inline int32_t edge_to_int(const edge_t& e, const std::vector<edge_t>& edges) {
 /**
  *  Returns all edges in lexicographic order.
  **/
-std::vector<edge_t> compute_edges(int32_t n) {
-  std::vector<edge_t> edges;
-  edges.reserve(num_edges(n));
-  for (vertex_t v = 0; v < num_vertices(n); ++v) {
-    for (int32_t i = 0; i < n; ++i) {
+template <int32_t N>
+edge_lexicon_t<N> compute_edges() {
+  edge_lexicon_t<N> edges;
+  auto it = edges.begin();
+  for (vertex_t v = 0; v < num_vertices(N); ++v) {
+    for (int32_t i = 0; i < N; ++i) {
       const vertex_t u = get_neighbour(v, i);
       if (u < v) {
-        edges.emplace_back(u, v);
+        *it++ = edge_t(u, v);
       }
     }
   }

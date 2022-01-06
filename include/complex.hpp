@@ -153,7 +153,7 @@ std::vector<vertex_t> adjacent_vertices_of_complex(
  **/
 template <int32_t N>
 sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
-                                            const std::vector<edge_t>& edges) {
+                                            const edge_lexicon_t<N>& edges) {
   sliceable_set_t<N> sliceable_set;
   for (vertex_t v = 0; v < num_vertices(N); ++v) {
     if (complex[v]) {
@@ -161,7 +161,7 @@ sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
         const vertex_t u = get_neighbour(v, i);
         if (!complex[u]) {
           const edge_t e = (u < v) ? edge_t(u, v) : edge_t(v, u);
-          sliceable_set[edge_to_int(e, edges)] = true;
+          sliceable_set[edge_to_int<N>(e, edges)] = true;
         }
       }
     }
@@ -178,7 +178,7 @@ sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
 template <int32_t N>
 std::vector<sliceable_set_t<N>> complexes_to_usr(
     const std::vector<complex_t<N>>& complexes,
-    const std::vector<edge_t>& edges) {
+    const edge_lexicon_t<N>& edges) {
   std::vector<sliceable_set_t<N>> usr;
   for (const auto& complex : complexes) {
     auto ss = complex_to_sliceable_set<N>(complex, edges);

@@ -10,7 +10,7 @@ using namespace ncube;
 
 int main() {
   constexpr int32_t N = 5;
-  const auto edges = compute_edges(N);
+  const auto edges = compute_edges<N>();
   const auto usr_1 = read_from_file<N>(N_CUBE_OUT_DIR "/degree_two/" +
                                        std::to_string(N) + "_usr_1.bin");
   const auto mss_1 = read_from_file<N>(N_CUBE_OUT_DIR "/degree_two/" +
