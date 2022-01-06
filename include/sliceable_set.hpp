@@ -20,6 +20,22 @@ template <int32_t N>
 using sliceable_set_t = std::bitset<num_edges(N)>;
 
 /**
+ *  Returns the minimum number of bytes needed to represent m bits.
+ **/
+constexpr std::size_t min_bytes_to_represent_bits(std::size_t m) {
+  return (m % 8 == 0) ? (m / 8) : (m / 8 + 1);
+}
+
+/* The i-th least significant bit in the byte array corresponds to the i-th
+ * least significant bit in the bistring encoding of a sliceablet set. The most
+ * significant byte is padded with zeros if the number of bits isn't divisable
+ * by 8.
+ */
+template <int32_t N>
+using sliceable_set_bytes_t =
+    std::array<char, min_bytes_to_represent_bits(num_edges(N))>;
+
+/**
  *  Returns a balanced distribution of m units of work across num_threads
  *  workers.
  *
@@ -266,48 +282,36 @@ std::vector<sliceable_set_t<N>> usr_to_mss(
 }
 
 /**
- *  Stores the bitstring encoding of a sliceable set in a byte array.
+ *  Returns the bitstring encoding of a sliceable set in a byte array.
  **/
 template <int32_t N>
-void sliceable_set_to_bytes(const sliceable_set_t<N>& ss, char* bytes,
-                            std::size_t num_bytes) {
-  for (std::size_t i = 0; i < num_bytes; ++i) {
-    const std::size_t rev_i = num_bytes - i - 1;
-    bytes[rev_i] = 0;
-    for (std::size_t j = 0; j < 8; ++j) {
-      if (ss[i * 8 + j]) {
-        bytes[rev_i] |= static_cast<char>(1 << j);
-      }
+sliceable_set_bytes_t<N> sliceable_set_to_bytes(const sliceable_set_t<N>& ss) {
+  sliceable_set_bytes_t<N> bytes = {};
+  for (std::size_t i = 0; i < ss.size(); ++i) {
+    if (ss[i]) {
+      const auto byte_index = bytes.size() - 1 - i / 8;
+      const auto bit_index = i % 8;
+      const char mask = 1 << bit_index;
+      bytes[byte_index] |= mask;
     }
   }
+  return bytes;
 }
 
 /**
  *  Returns a sliceable set from to its bitstring encoding in a byte array.
  **/
 template <int32_t N>
-sliceable_set_t<N> bytes_to_sliceable_set(char* bytes, std::size_t num_bytes) {
+sliceable_set_t<N> bytes_to_sliceable_set(
+    const sliceable_set_bytes_t<N>& bytes) {
   sliceable_set_t<N> ss;
-  for (std::size_t i = 0; i < num_bytes; ++i) {
-    const std::size_t rev_i = num_bytes - i - 1;
-    for (std::size_t j = 0; j < 8; ++j) {
-      const std::size_t ss_index = i * 8 + j;
-      if (ss_index < ss.size()) {
-        ss[ss_index] = bytes[rev_i] & (1 << j);
-      }
-    }
+  for (std::size_t i = 0; i < ss.size(); ++i) {
+    const auto byte_index = bytes.size() - 1 - i / 8;
+    const auto bit_index = i % 8;
+    const char mask = 1 << bit_index;
+    ss[i] = bytes[byte_index] & mask;
   }
   return ss;
-}
-
-/**
- *  Returns the minimum number of bytes needed to represent n bits.
- **/
-constexpr std::size_t min_bytes_to_represent_bits(std::size_t n) {
-  if (n % 8 == 0) {
-    return n / 8;
-  }
-  return n / 8 + 1;
 }
 
 /**
@@ -316,13 +320,10 @@ constexpr std::size_t min_bytes_to_represent_bits(std::size_t n) {
 template <int32_t N>
 void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
                    const std::filesystem::path& path) {
-  constexpr auto num_bytes_sliceable_set =
-      min_bytes_to_represent_bits(sliceable_set_t<N>().size());
   std::ofstream file(path, std::ios::binary);
   for (const sliceable_set_t<N>& set : sets) {
-    char bytes[num_bytes_sliceable_set];
-    sliceable_set_to_bytes<N>(set, bytes, num_bytes_sliceable_set);
-    file.write(bytes, num_bytes_sliceable_set);
+    const auto bytes = sliceable_set_to_bytes<N>(set);
+    file.write(bytes.data(), bytes.size());
   }
 }
 
@@ -335,16 +336,15 @@ void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
 template <int32_t N>
 std::vector<sliceable_set_t<N>> read_from_file(
     const std::filesystem::path& path) {
-  constexpr auto num_bytes_sliceable_set =
-      min_bytes_to_represent_bits(sliceable_set_t<N>().size());
+  sliceable_set_bytes_t<N> bytes;
   const auto filesize = std::filesystem::file_size(path);
+  const auto num_sets = filesize / bytes.size();
   std::vector<sliceable_set_t<N>> sets;
-  sets.reserve(filesize / num_bytes_sliceable_set);
+  sets.reserve(num_sets);
   std::ifstream file(path, std::ios::binary);
-  for (std::size_t i = 0; i < filesize / num_bytes_sliceable_set; ++i) {
-    char bytes[num_bytes_sliceable_set];
-    file.read(bytes, num_bytes_sliceable_set);
-    sets.push_back(bytes_to_sliceable_set<N>(bytes, num_bytes_sliceable_set));
+  for (std::size_t i = 0; i < num_sets; ++i) {
+    file.read(bytes.data(), bytes.size());
+    sets.push_back(bytes_to_sliceable_set<N>(bytes));
   }
   return sets;
 }
