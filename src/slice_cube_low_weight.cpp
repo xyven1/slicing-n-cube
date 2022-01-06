@@ -5,6 +5,8 @@
 #include "low_weight.hpp"
 #include "vertex.hpp"
 
+using namespace ncube;
+
 template <int32_t N>
 int32_t slice_cube_one_weight(const std::vector<int32_t>& distances) {
   const auto edges = compute_edges(N);

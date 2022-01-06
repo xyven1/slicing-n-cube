@@ -8,6 +8,8 @@
 #include "low_weight.hpp"
 #include "vertex.hpp"
 
+using namespace ncube;
+
 template <int32_t N>
 void write_one_weight_halfspaces() {
   const auto edges = compute_edges(N);

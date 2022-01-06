@@ -7,6 +7,8 @@
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
 
+using namespace ncube;
+
 template <int32_t N>
 int32_t smallest_low_weight() {
   const auto complexes = compute_cut_complexes_degree_one<N>();

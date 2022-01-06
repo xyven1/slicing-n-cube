@@ -8,6 +8,8 @@
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
 
+using namespace ncube;
+
 template <int32_t N>
 void write_degree_two_1_sliceable_sets() {
   const auto edges = compute_edges(N);

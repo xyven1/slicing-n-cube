@@ -14,6 +14,8 @@
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
 
+namespace ncube {
+
 /**
  *  Returns the slicing by a low weight halfspace.
  *
@@ -256,5 +258,7 @@ void write_low_weight_halfspaces_to_file(int32_t max,
     file << str << std::endl;
   }
 }
+
+}  // namespace ncube
 
 #endif  // N_CUBE_LOW_WEIGHT_H_

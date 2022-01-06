@@ -9,6 +9,8 @@
 
 #include "vertex.hpp"
 
+namespace ncube {
+
 /* The two vertices are assumed to be ordered, i.e. e.first < e.second. */
 using edge_t = std::pair<vertex_t, vertex_t>;
 
@@ -55,5 +57,7 @@ std::vector<edge_t> compute_edges(int32_t n) {
   std::sort(edges.begin(), edges.end());
   return edges;
 }
+
+}  // namespace ncube
 
 #endif  // N_CUBE_EDGE_H_

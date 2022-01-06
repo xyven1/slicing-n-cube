@@ -6,6 +6,8 @@
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
 
+using namespace ncube;
+
 void slice_cube_5() {
   constexpr int32_t N = 5;
   const auto edges = compute_edges(N);

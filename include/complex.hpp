@@ -17,6 +17,8 @@
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
 
+namespace ncube {
+
 /* complex[v] is true if vertex v is in the complex and false otherwise. */
 template <int32_t N>
 using complex_t = std::bitset<num_vertices(N)>;
@@ -237,5 +239,7 @@ template <int32_t N>
 std::vector<complex_t<N>> compute_cut_complexes_degree_two() {
   return compute_cut_complexes<N>(is_complex_degree_two<N>);
 }
+
+}  // namespace ncube
 
 #endif  // N_CUBE_COMPLEX_H_

@@ -6,6 +6,8 @@
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
 
+using namespace ncube;
+
 template <int32_t N>
 std::vector<int64_t> compute_edge_frequencies() {
   const auto edges = compute_edges(N);

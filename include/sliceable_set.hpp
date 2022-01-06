@@ -14,6 +14,8 @@
 #include "edge.hpp"
 #include "vertex.hpp"
 
+namespace ncube {
+
 /* edges[e] is true if edge e is in the sliceable set and false otherwise. */
 template <int32_t N>
 using sliceable_set_t = std::bitset<num_edges(N)>;
@@ -346,5 +348,7 @@ std::vector<sliceable_set_t<N>> read_from_file(
   }
   return sets;
 }
+
+}  // namespace ncube
 
 #endif  // N_CUBE_SLICEABLE_SET_H_

@@ -4,6 +4,8 @@
 #include <array>
 #include <cstdint>
 
+namespace ncube {
+
 /**
  *  The i-th least significant bit stores the i-th coordinate.
  *
@@ -51,5 +53,7 @@ vertex_t transform_vertex(vertex_t v, const std::array<int32_t, N>& permutation,
   }
   return v_trans;
 }
+
+}  // namespace ncube
 
 #endif  // N_CUBE_VERTEX_H_
