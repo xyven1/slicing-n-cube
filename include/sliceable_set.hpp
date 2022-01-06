@@ -12,7 +12,6 @@
 
 #include "bitset_comparator.hpp"
 #include "edge.hpp"
-#include "symmetry.hpp"
 #include "vertex.hpp"
 
 /* edges[e] is true if edge e is in the sliceable set and false otherwise. */
@@ -257,7 +256,6 @@ std::vector<sliceable_set_t<N>> usr_to_mss(
     const std::vector<sliceable_set_t<N>>& usr,
     const std::vector<edge_t>& edges) {
   std::vector<sliceable_set_t<N>> mss;
-  mss.reserve(usr.size() * num_symmetries(N));
   for (const auto& ss : usr) {
     std::array<int32_t, N> permutation;
     for (int32_t i = 0; i < N; ++i) {

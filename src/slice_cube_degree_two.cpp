@@ -4,7 +4,6 @@
 
 #include "edge.hpp"
 #include "sliceable_set.hpp"
-#include "symmetry.hpp"
 #include "vertex.hpp"
 
 int main() {

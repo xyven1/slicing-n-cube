@@ -1,6 +1,7 @@
 #ifndef N_CUBE_VERTEX_H_
 #define N_CUBE_VERTEX_H_
 
+#include <array>
 #include <cstdint>
 
 /**
@@ -29,6 +30,25 @@ int32_t get_coordinate(vertex_t v, int32_t i) {
 vertex_t get_neighbour(vertex_t v, int32_t i) {
   const int32_t mask = 1 << i;
   return v ^ mask;
+}
+
+/**
+ *  Returns a symmetric transformation of a vertex.
+ *
+ *  Every coordinate i of the vertex is permuted to position permutation[i] and
+ *  its sign is flipped if the i-th least significant bit of signs is set.
+ **/
+template <int32_t N>
+vertex_t transform_vertex(vertex_t v, const std::array<int32_t, N>& permutation,
+                          int32_t signs) {
+  vertex_t v_trans = 0;
+  for (int32_t i = 0; i < N; ++i) {
+    const int32_t change_sign = (signs >> i) & 1;
+    const int32_t coordinate_bit = (v >> i) & 1;
+    const int32_t new_coordinate_bit = coordinate_bit ^ change_sign;
+    v_trans |= new_coordinate_bit << permutation[i];
+  }
+  return v_trans;
 }
 
 #endif  // N_CUBE_VERTEX_H_

@@ -15,7 +15,6 @@
 #include "bitset_comparator.hpp"
 #include "edge.hpp"
 #include "sliceable_set.hpp"
-#include "symmetry.hpp"
 #include "vertex.hpp"
 
 /* complex[v] is true if vertex v is in the complex and false otherwise. */

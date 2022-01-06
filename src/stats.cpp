@@ -4,7 +4,6 @@
 #include "complex.hpp"
 #include "edge.hpp"
 #include "sliceable_set.hpp"
-#include "symmetry.hpp"
 #include "vertex.hpp"
 
 template <int32_t N>
