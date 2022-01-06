@@ -98,7 +98,7 @@ std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
   normal.fill(-1);
   do {
     for (const auto& threshold : thresholds) {
-      const sliceable_set_t<N> ss =
+      const auto ss =
           low_weight_halfspace_to_sliceable_set<N>(normal, threshold, edges);
       if (ss.any()) {
         sets.insert(ss);
@@ -122,7 +122,7 @@ std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
   normal.fill(-max);
   do {
     for (const auto& threshold : thresholds) {
-      const sliceable_set_t<N> ss =
+      const auto ss =
           low_weight_halfspace_to_sliceable_set<N>(normal, threshold, edges);
       if (ss.any()) {
         sets.insert(ss);
@@ -146,7 +146,7 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
   normal.fill(-max);
   do {
     for (int32_t d = 0; d < max * N; ++d) {
-      const sliceable_set_t<N> ss =
+      const auto ss =
           low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
       if (ss.any()) {
         const auto is_superset = [ss](const sliceable_set_t<N>& other) {
@@ -214,7 +214,7 @@ void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& thresholds,
   normal.fill(-1);
   do {
     for (const auto& threshold : thresholds) {
-      const sliceable_set_t<N> ss =
+      const auto ss =
           low_weight_halfspace_to_sliceable_set<N>(normal, threshold, edges);
       if (ss.any()) {
         std::stringstream str_stream;
