@@ -24,7 +24,7 @@ namespace ncube {
  **/
 template <int32_t N>
 sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
-    const std::vector<int32_t>& normal, int32_t threshold,
+    const std::array<int32_t, N>& normal, int32_t threshold,
     const edge_lexicon_t<N>& edges) {
   sliceable_set_t<N> ss;
   for (const auto& e : edges) {
@@ -51,8 +51,9 @@ sliceable_set_t<N> low_weight_halfspace_to_sliceable_set(
  *
  *  Naturally, the first call should be on a normal vector that is all -1.
  **/
-bool next_one_weight_vector(std::vector<int32_t>& halfspace) {
-  for (auto it = halfspace.rbegin(); it != halfspace.rend(); ++it) {
+template <int32_t N>
+bool next_one_weight_vector(std::array<int32_t, N>& normal) {
+  for (auto it = normal.rbegin(); it != normal.rend(); ++it) {
     if (*it == -1) {
       *it = 1;
       return true;
@@ -71,8 +72,9 @@ bool next_one_weight_vector(std::vector<int32_t>& halfspace) {
  *
  *  Naturally, the first call should be on a normal vector that is all -max.
  **/
-bool next_low_weight_vector(std::vector<int32_t>& halfspace, int32_t max) {
-  for (auto it = halfspace.rbegin(); it != halfspace.rend(); ++it) {
+template <int32_t N>
+bool next_low_weight_vector(std::array<int32_t, N>& normal, int32_t max) {
+  for (auto it = normal.rbegin(); it != normal.rend(); ++it) {
     if (*it == max) {
       *it = -max;
     } else {
@@ -92,7 +94,8 @@ template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
     const std::vector<int32_t>& thresholds, const edge_lexicon_t<N>& edges) {
   std::unordered_set<sliceable_set_t<N>> sets;
-  std::vector<int32_t> normal(N, -1);
+  std::array<int32_t, N> normal;
+  normal.fill(-1);
   do {
     for (const auto& threshold : thresholds) {
       const sliceable_set_t<N> ss =
@@ -101,7 +104,7 @@ std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
         sets.insert(ss);
       }
     }
-  } while (next_one_weight_vector(normal));
+  } while (next_one_weight_vector<N>(normal));
   return std::vector<sliceable_set_t<N>>(sets.begin(), sets.end());
 }
 
@@ -115,7 +118,8 @@ std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
     int32_t max, const std::vector<int32_t>& thresholds,
     const edge_lexicon_t<N>& edges) {
   std::unordered_set<sliceable_set_t<N>> sets;
-  std::vector<int32_t> normal(N, -max);
+  std::array<int32_t, N> normal;
+  normal.fill(-max);
   do {
     for (const auto& threshold : thresholds) {
       const sliceable_set_t<N> ss =
@@ -138,7 +142,8 @@ template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
     const edge_lexicon_t<N>& edges, int32_t max) {
   std::vector<sliceable_set_t<N>> sets;
-  std::vector<int32_t> normal(N, -max);
+  std::array<int32_t, N> normal;
+  normal.fill(-max);
   do {
     for (int32_t d = 0; d < max * N; ++d) {
       const sliceable_set_t<N> ss =
@@ -157,7 +162,7 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
         }
       }
     }
-  } while (next_low_weight_vector(normal, max));
+  } while (next_low_weight_vector<N>(normal, max));
   return sets;
 }
 
@@ -205,7 +210,8 @@ void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& thresholds,
                                          const edge_lexicon_t<N>& edges,
                                          const std::filesystem::path& path) {
   std::vector<std::string> output;
-  std::vector<int32_t> normal(N, -1);
+  std::array<int32_t, N> normal;
+  normal.fill(-1);
   do {
     for (const auto& threshold : thresholds) {
       const sliceable_set_t<N> ss =
@@ -216,7 +222,7 @@ void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& thresholds,
         output.push_back(str_stream.str());
       }
     }
-  } while (next_one_weight_vector(normal));
+  } while (next_one_weight_vector<N>(normal));
   std::sort(output.begin(), output.end());
   std::ofstream file(path);
   for (const auto& str : output) {
@@ -240,7 +246,8 @@ void write_low_weight_halfspaces_to_file(int32_t max,
                                          const edge_lexicon_t<N>& edges,
                                          const std::filesystem::path& path) {
   std::vector<std::string> output;
-  std::vector<int32_t> normal(N, -max);
+  std::array<int32_t, N> normal;
+  normal.fill(-max);
   do {
     for (int32_t threshold = 0; threshold < max * N; ++threshold) {
       const sliceable_set_t<N> ss =
@@ -251,7 +258,7 @@ void write_low_weight_halfspaces_to_file(int32_t max,
         output.push_back(str_stream.str());
       }
     }
-  } while (next_low_weight_vector(normal, max));
+  } while (next_low_weight_vector<N>(normal, max));
   std::sort(output.begin(), output.end());
   std::ofstream file(path);
   for (const auto& str : output) {
