@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <time.h>
 
 /**
  *  Returns the size of the file at the given path in bytes.
@@ -135,12 +136,18 @@ int main() {
   char *usr, *mss;
   const size_t usr_len = read_from_file(usr_path, &usr);
   if (usr_len == 0) {
+    printf("File not found: %s", usr_path);
     return 1;
   }
   const size_t mss_len = read_from_file(mss_path, &mss);
   if (mss_len == 0) {
+    printf("File not found: %s", mss_path);
     return 2;
   }
+  const clock_t start = clock();
   const int slices_all = pairwise_unions_slice_cube(usr, usr_len, mss, mss_len);
+  const clock_t end = clock();
+  const double duration = ((double)(end - start)) / CLOCKS_PER_SEC;
+  printf("Execution time of pairwise_unions_slice_cube: %f s\n", duration);
   printf("Can four hyperplanes slice the 5-cube: %d\n", slices_all);
 }

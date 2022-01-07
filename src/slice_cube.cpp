@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdint>
 #include <iostream>
 
@@ -16,7 +17,13 @@ bool slice_5_cube() {
   const auto mss_1 = expand_usr<N>(usr_1, edges);
   const auto usr_2 = pairwise_unions<N>(usr_1, mss_1, edges);
   const auto mss_2 = expand_usr<N>(usr_2, edges);
+  const auto start = std::chrono::high_resolution_clock::now();
   const auto slices_cube = pairwise_unions_slice_cube<N>(usr_2, mss_2);
+  const auto stop = std::chrono::high_resolution_clock::now();
+  const auto duration =
+      std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+  std::cout << "Execution time of pairwise_unions_slice_cube: "
+            << duration.count() << std::endl;
   return slices_cube;
 }
 
