@@ -6,7 +6,6 @@
 #include <filesystem>
 #include <sstream>
 #include <string>
-#include <unordered_set>
 #include <vector>
 
 #include "edge.hpp"
@@ -86,50 +85,36 @@ bool next_low_weight_vector(std::array<int32_t, N>& normal, int32_t max) {
 }
 
 /**
- *  Returns all slicings by low weight halfspaces satisfying the following:
+ *  Returns all maximal slicings by low weight halfspaces satisfying the following:
  *    - The normal vector contains only values in {-1, 1}.
  *    - The threshold (distance to the origin) is one of the given thresholds.
  **/
 template <int32_t N>
-std::vector<sliceable_set_t<N>> compute_one_weight_sliceable_sets(
+std::vector<sliceable_set_t<N>> compute_one_weight_mss(
     const std::vector<int32_t>& thresholds, const edge_lexicon_t<N>& edges) {
-  std::unordered_set<sliceable_set_t<N>> sets;
+  std::vector<sliceable_set_t<N>> sets;
   std::array<int32_t, N> normal;
   normal.fill(-1);
   do {
     for (const auto& threshold : thresholds) {
-      const auto ss =
+      const auto mss =
           low_weight_halfspace_to_sliceable_set<N>(normal, threshold, edges);
-      if (ss.any()) {
-        sets.insert(ss);
+      if (mss.any()) {
+        const auto is_superset_of_mss = [mss](const sliceable_set_t<N>& ss) {
+          return (ss | mss) == ss;
+        };
+        if (std::none_of(sets.begin(), sets.end(), is_superset_of_mss)) {
+          const auto is_subset_of_mss = [mss](const sliceable_set_t<N>& ss) {
+            return (ss | mss) == mss;
+          };
+          const auto it = remove_if(sets.begin(), sets.end(), is_subset_of_mss);
+          sets.erase(it, sets.end());
+          sets.push_back(mss);
+        }
       }
     }
   } while (next_one_weight_vector<N>(normal));
-  return std::vector<sliceable_set_t<N>>(sets.begin(), sets.end());
-}
-
-/**
- *  Returns all slicings by low weight halfspaces satisfying the following:
- *    - The normal vector contains only values in {-max, ..., max}.
- *    - The threshold (distance to the origin) is one of the given thresholds.
- **/
-template <int32_t N>
-std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
-    int32_t max, const std::vector<int32_t>& thresholds,
-    const edge_lexicon_t<N>& edges) {
-  std::unordered_set<sliceable_set_t<N>> sets;
-  std::array<int32_t, N> normal;
-  normal.fill(-max);
-  do {
-    for (const auto& threshold : thresholds) {
-      const auto ss =
-          low_weight_halfspace_to_sliceable_set<N>(normal, threshold, edges);
-      if (ss.any()) {
-        sets.insert(ss);
-      }
-    }
-  } while (next_low_weight_vector(normal, max));
-  return std::vector<sliceable_set_t<N>>(sets.begin(), sets.end());
+  return sets;
 }
 
 /**
@@ -137,19 +122,17 @@ std::vector<sliceable_set_t<N>> compute_low_weight_sliceable_sets(
  *  following:
  *    - The normal vector contains only values in {-max, ..., max}.
  *    - The threshold (distance to the origin) is any integer value.
- *
- *  The returned slicings are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
-    const edge_lexicon_t<N>& edges, int32_t max) {
+    int32_t max, const edge_lexicon_t<N>& edges) {
   std::vector<sliceable_set_t<N>> sets;
   std::array<int32_t, N> normal;
   normal.fill(-max);
   do {
-    for (int32_t d = 0; d < max * N; ++d) {
+    for (int32_t threshold = 0; threshold < max * N; ++threshold) {
       const auto mss =
-          low_weight_halfspace_to_sliceable_set<N>(normal, d, edges);
+          low_weight_halfspace_to_sliceable_set<N>(normal, threshold, edges);
       if (mss.any()) {
         const auto is_superset_of_mss = [mss](const sliceable_set_t<N>& ss) {
           return (ss | mss) == ss;
@@ -165,7 +148,6 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
       }
     }
   } while (next_low_weight_vector<N>(normal, max));
-  std::sort(sets.begin(), sets.end());
   return sets;
 }
 

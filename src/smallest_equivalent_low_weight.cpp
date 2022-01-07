@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <iostream>
 
+#include "bitset_comparator.hpp"
 #include "complex.hpp"
 #include "edge.hpp"
 #include "low_weight.hpp"
@@ -20,7 +21,8 @@ int32_t smallest_equivalent_low_weight() {
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = expand_usr<N>(usr, edges);
   for (int k = 0;; ++k) {
-    const auto mss_low_weight = compute_low_weight_mss<N>(edges, k);
+    auto mss_low_weight = compute_low_weight_mss<N>(k, edges);
+    std::sort(mss_low_weight.begin(), mss_low_weight.end());
     if (mss_low_weight == mss) {
       return k;
     }
