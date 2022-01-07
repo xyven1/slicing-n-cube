@@ -196,7 +196,7 @@ std::vector<sliceable_set_t<N>> pairwise_unions_parallel(
 }
 
 /**
- *  Returns the number of leading (leftmost) zeros in the bitstring encoding of
+ *  Returns the number of leading (leftmost) 0-bits in the bitstring encoding of
  *  a sliceable set.
  **/
 template <int32_t N>
@@ -211,8 +211,8 @@ int32_t get_leading_zeros(const sliceable_set_t<N>& ss) {
 }
 
 /**
- *  Returns the number of leading (leftmost) ones in the bitstring encoding of a
- *  sliceable set.
+ *  Returns the number of leading (leftmost) 1-bits in the bitstring encoding of
+ *  a sliceable set.
  **/
 template <int32_t N>
 int32_t get_leading_ones(const sliceable_set_t<N>& ss) {

@@ -3,12 +3,19 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
+/**
+ *  Returns the size of the file at the given path in bytes.
+ **/
 long get_file_size(const char *path) {
   struct stat stat_buf;
   int rc = stat(path, &stat_buf);
   return (rc == 0) ? stat_buf.st_size : -1;
 }
 
+/**
+ *  Reads the file at the given path into memory and returns the number of bytes
+ *  read.
+ **/
 size_t read_from_file(const char *path, char **buf_ptr) {
   const long maybe_file_size = get_file_size(path);
   if (maybe_file_size <= 0) {
@@ -34,6 +41,9 @@ size_t read_from_file(const char *path, char **buf_ptr) {
   return file_size;
 }
 
+/**
+ *  Prints a byte array as a bitstring.
+ **/
 void printb(const char *buf, size_t num_bytes) {
   for (size_t i = 0; i < num_bytes; ++i) {
     char str[9];
@@ -50,6 +60,9 @@ void printb(const char *buf, size_t num_bytes) {
   }
 }
 
+/**
+ *  Returns the number of leading 0-bits in a byte array.
+ **/
 int get_leading_zeros(const char *buf, size_t num_bytes) {
   for (size_t i = 0; i < num_bytes; ++i) {
     for (int j = 7; j >= 0; --j) {
@@ -61,6 +74,9 @@ int get_leading_zeros(const char *buf, size_t num_bytes) {
   return (int)(num_bytes * 8);
 }
 
+/**
+ *  Returns the number of leading 1-bits in a byte array.
+ **/
 int get_leading_ones(const char *buf, size_t num_bytes) {
   for (size_t i = 0; i < num_bytes; ++i) {
     for (int j = 7; j >= 0; --j) {
@@ -72,19 +88,25 @@ int get_leading_ones(const char *buf, size_t num_bytes) {
   return (int)(num_bytes * 8);
 }
 
-int combine_usr_mss(const char *usr, size_t usr_len, const char *mss,
-                    size_t mss_len) {
-  for (size_t i = 0; i < usr_len; i += 10) {
-    const int leading_zeros = get_leading_zeros(usr + i, 10);
+/***
+ *  Returns true if any pairwise union of two lists of sliceable sets slices all
+ *  edges and false otherwise.
+ *
+ *  The second list is required to be sorted in lexicographic order.
+ **/
+int pairwise_unions_slice_cube(const char *sets_1, size_t sets_1_len,
+                               const char *sets_2, size_t sets_2_len) {
+  for (size_t i = 0; i < sets_1_len; i += 10) {
+    const int leading_zeros = get_leading_zeros(sets_1 + i, 10);
     const uint64_t mask =
         (leading_zeros < 64) ? 0xFFFFFFFFFFFFFFFF >> leading_zeros : 0;
-    for (size_t j = mss_len - 10; j < mss_len; j -= 10) {
-      const uint64_t usr_a = *(const uint64_t *)(usr + i);
-      const uint64_t mss_a = *(const uint64_t *)(mss + j);
-      const uint16_t usr_b = *(const uint16_t *)(usr + i + 8);
-      const uint16_t mss_b = *(const uint16_t *)(mss + j + 8);
+    for (size_t j = sets_2_len - 10; j < sets_2_len; j -= 10) {
+      const uint64_t set_1_a = *(const uint64_t *)(sets_1 + i);
+      const uint64_t set_2_a = *(const uint64_t *)(sets_2 + j);
+      const uint16_t set_1_b = *(const uint16_t *)(sets_1 + i + 8);
+      const uint16_t set_2_b = *(const uint16_t *)(sets_2 + j + 8);
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-      if ((mss_a | __builtin_bswap64(mask)) != 0xFFFFFFFFFFFFFFFF) {
+      if ((set_2_a | __builtin_bswap64(mask)) != 0xFFFFFFFFFFFFFFFF) {
         break;
       }
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
@@ -97,26 +119,8 @@ int combine_usr_mss(const char *usr, size_t usr_len, const char *mss,
         break;
       }
 #endif
-      const uint64_t a = usr_a | mss_a;
-      const uint16_t b = usr_b | mss_b;
-      if (a == 0xFFFFFFFFFFFFFFFF && b == 0xFFFF) {
-        return 1;
-      }
-    }
-  }
-  return 0;
-}
-
-int combine_usr_mss_naive(const char *usr, size_t usr_len, const char *mss,
-                          size_t mss_len) {
-  for (size_t i = 0; i < mss_len; i += 10) {
-    for (size_t j = 0; j < usr_len; j += 10) {
-      const uint64_t mss_a = *(const uint64_t *)(mss + i);
-      const uint64_t usr_a = *(const uint64_t *)(usr + j);
-      const uint16_t mss_b = *(const uint16_t *)(mss + i + 8);
-      const uint16_t usr_b = *(const uint16_t *)(usr + j + 8);
-      const uint64_t a = usr_a | mss_a;
-      const uint16_t b = usr_b | mss_b;
+      const uint64_t a = set_1_a | set_2_a;
+      const uint16_t b = set_1_b | set_2_b;
       if (a == 0xFFFFFFFFFFFFFFFF && b == 0xFFFF) {
         return 1;
       }
@@ -137,6 +141,6 @@ int main() {
   if (mss_len == 0) {
     return 2;
   }
-  const int slices_all = combine_usr_mss(usr, usr_len, mss, mss_len);
-  printf("%d\n", slices_all);
+  const int slices_all = pairwise_unions_slice_cube(usr, usr_len, mss, mss_len);
+  printf("Can four hyperplanes slice the 5-cube: %d\n", slices_all);
 }
