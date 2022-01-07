@@ -170,13 +170,15 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
 }
 
 /**
- *  Returns the smallest k so that the given sliceable sets contain a
- *  k-sliceable set.
+ *  Returns the smallest k so that a combination of k sliceable sets slice the
+ *  n-cube.
+ *
+ *  Does not terminate of no combination of sliceable sets slices the n-cube.
  **/
 template <int32_t N>
-int32_t combine_low_weight_sliceable_sets(
-    const std::vector<sliceable_set_t<N>>& sets,
-    const edge_lexicon_t<N>& edges) {
+int32_t slice_cube_low_weight(const std::vector<sliceable_set_t<N>>& sets,
+                              const edge_lexicon_t<N>& edges) {
+  // Contains the unique symmetric representation of maximal k-sliceable sets.
   std::vector<sliceable_set_t<N>> sets_k;
   for (const auto& ss : sets) {
     const auto usr = unique_sliceable_set<N>(ss, edges);
@@ -184,14 +186,11 @@ int32_t combine_low_weight_sliceable_sets(
       sets_k.push_back(usr);
     }
   }
-  std::cout << "expanded size = " << sets.size() << std::endl;
-  std::cout << "k = " << 1 << " size = " << sets_k.size() << std::endl;
-  for (int i = 2;; ++i) {
+  for (int k = 2;; ++k) {
     sets_k = pairwise_unions_parallel<N>(sets_k, sets, edges);
-    std::cout << "k = " << i << " size = " << sets_k.size() << std::endl;
     for (const auto& ss : sets_k) {
       if (ss.all()) {
-        return i;
+        return k;
       }
     }
   }

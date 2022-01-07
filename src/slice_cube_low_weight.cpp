@@ -12,7 +12,7 @@ int32_t slice_cube_one_weight(const std::vector<int32_t>& distances) {
   const auto edges = compute_edges<N>();
   const auto low_weight_sets =
       compute_one_weight_sliceable_sets<N>(distances, edges);
-  const auto k = combine_low_weight_sliceable_sets<N>(low_weight_sets, edges);
+  const auto k = slice_cube_low_weight<N>(low_weight_sets, edges);
   return k;
 }
 
