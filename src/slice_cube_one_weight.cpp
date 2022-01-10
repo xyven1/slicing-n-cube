@@ -18,7 +18,7 @@ int32_t slice_cube_one_weight(const std::vector<int32_t>& thresholds) {
 int main() {
   std::vector<int32_t> thresholds = {0, 1};
   std::cout << "Minimum number of halfspaces with normal vector in {-1, 1} and "
-               "threshold in {0, 1} required to slice n-cube"
+               "threshold in {0, 1} required to slice the n-cube"
             << std::endl;
   std::cout << "n = 2: " << slice_cube_one_weight<2>(thresholds) << std::endl;
   std::cout << "n = 3: " << slice_cube_one_weight<3>(thresholds) << std::endl;
@@ -27,7 +27,7 @@ int main() {
   std::cout << "n = 6: " << slice_cube_one_weight<6>(thresholds) << std::endl;
   std::cout << "n = 7: " << slice_cube_one_weight<7>(thresholds) << std::endl;
   std::cout << "Minimum number of halfspaces with normal vector in {-1, 1} and "
-               "threshold in {0, ..., n} required to slice n-cube"
+               "threshold in {0, ..., n} required to slice the n-cube"
             << std::endl;
   thresholds.push_back(2);
   std::cout << "n = 2: " << slice_cube_one_weight<2>(thresholds) << std::endl;
