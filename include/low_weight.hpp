@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "edge.hpp"
-#include "multithreaded.hpp"
 #include "prettyprint.hpp"
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
@@ -171,7 +170,7 @@ int32_t slice_cube_low_weight(const std::vector<sliceable_set_t<N>>& sets,
     }
   }
   for (int k = 2;; ++k) {
-    sets_k = pairwise_unions_parallel<N>(sets_k, sets, edges);
+    sets_k = pairwise_unions<N>(sets_k, sets, edges);
     for (const auto& ss : sets_k) {
       if (ss.all()) {
         return k;

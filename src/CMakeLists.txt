@@ -1,7 +1,6 @@
 find_package(CGAL QUIET)
-find_package(Threads REQUIRED)
 
-link_libraries(CGAL::CGAL Threads::Threads)
+link_libraries(CGAL::CGAL)
 # Required for GCC 8
 link_libraries(stdc++fs)
 
