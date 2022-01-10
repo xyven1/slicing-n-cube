@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "edge.hpp"
+#include "multithreaded.hpp"
 #include "prettyprint.hpp"
 #include "sliceable_set.hpp"
 #include "vertex.hpp"
@@ -85,7 +86,8 @@ bool next_low_weight_vector(std::array<int32_t, N>& normal, int32_t max) {
 }
 
 /**
- *  Returns all maximal slicings by low weight halfspaces satisfying the following:
+ *  Returns all maximal slicings by low weight halfspaces satisfying the
+ *  following:
  *    - The normal vector contains only values in {-1, 1}.
  *    - The threshold (distance to the origin) is one of the given thresholds.
  **/
