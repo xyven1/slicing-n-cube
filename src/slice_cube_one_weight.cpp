@@ -39,6 +39,4 @@ int main() {
   std::cout << "n = 5: " << slice_cube_one_weight<5>(thresholds) << std::endl;
   thresholds.push_back(6);
   std::cout << "n = 6: " << slice_cube_one_weight<6>(thresholds) << std::endl;
-  thresholds.push_back(7);
-  std::cout << "n = 7: " << slice_cube_one_weight<7>(thresholds) << std::endl;
 }
