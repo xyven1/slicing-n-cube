@@ -28,6 +28,7 @@ bool slice_5_cube() {
 }
 
 int main() {
-  std::cout << "Can four hyperplanes slice the 5-cube: " << slice_5_cube()
+  const auto slices_all = slice_5_cube();
+  std::cout << "Can four hyperplanes slice the 5-cube: " << slices_all
             << std::endl;
 }
