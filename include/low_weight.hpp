@@ -155,33 +155,6 @@ std::vector<sliceable_set_t<N>> compute_low_weight_usr_mss(
 }
 
 /**
- *  Returns the smallest k so that a combination of k sliceable sets slice the
- *  n-cube.
- *
- *  Does not terminate of no combination of sliceable sets slices the n-cube.
- **/
-template <int32_t N>
-int32_t slice_cube_low_weight(const std::vector<sliceable_set_t<N>>& sets,
-                              const edge_lexicon_t<N>& edges) {
-  // Contains the unique symmetric representation of maximal k-sliceable sets.
-  std::vector<sliceable_set_t<N>> sets_k;
-  for (const auto& ss : sets) {
-    const auto usr = unique_sliceable_set<N>(ss, edges);
-    if (std::find(sets_k.begin(), sets_k.end(), usr) == sets_k.end()) {
-      sets_k.push_back(usr);
-    }
-  }
-  for (int k = 2;; ++k) {
-    sets_k = pairwise_unions<N>(sets_k, sets, edges);
-    for (const auto& ss : sets_k) {
-      if (ss.all()) {
-        return k;
-      }
-    }
-  }
-}
-
-/**
  *  Writes in lexicographic order all slicings by low weight halfspaces
  *  satisfying the following to a file at the given path:
  *    - The normal vector contains only values in {-1, 1}.
