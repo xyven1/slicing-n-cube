@@ -21,8 +21,8 @@ int32_t smallest_equivalent_low_weight() {
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = expand_usr<N>(usr, edges);
   for (int k = 0;; ++k) {
-    auto mss_low_weight = compute_low_weight_mss<N>(k, edges);
-    std::sort(mss_low_weight.begin(), mss_low_weight.end());
+    const auto usr_low_weight = compute_low_weight_usr_mss<N>(k, edges);
+    const auto mss_low_weight = expand_usr<N>(usr_low_weight, edges);
     if (mss_low_weight == mss) {
       return k;
     }

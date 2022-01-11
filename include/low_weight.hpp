@@ -85,13 +85,13 @@ bool next_low_weight_vector(std::array<int32_t, N>& normal, int32_t max) {
 }
 
 /**
- *  Returns all maximal slicings by low weight halfspaces satisfying the
- *  following:
+ *  Returns the unique symmetric representation of all maximal slicings by low
+ *  weight halfspaces satisfying the following:
  *    - The normal vector contains only values in {-1, 1}.
  *    - The threshold (distance to the origin) is one of the given thresholds.
  **/
 template <int32_t N>
-std::vector<sliceable_set_t<N>> compute_one_weight_mss(
+std::vector<sliceable_set_t<N>> compute_one_weight_usr_mss(
     const std::vector<int32_t>& thresholds, const edge_lexicon_t<N>& edges) {
   std::vector<sliceable_set_t<N>> sets;
   std::array<int32_t, N> normal;
@@ -101,16 +101,17 @@ std::vector<sliceable_set_t<N>> compute_one_weight_mss(
       const auto mss =
           low_weight_halfspace_to_sliceable_set<N>(normal, threshold, edges);
       if (mss.any()) {
-        const auto is_superset_of_mss = [mss](const sliceable_set_t<N>& ss) {
-          return (ss | mss) == ss;
+        const auto usr = unique_sliceable_set<N>(mss, edges);
+        const auto is_superset_of_usr = [usr](const sliceable_set_t<N>& ss) {
+          return (ss | usr) == ss;
         };
-        if (std::none_of(sets.begin(), sets.end(), is_superset_of_mss)) {
-          const auto is_subset_of_mss = [mss](const sliceable_set_t<N>& ss) {
-            return (ss | mss) == mss;
+        if (std::none_of(sets.begin(), sets.end(), is_superset_of_usr)) {
+          const auto is_subset_of_usr = [usr](const sliceable_set_t<N>& ss) {
+            return (ss | usr) == usr;
           };
-          const auto it = remove_if(sets.begin(), sets.end(), is_subset_of_mss);
+          const auto it = remove_if(sets.begin(), sets.end(), is_subset_of_usr);
           sets.erase(it, sets.end());
-          sets.push_back(mss);
+          sets.push_back(usr);
         }
       }
     }
@@ -119,13 +120,13 @@ std::vector<sliceable_set_t<N>> compute_one_weight_mss(
 }
 
 /**
- *  Returns all maximal slicings by low weight halfspaces satisfying the
- *  following:
+ *  Returns the unique symmetric representation of all maximal slicings by low
+ *  weight halfspaces satisfying the following:
  *    - The normal vector contains only values in {-max, ..., max}.
  *    - The threshold (distance to the origin) is any integer value.
  **/
 template <int32_t N>
-std::vector<sliceable_set_t<N>> compute_low_weight_mss(
+std::vector<sliceable_set_t<N>> compute_low_weight_usr_mss(
     int32_t max, const edge_lexicon_t<N>& edges) {
   std::vector<sliceable_set_t<N>> sets;
   std::array<int32_t, N> normal;
@@ -135,16 +136,17 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
       const auto mss =
           low_weight_halfspace_to_sliceable_set<N>(normal, threshold, edges);
       if (mss.any()) {
-        const auto is_superset_of_mss = [mss](const sliceable_set_t<N>& ss) {
-          return (ss | mss) == ss;
+        const auto usr = unique_sliceable_set<N>(mss, edges);
+        const auto is_superset_of_usr = [usr](const sliceable_set_t<N>& ss) {
+          return (ss | usr) == ss;
         };
-        if (std::none_of(sets.begin(), sets.end(), is_superset_of_mss)) {
-          const auto is_subset_of_mss = [mss](const sliceable_set_t<N>& ss) {
-            return (ss | mss) == mss;
+        if (std::none_of(sets.begin(), sets.end(), is_superset_of_usr)) {
+          const auto is_subset_of_usr = [usr](const sliceable_set_t<N>& ss) {
+            return (ss | usr) == usr;
           };
-          const auto it = remove_if(sets.begin(), sets.end(), is_subset_of_mss);
+          const auto it = remove_if(sets.begin(), sets.end(), is_subset_of_usr);
           sets.erase(it, sets.end());
-          sets.push_back(mss);
+          sets.push_back(usr);
         }
       }
     }

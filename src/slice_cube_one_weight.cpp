@@ -10,8 +10,9 @@ using namespace ncube;
 template <int32_t N>
 int32_t slice_cube_one_weight(const std::vector<int32_t>& thresholds) {
   const auto edges = compute_edges<N>();
-  const auto sets = compute_one_weight_mss<N>(thresholds, edges);
-  const auto k = slice_cube_low_weight<N>(sets, edges);
+  const auto usr = compute_one_weight_usr_mss<N>(thresholds, edges);
+  const auto mss = expand_usr<N>(usr, edges);
+  const auto k = slice_cube<N>(mss, edges);
   return k;
 }
 
