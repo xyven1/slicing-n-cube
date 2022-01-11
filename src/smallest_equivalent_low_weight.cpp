@@ -1,7 +1,6 @@
 #include <cstdint>
 #include <iostream>
 
-#include "bitset_comparator.hpp"
 #include "complex.hpp"
 #include "edge.hpp"
 #include "low_weight.hpp"
