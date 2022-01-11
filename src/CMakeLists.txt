@@ -4,6 +4,7 @@ link_libraries(CGAL::CGAL)
 # Required for GCC 8
 link_libraries(stdc++fs)
 
+add_executable(edge_cardinality edge_cardinality.cpp)
 add_executable(slice_cube slice_cube.cpp)
 add_executable(slice_cube_degree_two slice_cube_degree_two.cpp)
 add_executable(slice_cube_final slice_cube_final.c)
