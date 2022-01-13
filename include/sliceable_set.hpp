@@ -77,6 +77,8 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
 /**
  *  Returns the unique symmetric representation of the pairwise unions of two
  *  lists of sliceable sets.
+ *
+ *  The returned sliceable sets are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> pairwise_unions(
@@ -101,6 +103,7 @@ std::vector<sliceable_set_t<N>> pairwise_unions(
       }
     }
   }
+  std::sort(unions.begin(), unions.end());
   return unions;
 }
 

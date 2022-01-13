@@ -24,8 +24,7 @@ void equivalent_low_weight_mss() {
   const auto mss = expand_usr<N>(usr, edges);
   std::cout << "  |mss| = " << mss.size() << std::endl;
   for (int i = 1;; ++i) {
-    auto mss_low_weight = compute_low_weight_mss<N>(i, edges);
-    std::sort(mss_low_weight.begin(), mss_low_weight.end());
+    const auto mss_low_weight = compute_low_weight_mss<N>(i, edges);
     std::cout << "  |mss_" << i << "| = " << mss_low_weight.size() << std::endl;
     if (mss_low_weight == mss) {
       std::cout << "  smallest i to have equivalent mss is " << i << std::endl;

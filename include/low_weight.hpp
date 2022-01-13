@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "bitset_comparator.hpp"
 #include "edge.hpp"
 #include "prettyprint.hpp"
 #include "sliceable_set.hpp"
@@ -89,6 +90,8 @@ bool next_low_weight_vector(std::array<int32_t, N>& normal, int32_t max) {
  *  weight halfspaces satisfying the following:
  *    - The normal vector contains only values in {-1, 1}.
  *    - The threshold (distance to the origin) is one of the given thresholds.
+ *
+ *  The returned slicings are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_one_weight_mss(
@@ -115,14 +118,17 @@ std::vector<sliceable_set_t<N>> compute_one_weight_mss(
       }
     }
   } while (next_one_weight_vector<N>(normal));
+  std::sort(sets.begin(), sets.end());
   return sets;
 }
 
 /**
  *  Returns all maximal slicings by low weight halfspaces satisfying the
- *following:
+ *  following:
  *    - The normal vector contains only values in {-max, ..., max}.
  *    - The threshold (distance to the origin) is any integer value.
+ *
+ *  The returned slicings are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
@@ -149,6 +155,7 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
       }
     }
   } while (next_low_weight_vector<N>(normal, max));
+  std::sort(sets.begin(), sets.end());
   return sets;
 }
 
