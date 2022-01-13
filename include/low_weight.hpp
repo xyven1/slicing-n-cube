@@ -17,7 +17,7 @@
 namespace ncube {
 
 /**
- *  Returns the slicing by a low weight halfspace.
+ *  Returns the sliceable set induced by a low weight halfspace.
  *
  *  The low weight halfspace is given by its normal vector and threshold
  *  (distance to the origin).
@@ -86,12 +86,12 @@ bool next_low_weight_vector(std::array<int32_t, N>& normal, int32_t max) {
 }
 
 /**
- *  Returns the unique symmetric representation of all maximal slicings by low
- *  weight halfspaces satisfying the following:
+ *  Returns all maximal sliceable sets induced by low weight halfspaces
+ *  satisfying the following:
  *    - The normal vector contains only values in {-1, 1}.
  *    - The threshold (distance to the origin) is one of the given thresholds.
  *
- *  The returned slicings are sorted in lexicographic order.
+ *  The returned sliceable sets are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_one_weight_mss(
@@ -123,12 +123,12 @@ std::vector<sliceable_set_t<N>> compute_one_weight_mss(
 }
 
 /**
- *  Returns all maximal slicings by low weight halfspaces satisfying the
- *  following:
+ *  Returns all maximal sliceable sets induced by low weight halfspaces
+ *  satisfying the following:
  *    - The normal vector contains only values in {-max, ..., max}.
  *    - The threshold (distance to the origin) is any integer value.
  *
- *  The returned slicings are sorted in lexicographic order.
+ *  The returned sliceable sets are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> compute_low_weight_mss(
@@ -160,13 +160,13 @@ std::vector<sliceable_set_t<N>> compute_low_weight_mss(
 }
 
 /**
- *  Writes in lexicographic order all slicings by low weight halfspaces
- *  satisfying the following to a file at the given path:
+ *  Writes in lexicographic order all sliceable sets induced by low weight
+ *  halfspaces satisfying the following to a file at the given path:
  *    - The normal vector contains only values in {-1, 1}.
  *    - The threshold (distance to the origin) is one of the given thresholds.
  *
- *  For each slicing the following is written in text:
- *    - The bitstring encoding of the slicing.
+ *  For each sliceable set the following is written in text:
+ *    - The bitstring encoding of the sliceable set.
  *    - The normal vector.
  *    - The threshold.
  **/
@@ -196,13 +196,13 @@ void write_one_weight_halfspaces_to_file(const std::vector<int32_t>& thresholds,
 }
 
 /**
- *  Writes in lexicographic order all slicings by low weight halfspaces
- *  satisfying the following to a file at the given path:
+ *  Writes in lexicographic order all sliceable sets induced by low weight
+ *  halfspaces satisfying the following to a file at the given path:
  *    - The normal vector contains only values in {-max, ..., max}.
  *    - The threshold (distance to the origin) is any integer value.
  *
- *  For each slicing the following is written in text:
- *    - The bitstring encoding of the slicing.
+ *  For each sliceable set the following is written in text:
+ *    - The bitstring encoding of the sliceable set.
  *    - The normal vector.
  *    - The threshold.
  **/

@@ -149,7 +149,7 @@ std::vector<vertex_t> adjacent_vertices_of_complex(
 }
 
 /**
- *  Returns the slicing corresponding to the exterior edges of a cut complex.
+ *  Returns the sliceable set induced by the exterior edges of a cut complex.
  **/
 template <int32_t N>
 sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
@@ -170,10 +170,10 @@ sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
 }
 
 /**
- *  Returns the unique symmetric representation of all slicings induced by the
+ *  Returns the unique symmetric representation of all sliceable sets induced by
  *  cut complexes.
  *
- *  The returned slicings are sorted in lexicographic order.
+ *  The returned sliceable sets are sorted in lexicographic order.
  **/
 template <int32_t N>
 std::vector<sliceable_set_t<N>> complexes_to_usr(
