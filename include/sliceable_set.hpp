@@ -74,7 +74,6 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
   return min_ss;
 }
 
-
 /**
  *  Returns the symmetry expansions of unique symmetric representations of
  *  sliceable sets.
@@ -157,8 +156,8 @@ std::vector<sliceable_set_t<N>> reduce_to_mss(
 }
 
 /**
- *  Returns the unique symmetric representation of the pairwise unions of two
- *  lists of sliceable sets.
+ *  Returns the unique symmetric representation of the maximal pairwise unions
+ *  of two lists of sliceable sets.
  *
  *  The returned sliceable sets are sorted in lexicographic order.
  **/
@@ -185,7 +184,9 @@ std::vector<sliceable_set_t<N>> pairwise_unions(
       }
     }
   }
-  std::sort(unions.begin(), unions.end());
+  unions = expand_usr<N>(unions, edges);
+  unions = reduce_to_mss<N>(unions);
+  unions = reduce_to_usr<N>(unions, edges);
   return unions;
 }
 
