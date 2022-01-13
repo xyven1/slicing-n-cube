@@ -62,9 +62,11 @@ void equivalent_low_weight_slice_cube_min() {
 }
 
 int main() {
+  equivalent_low_weight_mss<2>();
   equivalent_low_weight_mss<3>();
   equivalent_low_weight_mss<4>();
   equivalent_low_weight_mss<5>();
+  equivalent_low_weight_slice_cube_min<2>();
   equivalent_low_weight_slice_cube_min<3>();
   equivalent_low_weight_slice_cube_min<4>();
   equivalent_low_weight_slice_cube_min<5>();
