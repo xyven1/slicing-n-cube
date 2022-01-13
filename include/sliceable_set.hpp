@@ -194,6 +194,25 @@ std::vector<sliceable_set_t<N>> expand_usr(
 }
 
 /**
+ *  Returns the unique symmetric representation of sliceable sets.
+ *
+ *  The returned sliceable sets are sorted in lexicographic order.
+ **/
+template <int32_t N>
+std::vector<sliceable_set_t<N>> reduce_to_usr(
+    const std::vector<sliceable_set_t<N>>& sets,
+    const edge_lexicon_t<N>& edges) {
+  std::vector<sliceable_set_t<N>> usr;
+  usr.reserve(sets.size());
+  for (const auto& ss : sets) {
+    usr.push_back(unique_sliceable_set<N>(ss, edges));
+  }
+  std::sort(usr.begin(), usr.end());
+  usr.erase(std::unique(usr.begin(), usr.end()), usr.end());
+  return usr;
+}
+
+/**
  *  Returns the bitstring encoding of a sliceable set in a byte array.
  **/
 template <int32_t N>

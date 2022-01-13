@@ -22,8 +22,8 @@ int32_t equivalent_low_weight_mss() {
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto mss = expand_usr<N>(usr, edges);
   for (int i = 0;; ++i) {
-    const auto usr_low_weight = compute_low_weight_usr_mss<N>(i, edges);
-    const auto mss_low_weight = expand_usr<N>(usr_low_weight, edges);
+    auto mss_low_weight = compute_low_weight_mss<N>(i, edges);
+    std::sort(mss_low_weight.begin(), mss_low_weight.end());
     if (mss_low_weight == mss) {
       return i;
     }
@@ -42,7 +42,8 @@ int32_t equivalent_low_weight_slice_cube_min() {
   const auto usr = complexes_to_usr<N>(complexes, edges);
   const auto k = slice_cube_min<N>(usr, edges);
   for (int i = 0;; ++i) {
-    const auto usr_low_weight = compute_low_weight_usr_mss<N>(i, edges);
+    const auto mss_low_weight = compute_low_weight_mss<N>(i, edges);
+    const auto usr_low_weight = reduce_to_usr<N>(mss_low_weight, edges);
     const auto k_low_weight = slice_cube_min<N>(usr_low_weight, edges);
     if (k == k_low_weight) {
       return i;
