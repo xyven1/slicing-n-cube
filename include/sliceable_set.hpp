@@ -207,9 +207,10 @@ std::vector<sliceable_set_t<N>> reduce_to_usr(
     const edge_lexicon_t<N>& edges) {
   std::vector<sliceable_set_t<N>> usr;
   usr.reserve(sets.size());
-  for (const auto& ss : sets) {
-    usr.push_back(unique_sliceable_set<N>(ss, edges));
-  }
+  const auto f = [edges](const sliceable_set_t<N>& ss) {
+    return unique_sliceable_set<N>(ss, edges);
+  };
+  std::transform(sets.begin(), sets.end(), std::back_inserter(usr), f);
   std::sort(usr.begin(), usr.end());
   usr.erase(std::unique(usr.begin(), usr.end()), usr.end());
   return usr;
