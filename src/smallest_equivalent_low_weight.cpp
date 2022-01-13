@@ -50,7 +50,7 @@ void equivalent_low_weight_slice_cube_min() {
   for (int i = 1;; ++i) {
     const auto mss_low_weight = compute_low_weight_mss<N>(i, edges);
     const auto usr_low_weight = reduce_to_usr<N>(mss_low_weight, edges);
-    const auto k_low_weight = slice_cube_min<N>(usr_low_weight, edges);
+    const auto k_low_weight = slice_cube_min<N>(usr_low_weight, k, edges);
     std::cout << "  k_" << i << " = " << k << std::endl;
     if (k == k_low_weight) {
       std::cout << "  smallest i to slice the n-cube with the same number of "
