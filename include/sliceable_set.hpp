@@ -74,6 +74,88 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
   return min_ss;
 }
 
+
+/**
+ *  Returns the symmetry expansions of unique symmetric representations of
+ *  sliceable sets.
+ *
+ *  The returned sliceable sets are sorted in lexicographic order.
+ **/
+template <int32_t N>
+std::vector<sliceable_set_t<N>> expand_usr(
+    const std::vector<sliceable_set_t<N>>& usr,
+    const edge_lexicon_t<N>& edges) {
+  std::vector<sliceable_set_t<N>> expansions;
+  for (const auto& ss : usr) {
+    std::array<int32_t, N> permutation;
+    for (int32_t i = 0; i < N; ++i) {
+      permutation[i] = i;
+    }
+    do {
+      for (int32_t signs = 0; signs < num_vertices(N); ++signs) {
+        sliceable_set_t<N> ss_trans;
+        for (int32_t e = 0; e < num_edges(N); ++e) {
+          const auto edge_trans =
+              transform_edge<N>(edges[e], permutation, signs);
+          const auto e_trans = edge_to_int<N>(edge_trans, edges);
+          ss_trans[e_trans] = ss[e];
+        }
+        expansions.push_back(ss_trans);
+      }
+    } while (std::next_permutation(permutation.begin(), permutation.end()));
+  }
+  std::sort(expansions.begin(), expansions.end());
+  expansions.erase(std::unique(expansions.begin(), expansions.end()),
+                   expansions.end());
+  return expansions;
+}
+
+/**
+ *  Returns the unique symmetric representation of sliceable sets.
+ *
+ *  The returned sliceable sets are sorted in lexicographic order.
+ **/
+template <int32_t N>
+std::vector<sliceable_set_t<N>> reduce_to_usr(
+    const std::vector<sliceable_set_t<N>>& sets,
+    const edge_lexicon_t<N>& edges) {
+  std::vector<sliceable_set_t<N>> usr;
+  usr.reserve(sets.size());
+  const auto f = [edges](const sliceable_set_t<N>& ss) {
+    return unique_sliceable_set<N>(ss, edges);
+  };
+  std::transform(sets.begin(), sets.end(), std::back_inserter(usr), f);
+  std::sort(usr.begin(), usr.end());
+  usr.erase(std::unique(usr.begin(), usr.end()), usr.end());
+  return usr;
+}
+
+/**
+ *  Returns the maximal sliceable sets among the given sliceable sets.
+ *
+ *  The returned sliceable sets are sorted in lexicographic order.
+ **/
+template <int32_t N>
+std::vector<sliceable_set_t<N>> reduce_to_mss(
+    const std::vector<sliceable_set_t<N>>& sets) {
+  std::vector<sliceable_set_t<N>> mss;
+  for (const auto& curr : sets) {
+    const auto is_superset_of_curr = [curr](const sliceable_set_t<N>& ss) {
+      return (curr | ss) == ss;
+    };
+    if (std::none_of(mss.begin(), mss.end(), is_superset_of_curr)) {
+      const auto is_subset_of_curr = [curr](const sliceable_set_t<N>& ss) {
+        return (curr | ss) == curr;
+      };
+      const auto it = std::remove_if(mss.begin(), mss.end(), is_subset_of_curr);
+      mss.erase(it, mss.end());
+      mss.push_back(curr);
+    }
+  }
+  std::sort(mss.begin(), mss.end());
+  return mss;
+}
+
 /**
  *  Returns the unique symmetric representation of the pairwise unions of two
  *  lists of sliceable sets.
@@ -159,87 +241,6 @@ bool pairwise_unions_slice_cube(const std::vector<sliceable_set_t<N>>& sets_1,
     }
   }
   return slices_all;
-}
-
-/**
- *  Returns the symmetry expansions of unique symmetric representations of
- *  sliceable sets.
- *
- *  The returned sliceable sets are sorted in lexicographic order.
- **/
-template <int32_t N>
-std::vector<sliceable_set_t<N>> expand_usr(
-    const std::vector<sliceable_set_t<N>>& usr,
-    const edge_lexicon_t<N>& edges) {
-  std::vector<sliceable_set_t<N>> expansions;
-  for (const auto& ss : usr) {
-    std::array<int32_t, N> permutation;
-    for (int32_t i = 0; i < N; ++i) {
-      permutation[i] = i;
-    }
-    do {
-      for (int32_t signs = 0; signs < num_vertices(N); ++signs) {
-        sliceable_set_t<N> ss_trans;
-        for (int32_t e = 0; e < num_edges(N); ++e) {
-          const auto edge_trans =
-              transform_edge<N>(edges[e], permutation, signs);
-          const auto e_trans = edge_to_int<N>(edge_trans, edges);
-          ss_trans[e_trans] = ss[e];
-        }
-        expansions.push_back(ss_trans);
-      }
-    } while (std::next_permutation(permutation.begin(), permutation.end()));
-  }
-  std::sort(expansions.begin(), expansions.end());
-  expansions.erase(std::unique(expansions.begin(), expansions.end()),
-                   expansions.end());
-  return expansions;
-}
-
-/**
- *  Returns the unique symmetric representation of sliceable sets.
- *
- *  The returned sliceable sets are sorted in lexicographic order.
- **/
-template <int32_t N>
-std::vector<sliceable_set_t<N>> reduce_to_usr(
-    const std::vector<sliceable_set_t<N>>& sets,
-    const edge_lexicon_t<N>& edges) {
-  std::vector<sliceable_set_t<N>> usr;
-  usr.reserve(sets.size());
-  const auto f = [edges](const sliceable_set_t<N>& ss) {
-    return unique_sliceable_set<N>(ss, edges);
-  };
-  std::transform(sets.begin(), sets.end(), std::back_inserter(usr), f);
-  std::sort(usr.begin(), usr.end());
-  usr.erase(std::unique(usr.begin(), usr.end()), usr.end());
-  return usr;
-}
-
-/**
- *  Returns the maximal sliceable sets among the given sliceable sets.
- *
- *  The returned sliceable sets are sorted in lexicographic order.
- **/
-template <int32_t N>
-std::vector<sliceable_set_t<N>> reduce_to_mss(
-    const std::vector<sliceable_set_t<N>>& sets) {
-  std::vector<sliceable_set_t<N>> mss;
-  for (const auto& curr : sets) {
-    const auto is_superset_of_curr = [curr](const sliceable_set_t<N>& ss) {
-      return (curr | ss) == ss;
-    };
-    if (std::none_of(mss.begin(), mss.end(), is_superset_of_curr)) {
-      const auto is_subset_of_curr = [curr](const sliceable_set_t<N>& ss) {
-        return (curr | ss) == curr;
-      };
-      const auto it = std::remove_if(mss.begin(), mss.end(), is_subset_of_curr);
-      mss.erase(it, mss.end());
-      mss.push_back(curr);
-    }
-  }
-  std::sort(mss.begin(), mss.end());
-  return mss;
 }
 
 /**
