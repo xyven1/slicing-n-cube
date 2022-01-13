@@ -252,8 +252,8 @@ template <int32_t N>
 void write_to_file(const std::vector<sliceable_set_t<N>>& sets,
                    const std::filesystem::path& path) {
   std::ofstream file(path, std::ios::binary);
-  for (const sliceable_set_t<N>& set : sets) {
-    const auto bytes = sliceable_set_to_bytes<N>(set);
+  for (const auto& ss : sets) {
+    const auto bytes = sliceable_set_to_bytes<N>(ss);
     file.write(bytes.data(), bytes.size());
   }
 }
@@ -275,7 +275,8 @@ std::vector<sliceable_set_t<N>> read_from_file(
   std::ifstream file(path, std::ios::binary);
   for (std::size_t i = 0; i < num_sets; ++i) {
     file.read(bytes.data(), bytes.size());
-    sets.push_back(bytes_to_sliceable_set<N>(bytes));
+    const auto ss = bytes_to_sliceable_set<N>(bytes);
+    sets.push_back(ss);
   }
   return sets;
 }
