@@ -97,7 +97,7 @@ std::vector<sliceable_set_t<N>> pairwise_unions(
           return (usr | ss) == usr;
         };
         const auto it =
-            remove_if(unions.begin(), unions.end(), is_subset_of_usr);
+            std::remove_if(unions.begin(), unions.end(), is_subset_of_usr);
         unions.erase(it, unions.end());
         unions.push_back(usr);
       }
