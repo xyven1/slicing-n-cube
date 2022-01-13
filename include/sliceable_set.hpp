@@ -217,6 +217,32 @@ std::vector<sliceable_set_t<N>> reduce_to_usr(
 }
 
 /**
+ *  Returns the maximal sliceable sets among the given sliceable sets.
+ *
+ *  The returned sliceable sets are sorted in lexicographic order.
+ **/
+template <int32_t N>
+std::vector<sliceable_set_t<N>> reduce_to_mss(
+    const std::vector<sliceable_set_t<N>>& sets) {
+  std::vector<sliceable_set_t<N>> mss;
+  for (const auto& curr : sets) {
+    const auto is_superset_of_curr = [curr](const sliceable_set_t<N>& ss) {
+      return (curr | ss) == ss;
+    };
+    if (std::none_of(mss.begin(), mss.end(), is_superset_of_curr)) {
+      const auto is_subset_of_curr = [curr](const sliceable_set_t<N>& ss) {
+        return (curr | ss) == curr;
+      };
+      const auto it = std::remove_if(mss.begin(), mss.end(), is_subset_of_curr);
+      mss.erase(it, mss.end());
+      mss.push_back(curr);
+    }
+  }
+  std::sort(mss.begin(), mss.end());
+  return mss;
+}
+
+/**
  *  Returns the bitstring encoding of a sliceable set in a byte array.
  **/
 template <int32_t N>
