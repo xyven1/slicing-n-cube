@@ -36,7 +36,7 @@ using sliceable_set_bytes_t =
     std::array<char, min_bytes_to_represent_bits(num_edges(N))>;
 
 /**
- *  Returns the unique symmetric representation of a sliceable set.
+ *  Returns the unique symmetric representative of a sliceable set.
  **/
 template <int32_t N>
 sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
@@ -45,7 +45,7 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
   for (int32_t i = 0; i < N; ++i) {
     permutation[i] = i;
   }
-  // Since the unique symmetric representation of a sliceable set is defined as
+  // Since the unique symmetric representative of a sliceable set is defined as
   // the lexicographically smallest transformation, a transformation may be
   // aborted as soon as any resulting bit (starting from the leftmost bit) is 1
   // and the corresponding bit of the current minimum is 0.
@@ -75,7 +75,7 @@ sliceable_set_t<N> unique_sliceable_set(const sliceable_set_t<N>& ss,
 }
 
 /**
- *  Returns the symmetry expansions of unique symmetric representations of
+ *  Returns the symmetry expansions of the unique symmetric representatives of
  *  sliceable sets.
  *
  *  The returned sliceable sets are sorted in lexicographic order.
@@ -110,7 +110,7 @@ std::vector<sliceable_set_t<N>> expand_usr(
 }
 
 /**
- *  Returns the unique symmetric representation of sliceable sets.
+ *  Returns the unique symmetric representatives of sliceable sets.
  *
  *  The returned sliceable sets are sorted in lexicographic order.
  **/
@@ -156,7 +156,7 @@ std::vector<sliceable_set_t<N>> reduce_to_mss(
 }
 
 /**
- *  Returns the unique symmetric representation of the pairwise unions of two
+ *  Returns the unique symmetric representatives of the pairwise unions of two
  *  lists of sliceable sets. Eliminates non-maximal unions on a best effort
  *  basis.
  *

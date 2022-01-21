@@ -89,7 +89,7 @@ bool is_complex_degree_two(const complex_t<N>& complex) {
 }
 
 /**
- *  Returns the unique symmetric representation of a cut complex.
+ *  Returns the unique symmetric representative of a cut complex.
  **/
 template <int32_t N>
 complex_t<N> unique_complex(const complex_t<N>& complex) {
@@ -97,7 +97,7 @@ complex_t<N> unique_complex(const complex_t<N>& complex) {
   for (int32_t i = 0; i < N; ++i) {
     permutation[i] = i;
   }
-  // Since the unique symmetric representation of a cut complex is defined as
+  // Since the unique symmetric representative of a cut complex is defined as
   // the lexicographically smallest transformation, a transformation may be
   // aborted as soon as any resulting bit (starting from the leftmost bit) is 1
   // and the corresponding bit of the current minimum is 0.
@@ -170,8 +170,8 @@ sliceable_set_t<N> complex_to_sliceable_set(const complex_t<N>& complex,
 }
 
 /**
- *  Returns the unique symmetric representation of all sliceable sets induced by
- *  cut complexes.
+ *  Returns the unique symmetric representatives of all sliceable sets induced
+ *  by cut complexes.
  *
  *  The returned sliceable sets are sorted in lexicographic order.
  **/
@@ -191,7 +191,7 @@ std::vector<sliceable_set_t<N>> complexes_to_usr(
 }
 
 /**
- *  Returns the unique symmetric representation of all cut complexes subject
+ *  Returns the unique symmetric representatives of all cut complexes subject
  *  to a given function that decides if a set of vertices is a cut complex.
  **/
 template <int32_t N>

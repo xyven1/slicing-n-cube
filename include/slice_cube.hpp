@@ -12,7 +12,7 @@ namespace ncube {
 
 /**
  *  Returns the smallest k so that a combination of k sliceable sets given by
- *  their unique symmetric representations slices the n-cube.
+ *  their unique symmetric representatives slices the n-cube.
  *
  *  If k is larger than the specified maximum, the function terminates
  *  prematurely and returns -1.
@@ -62,7 +62,7 @@ int32_t slice_cube_min(const std::vector<sliceable_set_t<N>>& usr_1,
 
 /**
  *  Returns the smallest k so that a combination of k sliceable sets given by
- *  their unique symmetric representations slices the n-cube.
+ *  their unique symmetric representatives slices the n-cube.
  *
  *  If k is larger than 7, -1 is returned instead.
  */

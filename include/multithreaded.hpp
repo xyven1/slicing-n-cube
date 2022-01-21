@@ -29,7 +29,7 @@ std::vector<std::size_t> assign_workload(std::size_t m,
 }
 
 /**
- *  Stores the unique symmetric representation of the pairwise unions of two
+ *  Stores the unique symmetric representatives of the pairwise unions of two
  *  lists of sliceable sets in a range. Does NOT discard duplicates.
  **/
 template <int32_t N>
@@ -50,7 +50,7 @@ void pairwise_unions_all(
 }
 
 /**
- *  Returns the unique symmetric representation of the pairwise unions of two
+ *  Returns the unique symmetric representatives of the pairwise unions of two
  *  lists of sliceable sets.
  *
  *  This function is parallelized but requires a significant amount of memory.
@@ -67,7 +67,7 @@ std::vector<sliceable_set_t<N>> pairwise_unions_parallel(
   // divide mss
   const unsigned int num_threads = std::thread::hardware_concurrency();
   const auto set_1_workload = assign_workload(sets_2.size(), num_threads);
-  // compute the unique symmetric representation of all pairwise unions
+  // compute the unique symmetric representatives of all pairwise unions
   std::vector<sliceable_set_t<N>> unions(sets_1.size() * sets_2.size());
   std::vector<std::thread> threads;
   std::size_t prev_workload = 0;
