@@ -2,7 +2,7 @@
 
 - `data` contains an Excel spreadsheet with the charts and raw data of the MSSs.
 - `extern` contains [prettyprint](https://github.com/Anmol-Singh-Jaggi/Pretty-print).
-- `include/` contains the framework.
+- `include` contains the framework.
 - `src` contains the programs.
 
 # Build instructions
