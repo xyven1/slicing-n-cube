@@ -16,7 +16,7 @@ int main() {
   const auto duration =
       std::chrono::duration_cast<std::chrono::seconds>(stop - start);
   std::cout << "Execution time of pairwise_unions_slice_cube: "
-            << duration.count() << std::endl;
+            << duration.count() << " s" << std::endl;
   std::cout << "Can four hyperplanes slice the 5-cube: " << slices_cube
             << std::endl;
 }
