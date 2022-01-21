@@ -12,23 +12,19 @@
 using namespace ncube;
 
 template <int32_t N>
-std::vector<int64_t> edge_cardinalities(
-    const std::vector<sliceable_set_t<N>>& sets) {
-  std::vector<int64_t> cardinalities(num_edges(N) + 1);
-  for (const auto& ss : sets) {
-    cardinalities[ss.count()] += 1;
-  }
-  return cardinalities;
-}
-
-template <int32_t N>
 std::vector<int64_t> edge_cardinalities_mss(
     std::function<bool(const complex_t<N>&)> is_complex) {
   const auto edges = compute_edges<N>();
   const auto complexes = compute_complexes<N>(is_complex);
   const auto usr = complexes_to_usr<N>(complexes, edges);
-  const auto mss = expand_usr<N>(usr, edges);
-  return edge_cardinalities<N>(mss);
+  std::vector<int64_t> cardinalities(num_edges(N) + 1);
+  for (const auto& a : usr) {
+    const auto mss = expand_usr<N>({a}, edges);
+    for (const auto& b : mss) {
+      cardinalities[b.count()] += 1;
+    }
+  }
+  return cardinalities;
 }
 
 template <int32_t N>
@@ -49,6 +45,7 @@ int main() {
   write_to_file<4>(is_complex_degree_one<4>, dir + "/degree_one_4.txt");
   write_to_file<5>(is_complex_degree_one<5>, dir + "/degree_one_5.txt");
   write_to_file<6>(is_complex_degree_one<6>, dir + "/degree_one_6.txt");
+  write_to_file<7>(is_complex_degree_one<7>, dir + "/degree_one_7.txt");
 
   write_to_file<2>(is_complex_degree_two<2>, dir + "/degree_two_2.txt");
   write_to_file<3>(is_complex_degree_two<3>, dir + "/degree_two_3.txt");
