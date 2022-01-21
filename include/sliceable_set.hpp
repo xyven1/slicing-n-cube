@@ -156,8 +156,9 @@ std::vector<sliceable_set_t<N>> reduce_to_mss(
 }
 
 /**
- *  Returns the unique symmetric representation of the maximal pairwise unions
- *  of two lists of sliceable sets.
+ *  Returns the unique symmetric representation of the pairwise unions of two
+ *  lists of sliceable sets. Eliminates non-maximal unions on a best effort
+ *  basis.
  *
  *  The returned sliceable sets are sorted in lexicographic order.
  **/
@@ -184,9 +185,14 @@ std::vector<sliceable_set_t<N>> pairwise_unions(
       }
     }
   }
-  unions = expand_usr<N>(unions, edges);
-  unions = reduce_to_mss<N>(unions);
-  unions = reduce_to_usr<N>(unions, edges);
+  // Eliminating all non-maximal unions has quadratic running time
+  if (unions.size() < 1000) {
+    unions = expand_usr<N>(unions, edges);
+    unions = reduce_to_mss<N>(unions);
+    unions = reduce_to_usr<N>(unions, edges);
+  } else {
+    std::sort(unions.begin(), unions.end());
+  }
   return unions;
 }
 
