@@ -1,3 +1,10 @@
+# Project structure
+
+- `data` contains an Excel spreadsheet with the charts and raw data of the MSSs.
+- `extern` contains [prettyprint](https://github.com/Anmol-Singh-Jaggi/Pretty-print).
+- `include/` contains the framework.
+- `src` contains the programs.
+
 # Build instructions
 
 ```
@@ -14,10 +21,3 @@ cmake --build build
 - gmp 6.1.2
 - mpfr 4.1.0
 - boost 1.74.0
-
-# Project structure
-
-- `data` contains an Excel spreadsheet with the charts and raw data of the MSSs.
-- `extern` contains [prettyprint](https://github.com/Anmol-Singh-Jaggi/Pretty-print).
-- `include/` contains the framework.
-- `src` contains the programs.
