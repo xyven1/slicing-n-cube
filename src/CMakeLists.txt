@@ -1,8 +1,6 @@
 find_package(CGAL QUIET)
 
 link_libraries(CGAL::CGAL)
-# Required for GCC 8
-link_libraries(stdc++fs)
 
 add_executable(edge_cardinality edge_cardinality.cpp)
 add_executable(slice_5_cube_c slice_5_cube.c)
